@@ -75,9 +75,8 @@ When you invite the tipbot into a channel it can see all the messages in the cha
 keep this in mind if the tipbot is hosted by that one intern that has left your company for a competitor ;-)
 
 #### ToDo
- ​*currencies*​  ask the bot for a list of supported currencies; ​_@tipbot currencies PLX!_​ 
+- ​*currencies*​  ask the bot for a list of supported currencies; ​_@tipbot currencies PLX!_​ 
 - ​*price*​      ask the bot for the Dash price in a particular currency; ​_@tipbot price in USD!_​ 
 - ​*convert*​    ask the bot to convert between a particular currency and Dash (or visa versa); ​_@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP_​
-- 
-- .receive <value + unit> @someone.  tell the bot to request coins from someone.  `@tipbot I want to receive 0.1 Dash from @bob` will request 0.1 Dash from @bob. After you've requested coins from someone that person will be asked if that is OK, replying with `yes`, `ok` or `sure` will make the transaction happen. The `<value + unit>` can be `0.1 Dash` or `10000000 Satoshi`  This command has a few aliases which you can use; `ask`, `demand`, `deserve`, `send me`, `give me`, `gimme` and `owes me` eg; `@tipbot I demand 0.1 Dash from @bob for making such a cool bot` or `@tipbot @bob please gimme 0.1 Dash for lunch`
+- ​*receive* <value + unit> @someone​  tell the bot to request coins from someone.  `@tipbot I want to receive 0.1 Dash from @bob` will request 0.1 Dash from @bob. After you've requested coins from someone that person will be asked if that is OK, replying with `yes`, `ok` or `sure` will make the transaction happen. The `<value + unit>` can be `0.1 Dash` or `10000000 Satoshi`  This command has a few aliases which you can use; `ask`, `demand`, `deserve`, `send me`, `give me`, `gimme` and `owes me` eg; `@tipbot I demand 0.1 Dash from @bob for making such a cool bot` or `@tipbot @bob please gimme 0.1 Dash for lunch`
 
