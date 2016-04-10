@@ -17,6 +17,8 @@
 			"env": {
 				"NODE_ENV": "development",
                 "TIPBOT_SLACK_TOKEN" : "xoxb-33015192179-ubOm4TUkOG5GnHYSuKIRQKa9",
+                "TIPBOT_RPC_USER":"1",
+                "TIPBOT_ RPC_PASSWORD":"2",
                 "DEBUG" : "tipbot:*"
 			},
 			"externalConsole": false,
