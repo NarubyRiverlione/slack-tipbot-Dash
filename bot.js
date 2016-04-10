@@ -7,8 +7,8 @@ var parseArgs = require("minimist");
 
 var argv = parseArgs(process.argv.slice(2));
 
-var SLACK_TOKEN  = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN,
-    RPC_USER     = argv["rpc-user"] || process.env.TIPBOT_RPC_USER,
+var SLACK_TOKEN  = argv["slack-token"]  || process.env.TIPBOT_SLACK_TOKEN,
+    RPC_USER     = argv["rpc-user"]     || process.env.TIPBOT_RPC_USER,
     RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD,
     AUTO_RECONNECT = true,
     OPTIONS = {
@@ -17,7 +17,7 @@ var SLACK_TOKEN  = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN,
     };
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
-assert(RPC_USER, "--rpc-user or RPC_USER is required");
+assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
 assert(RPC_PASSWORD, "--rpc-password or TIPBOT_RPC_PASSWORD is required");
 
 
