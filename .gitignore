@@ -31,3 +31,5 @@ npm-debug.log
 *.db
 test.sh
 launch.json
+
+.foreverignore
