@@ -1,6 +1,6 @@
 {
   "name": "slack-tipbot-node",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Dash Slack TipBot - Using local wallet",
   "main": "bot.js",
   "dependencies": {
@@ -15,10 +15,10 @@
     "slack-client": "~1.4.1"
   },
   "devDependencies": {
-    "nodemon": "^1.3.6"
+   
   },
   "scripts": {
-    "develop": "DEBUG=\"*\" ./node_modules/nodemon/bin/nodemon.js ./bot.js"
+   
   },
   "repository": {
     "type": "git",
