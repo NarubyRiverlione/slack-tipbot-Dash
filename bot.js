@@ -10,6 +10,7 @@ var argv = parseArgs(process.argv.slice(2));
 var SLACK_TOKEN  = argv["slack-token"]  || process.env.TIPBOT_SLACK_TOKEN,
     RPC_USER     = argv["rpc-user"]     || process.env.TIPBOT_RPC_USER,
     RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD,
+    RPC_PORT     = argv["rpc-port"]     || process.env.TIPBOT_RPC_PORT || 9998,
     AUTO_RECONNECT = true,
     OPTIONS = {
         ALL_BALANCES: true,
@@ -61,7 +62,7 @@ Slack.prototype.reconnect = function() {
 };
 
 var slack = new Slack(SLACK_TOKEN, AUTO_RECONNECT, /* AUTO_MARK */ true);
-var tipbot = new TipBot(slack, RPC_USER, RPC_PASSWORD, OPTIONS);
+var tipbot = new TipBot(slack, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS);
 
 slack.on("open", function() {
     var channels = [],
