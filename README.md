@@ -17,6 +17,7 @@ How to Run a TipBot
  - `git clone https://github.com/narubyriverlione/slack-tipbot`
  - `cd slack-tipbot`
  - `npm install`
+ - create rates directory: 'mkdir tmp/rates'
 
 ### Run
 Change the `YOUR_SLACK_TOKEN` in the below snippet to the API key.
@@ -30,8 +31,6 @@ You can also use ENV variable instead of argument:
 
 You should use something like [forever](https://www.npmjs.com/package/forever) or [supervisord](http://supervisord.org/) to keep it running on a server,
 but using a `screen` does the job too xD
-
-You can add `--testnet` (or ENV var `TIPBOT_TESTNET="true"`) to make the bot run on testnet instead of mainnet (for development or example).
 
 ### Usage
 You can control / communicate with the tipbot by sending the bot a **direct message** or **mentioning** its name in a channel.
@@ -74,7 +73,6 @@ The tipbot is in full control of the coins.
 When you invite the tipbot into a channel it can see all the messages in the channel,
 keep this in mind if the tipbot is hosted by that one intern that has left your company for a competitor ;-)
 
-#### ToDo
 - ​*currencies*​  ask the bot for a list of supported currencies; ​_@tipbot currencies PLX!_​ 
 - ​*price*​      ask the bot for the Dash price in a particular currency; ​_@tipbot price in USD!_​ 
 - ​*convert*​    ask the bot to convert between a particular currency and Dash (or visa versa); ​_@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP_​
