@@ -11,10 +11,9 @@ var SLACK_TOKEN = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN,
     RPC_USER = argv["rpc-user"] || process.env.TIPBOT_RPC_USER,
     RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD,
     RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998,
-    AUTO_RECONNECT = true,
     OPTIONS = {
         ALL_BALANCES: true,
-        DEMAND: true
+        DEMAND: false
     };
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
@@ -113,7 +112,8 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
         } else if (firstCharOfChannelID === "D") {
             // in Direct Message channel
             // let tipbot handle the message
-            tipbot.onMessage(message.channel, member, message.text);
+            var DMchannelID = {"id": message.channel};
+            tipbot.onMessage(DMchannelID, member, message.text);
         }
     });
 });
