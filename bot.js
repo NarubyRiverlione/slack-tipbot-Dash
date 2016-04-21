@@ -83,11 +83,6 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
     // if (message.type === "message") {
     var member, channel;
 
-    // TODO: Direct Message channel
-    // } else if (firstCharOfChannelID === "D") {
-    //     channel = bot.api.dm.getDMById(objId);
-    // }
-
     bot.api.users.info({ "user": message.user }, function (err, response) {
         if (err) throw new Error(err);
         member = response.user;
