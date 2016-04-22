@@ -20,14 +20,7 @@ assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
 assert(RPC_PASSWORD, "--rpc-password or TIPBOT_RPC_PASSWORD is required");
 
-
-/**
- * find a DM channel object by userID
- *
- * @param userId
- * @returns {*}
- */
-
+// setup Slack Controller
 var controller = Botkit.slackbot({
     logLevel: 6,
     debug: true
@@ -35,9 +28,10 @@ var controller = Botkit.slackbot({
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
 });
 
+// Setup TipBot
 var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS);
 
-// spawns the bot
+// spawns the slackbot
 controller.spawn({
     token: SLACK_TOKEN
 }).startRTM(function (err, bot, payload) {
