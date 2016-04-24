@@ -65,6 +65,23 @@ var texts = function () {
     };
 
     this.userTxt = {
+        // GET BALANCES
+        "BaseCurrency": "Dash",
+        "BalanceIs": " your tip jar contains: ",
+        "UnconfirmedBalance_1": "you have an unconfirmed balance (less than ",
+        "UnconfirmedBalance_2": " confirmations) of ",
+        // WITHDRAW
+        "Withdrawal_1": "Withdrawal of ",
+        "WithdrawalTransaction": " transaction: ",
+        "InsufficientBalance": " insufficient balance.",
+        // SEND
+        "SendPublicMessage_1": ":clap: ",
+        "SendPublicMessage_2": " tipped ",
+        "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLet's me see how much there is left in your tip yar now: \n",
+        "SendPrivateMssRecievingUser_1": "Hi there! You just received ",
+        "SendPrivateMssRecievingUser_2": " from ",
+         "SendOops_1" : "Oops could not tip ",
+         "SendOops_2" : " to "
 
     };
 
