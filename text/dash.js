@@ -31,7 +31,7 @@ var texts = function () {
         // ALL BALANCES
         "RetrievingAllBalancesDisabled": "Retrieving all balances is disabled!",
         "RetrievingAllBalancesAdminOnly": "Only admins can list all balances!",
-        "RetrievingAllBalancesWait": "Retrieving all balances... might take awhile depending on the amount of users!",
+        "RetrievingAllBalancesWait": "Retrieving all balances... might take a while depending on the amount of users!",
         // GENERAL
         "NoAmountFound": " couldn't find the amount. Did you forget the decimal ?",
         "NoValidAddress": " that's not a valid address!",
@@ -70,6 +70,7 @@ var texts = function () {
         "BalanceIs": " your tip jar contains: ",
         "UnconfirmedBalance_1": "you have an unconfirmed balance (less than ",
         "UnconfirmedBalance_2": " confirmations) of ",
+        "BalanceWarningHigh": "Your tip jar is filling up. Please consider withdrawing some Dash.",
         // WITHDRAW
         "Withdrawal_1": "Withdrawal of ",
         "WithdrawalTransaction": " transaction: ",
