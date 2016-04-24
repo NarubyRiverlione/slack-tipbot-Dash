@@ -7,14 +7,14 @@ var parseArgs = require("minimist");
 
 var argv = parseArgs(process.argv.slice(2));
 
-var SLACK_TOKEN = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN,
-    RPC_USER = argv["rpc-user"] || process.env.TIPBOT_RPC_USER,
-    RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD,
-    RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998,
-    OPTIONS = {
-        ALL_BALANCES: true,
-        DEMAND: false
-    };
+var SLACK_TOKEN = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN;
+var RPC_USER = argv["rpc-user"] || process.env.TIPBOT_RPC_USER;
+var RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD;
+var RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998;
+var OPTIONS = {
+    ALL_BALANCES: true,
+    DEMAND: false
+};
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -22,7 +22,7 @@ assert(RPC_PASSWORD, "--rpc-password or TIPBOT_RPC_PASSWORD is required");
 
 // setup Slack Controller
 var controller = Botkit.slackbot({
-    logLevel: 6,
+    logLevel: 4,
     debug: true
     //include "log: false" to disable logging
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
@@ -101,7 +101,7 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
         } else if (firstCharOfChannelID === "D") {
             // in Direct Message channel
             // let tipbot handle the message
-            var DMchannelID = {"id": message.channel};
+            var DMchannelID = { "id": message.channel };
             tipbot.onMessage(DMchannelID, member, message.text);
         }
     });
