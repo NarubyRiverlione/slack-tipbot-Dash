@@ -86,7 +86,7 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
             // in Public channel
             bot.api.channels.info({ "channel": message.channel }, function (err, response) {
                 if (err) throw new Error(err);
-                channel = response.group;
+                channel = response.channel;
                 // let tipbot handle the message
                 tipbot.onMessage(channel, member, message.text);
             });
