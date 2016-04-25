@@ -78,7 +78,7 @@ var texts = function () {
         // SEND
         "SendPublicMessage_1": ":clap: ",
         "SendPublicMessage_2": " tipped ",
-        "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLet's me see how much there is left in your tip yar now: \n",
+        "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLets see how much there is left in your tip jar now: \n",
         "SendPrivateMssRecievingUser_1" : "Hi there " , 
         "SendPrivateMssRecievingUser_2" : ", you just received ",
         "SendPrivateMssRecievingUser_3" : " from ",
