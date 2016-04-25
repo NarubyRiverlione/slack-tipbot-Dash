@@ -1,6 +1,6 @@
 "use strict";
 var texts = function () {
-    this.TipBotTxt = {
+    this.tipbotTxt = {
         // HELPTEXT   
         "helpText": "*DashBot commands* \n" +
         " - *balance*\t\task the bot for your current balance\n" +
@@ -79,8 +79,9 @@ var texts = function () {
         "SendPublicMessage_1": ":clap: ",
         "SendPublicMessage_2": " tipped ",
         "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLet's me see how much there is left in your tip yar now: \n",
-        "SendPrivateMssRecievingUser_1": "Hi there! You just received ",
-        "SendPrivateMssRecievingUser_2": " from ",
+        "SendPrivateMssRecievingUser_1" : "Hi there " , 
+        "SendPrivateMssRecievingUser_2" : ", you just received ",
+        "SendPrivateMssRecievingUser_3" : " from ",
          "SendOops_1" : "Oops could not tip ",
          "SendOops_2" : " to "
 
