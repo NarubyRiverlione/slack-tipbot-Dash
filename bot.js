@@ -113,9 +113,9 @@ controller.on("user_change", function (bot, user) {
 });
 // TODO test this
 // when a new user joins the Slack Team to the user.id can be added
-controller.on("team_join", function (bot, user) {
-    tipbot.onUserChange(bot, user);
-});
+// controller.on("team_join", function (bot, user) {
+//     tipbot.onUserChange(bot, user);
+// });
 
 
 controller.on("close", function (e) {
