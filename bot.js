@@ -108,13 +108,13 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
 });
 
 // when a user change his profile (other username,...)
-controller.on("user_change", function (bot, user) {
-    tipbot.onUserChange(bot, user);
+controller.on("user_change", function (bot, resp) {
+    tipbot.onUserChange(bot, resp.user);
 });
 // TODO test this
 // when a new user joins the Slack Team to the user.id can be added
-controller.on("team_join", function (bot, user) {
-    tipbot.onUserChange(bot, user);
+controller.on("team_join", function (bot, resp) {
+    tipbot.onUserChange(bot, resp.user);
 });
 
 
