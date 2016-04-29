@@ -11,6 +11,8 @@ var SLACK_TOKEN = argv["slack-token"] || process.env.TIPBOT_SLACK_TOKEN;
 var RPC_USER = argv["rpc-user"] || process.env.TIPBOT_RPC_USER;
 var RPC_PASSWORD = argv["rpc-password"] || process.env.TIPBOT_RPC_PASSWORD;
 var RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998;
+var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD;
+
 var OPTIONS = {
     ALL_BALANCES: true,
     DEMAND: false
@@ -29,7 +31,7 @@ var controller = Botkit.slackbot({
 });
 
 // Setup TipBot
-var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS);
+var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
 
 // spawns the slackbot
 controller.spawn({
