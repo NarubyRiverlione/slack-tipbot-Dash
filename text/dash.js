@@ -60,6 +60,8 @@ var texts = function () {
         "SupportedCurrenciesFull": "Supported currencies: ",
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
+        // RAIN
+        "RainAdminOnly" : "Only Admins can make it rain because there the Rain Gods.",
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
