@@ -27,7 +27,7 @@ var texts = function () {
         "\t\t\t\t\t\t_@DashBot price in USD!_ \n" +
         "\n" +
         " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n" +
-        "\n"+
+        "\n" +
         " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
         "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
         // ALL BALANCES
@@ -63,7 +63,7 @@ var texts = function () {
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
         // RAIN
-        "RainAdminOnly" : "Only Admins can make it rain because there the Rain Gods.",
+        "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
@@ -83,11 +83,11 @@ var texts = function () {
         "SendPublicMessage_1": ":clap: ",
         "SendPublicMessage_2": " tipped ",
         "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLets see how much there is left in your tip jar now: \n",
-        "SendPrivateMssRecievingUser_1" : "Hi there " , 
-        "SendPrivateMssRecievingUser_2" : ", you just received ",
-        "SendPrivateMssRecievingUser_3" : " from ",
-         "SendOops_1" : "Oops could not tip ",
-         "SendOops_2" : " to "
+        "SendPrivateMssRecievingUser_1": "Hi there ",
+        "SendPrivateMssRecievingUser_2": ", you just received ",
+        "SendPrivateMssRecievingUser_3": " from ",
+        "SendOops_1": "Oops could not tip ",
+        "SendOops_2": " to "
 
     };
 
