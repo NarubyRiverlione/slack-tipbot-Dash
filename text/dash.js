@@ -55,7 +55,7 @@ var texts = function () {
         "NotEnoughCurrencies": ": not enough currencies!",
         "ToMuchCurrencies": ": too many currencies!",
         // PRICE
-        "PriceBase": "1.0 Dash is ",
+        "PriceBase": "1 Dash is ",
         "PriceInfoFrom": " (price of coinmarketcap)",
         // CURRENCIES
         "CurrenciesTitle": "Price info from coinmarketcap \n",
@@ -64,6 +64,14 @@ var texts = function () {
         "SupportedBase": "And does it need saying: *DASH* is supported !",
         // RAIN
         "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
+        "RainThresholdNew": "New Rain threshold set !",
+        "RainThreshold": "Rain threshold is: ",
+        "RainThresholdNotSet": "Rain threshold isn't set yet.",
+        "RainTimerNew": "New Rain timer set !",
+        "RainTimer": "Clouds are gathering, it feels likes it start raining sometime in the next ",
+        "RainTimerUnit": " minutes.",
+        "RainTimerNotSet": "Rain timer not set yet !",
+
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
