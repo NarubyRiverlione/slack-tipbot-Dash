@@ -73,18 +73,18 @@ controller.on("hello", function (bot, message) {
     debug("tipbot:bot")("BOT CONNECTED: " + message);
 
     // find channelID of PRICE_CHANNEL to broadcast price messages
-    getPriceChannel(bot, function (err, priceChannel) {
+    getChannel(bot,OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
         if (err) {
             debug("tipbot:bot")("No price channel to broadcast.");
         } else {
             debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL + " = " + priceChannel.id);
             // tell all prices on the price list
-            tipbot.OPTIONS.PRICE_CHANNEL = priceChannel;
+            tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
         }
     });
 });
 
-function getPriceChannel(bot, cb) {
+function getChannel(bot, channelName, cb) {
  //   var self = this;
     bot.api.channels.list({}, function (err, channelList) {
         if (err) {
@@ -92,25 +92,25 @@ function getPriceChannel(bot, cb) {
             cb(err, null);
         }
         var priceChannelID = _.filter(channelList.chanels, function (find) {
-            return find.name.match(OPTIONS.PRICE_CHANNEL, "i");
+            return find.name.match(channelName, "i");
         });
 
         if (priceChannelID.length === 1) {
             cb(null, priceChannelID[0]);
         } else {
-            debug("tipbot:bot")("Didn't found the " + OPTIONS.PRICE_CHANNEL + ", looking in private groups now.");
+           // debug("tipbot:bot")("Didn't found the " + channelName + ", looking in private groups now.");
             bot.api.groups.list({}, function (err, groupList) {
                 if (err) {
                     debug("tipbot:bot")("Error retrieving list of private channels (groups)" + err);
                     cb(err, null);
                 }
                 var priceGroupID = _.filter(groupList.groups, function (find) {
-                    return find.name.match(OPTIONS.PRICE_CHANNEL, "i");
+                    return find.name.match(channelName, "i");
                 });
                 if (priceGroupID.length === 1) {
                     cb(null, priceGroupID[0]);
                 } else {
-                    debug("tipbot:bot")("Didn't found the " + OPTIONS.PRICE_CHANNEL + ", in private groups also.");
+                    debug("tipbot:bot")("Didn't found the " + channelName + ", in private groups also.");
                 }
             });
         }

@@ -12,7 +12,8 @@
     "debug": "~2.1.1",
     "lodash": "~3.1.0",
     "minimist": "^1.1.0",
-    "request": "~2.53.0"
+    "request": "~2.53.0",
+    "waitjs": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {},
@@ -26,10 +27,9 @@
     "tipbot",
     "dash"
   ],
-  "author": "Ruben de Vries <ruben@blocktrail.com>",
+  "author": "Naruby Riverlione <naruby.riverlione@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/narubyriverlione/slack-tipbot/issues"
-  },
-  "homepage": "https://tipbot.blocktrail.com"
+    "url": "https://github.com/NarubyRiverlione/slack-tipbot-Dash/issues"
+  }
 }

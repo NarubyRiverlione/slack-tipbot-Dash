@@ -26,6 +26,8 @@ var texts = function () {
         " - *price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
         "\t\t\t\t\t\t_@DashBot price in USD!_ \n" +
         "\n" +
+        " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n" +
+        "\n"+
         " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
         "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
         // ALL BALANCES
