@@ -1,5 +1,4 @@
 #Dash TipBot For Slack
-========================
 Easily transfer money between team members on your Slack channel.
 
 ## Features
@@ -8,7 +7,6 @@ Easily transfer money between team members on your Slack channel.
 
 
 ## How to Run a TipBot
--------------------
 ### Setup
  - Add a bot integration to Slack [here](https://my.slack.com/services/new/bot)
     - Make sure you copy the Slack API token
@@ -47,34 +45,34 @@ For example, to trigger the `help` command you can could say `hey @tipbot can yo
 and the `help` in that sentence will trigger displaying the help information.
 
 #### Commands / Trigger words
-##### `help` - *ask the bot for help*
+##### `help`        - *ask the bot for help*
 eg; `hey @tipbot can you show me the help info!`
 
-##### `balance` - *ask the bot for your current balance*
+##### `balance`     - *ask the bot for your current balance*
 eg; `hey @tipbot can you please tell me my balance`
 
 ##### `send <value + unit> @someone` - *tell the bot to send coins to someone*
 eg; `@tipbot please send .001 Dash to @bob` will send 0.001 Dash to @bob.
 
-the `<value + unit>` can be `0.1 Dash` or `10000000 Satoshi`
-
-this command has a few aliases which you can use; `give` and `sent`. You can also use fiat currencies, they will be converted to the Dash value.
+This command has a few aliases which you can use; `give` and `sent`. 
+You can also use fiat currencies, they will be converted to the Dash value.
 eg; `@tipbot can you give @bob 1 euro` or `@tipbot I'd like you to send @bob 0.5 usd`
 
-##### `deposit` - *ask the bot for a deposit address*
+##### `deposit`     - *ask the bot for a deposit address*
 eg; `@tipbot I'd like to deposit to my tip jar`
 
-##### `withdraw` -  *tell the bot you want to withdraw to an address*
+##### `withdraw`    -  *tell the bot you want to withdraw to an address*
+after you've requested the withdraw the bot will confirm with you if it's OK, replying with `yes`, `ok` or `sure` will make the transaction happen.
 eg; `@tipbot I want to withdraw 0.5 Dash to 1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp`
 
-after you've requested the withdraw the bot will confirm with you if it's OK, replying with `yes`, `ok` or `sure` will make the transaction happen.
+##### `currencies` - ask the bot for a list of supported currencies. 
+eg; `_@tipbot what currencies do you know?`
 
-##### `currencies` - ask the bot for a list of supported currencies; ​_@tipbot what currencies do you know?_​ 
-
-##### `price`      - ask the bot for the Dash price in a particular currency; ​_@tipbot price in USD!_​ 
+##### `price`      - ask the bot for the Dash price in a particular currency. 
+eg; `_@tipbot price in USD!` 
 
 ##### `convert`    - ask the bot to convert between a particular currency and Dash (or visa versa)
-eg; ​_@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP_​
+eg; `@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP`
 
 
 ### Channels
@@ -86,6 +84,5 @@ When enabled by an admin you can request dash:
 
 
 ## Security / Privacy
-------------------
 The (admin of the) tipbot is in full control of the coins.
 When you invite the tipbot into a channel it can see all the messages in the channel.
