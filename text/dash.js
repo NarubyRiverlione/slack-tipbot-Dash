@@ -71,12 +71,17 @@ var texts = function () {
         "RainTimer": "Clouds are gathering, it feels likes it start raining sometime in the next ",
         "RainTimerUnit": " minutes.",
         "RainTimerNotSet": "Rain timer not set yet !",
-
+        "RainAvailibleAmount" :"Available rain : ",
+        "RainPerUser" : " rain drops for each online user (",
+        "RainNow_1" : "Give ",
+        "RainNow_2" : " from " ,
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
 
     this.userTxt = {
+        // GENERAL
+        "Locked" : " , sorry your already doing a transaction. \n Wait a moment before starting a new one.",
         // GET BALANCES
         "BaseCurrency": "Dash",
         "BalanceIs": " your tip jar contains: ",
@@ -86,7 +91,8 @@ var texts = function () {
         // WITHDRAW
         "Withdrawal_1": "Withdrawal of ",
         "WithdrawalTransaction": " transaction: ",
-        "InsufficientBalance": " insufficient balance.",
+        "InsufficientBalance_1" : "Sorry ",
+        "InsufficientBalance_2": " insufficient balance.",
         // SEND
         "SendPublicMessage_1": ":clap: ",
         "SendPublicMessage_2": " tipped ",
