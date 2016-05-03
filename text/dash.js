@@ -75,6 +75,7 @@ var texts = function () {
         "RainPerUser" : " rain drops for each online user (",
         "RainNow_1" : "Give ",
         "RainNow_2" : " from " ,
+        "RainCannotFindRainAccount" : "Could not found the Rain user : "  ,
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
