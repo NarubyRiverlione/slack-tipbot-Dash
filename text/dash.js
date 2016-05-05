@@ -75,7 +75,9 @@ var texts = function () {
         "RainPerUser" : " rain drops for each online user (",
         "RainNow_1" : "Give ",
         "RainNow_2" : " from " ,
-        "RainCannotFindRainAccount" : "Could not found the Rain user : "  ,
+        "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
+        "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
+        "RainCannotFindRainBalance" : "Could not fing the Rain balance for the user : "  ,
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
