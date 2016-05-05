@@ -37,10 +37,15 @@ var TipBot = function (RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASS) {
         DEMAND: false,
         PRICE_UPDATE_EVERY: 30, // minuts
         RAIN_USER: "dashrain",
+<<<<<<< HEAD
+     //   PRICETICKER_CHANNEL: null,
+        PRICETICKER_TIMER: 30 // minutes for the moment
+=======
         //   PRICETICKER_CHANNEL: null,
         PRICETICKER_TIMER: 60 // minutes for the moment
         // RAIN_TIMER: 15 // random in the next minutes
         // RAIN_THRESHOLD: 5000000 // satoshis
+>>>>>>> 0e75a7001b9c8272bbb70d971e7cdf32f5996ab9
     });
 
     // create connection via RPC to wallet
