@@ -63,21 +63,26 @@ var texts = function () {
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
         // RAIN
-        "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
-        "RainThresholdNew": "New Rain threshold set !",
+       // "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
+       // "RainThresholdNew": "New Rain threshold set !",
         "RainThreshold": "Rain threshold is: ",
-        "RainThresholdNotSet": "Rain threshold isn't set yet.",
-        "RainTimerNew": "New Rain timer set !",
-        "RainTimer": "Clouds are gathering, it feels likes it start raining sometime in the next ",
-        "RainTimerUnit": " minutes.",
-        "RainTimerNotSet": "Rain timer not set yet !",
+        "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
+       // "RainTimerNew": "New Rain timer set !",
+        "RainTimer": ":cloud: :cloud: :cloud: _it feels likes it start raining sometime in the next_ ",
+        "RainTimerUnit": " _minutes_ :cloud: :cloud: :cloud:",
+        "RainTimerNotSet": "Dear Rain God, the rain timer not set yet.  \n You can do that with the *rain timer _minutes_* command.",
         "RainAvailibleAmount" :"Available rain : ",
-        "RainPerUser" : " rain drops for each online user (",
-        "RainNow_1" : "Give ",
-        "RainNow_2" : " from " ,
+        "RainPerUserNow" : "If you let it rain *now* ",
+        "RainDropSizeWithThreshold" : "If you wait for the rain *threshold* of ",
+        "RainPerUser_1" : " raindrops of ",
+        "RainPerUser_2" : " dash would fall",
+        "RainNow" : "*And the Dash Rain Gods said*\n" +
+        ":rain_cloud: LET IT RAIN :rain_cloud: \n" +
+        "_Each current online user will get a raindrop of_  " ,
         "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
         "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
-        "RainCannotFindRainBalance" : "Could not fing the Rain balance for the user : "  ,
+        "RainCannotFindRainBalance" : "Could not find the Rain balance for the user : "  ,
+
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
