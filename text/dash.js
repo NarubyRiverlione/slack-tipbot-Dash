@@ -26,6 +26,8 @@ var texts = function () {
         " - *price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
         "\t\t\t\t\t\t_@DashBot price in USD!_ \n" +
         "\n" +
+        " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n" +
+        "\n" +
         " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
         "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
         // ALL BALANCES
@@ -53,18 +55,36 @@ var texts = function () {
         "NotEnoughCurrencies": ": not enough currencies!",
         "ToMuchCurrencies": ": too many currencies!",
         // PRICE
-        "PriceBase": "1.0 Dash is ",
+        "PriceBase": "1 Dash is ",
         "PriceInfoFrom": " (price of coinmarketcap)",
         // CURRENCIES
         "CurrenciesTitle": "Price info from coinmarketcap \n",
         "SupportedCurrenciesFull": "Supported currencies: ",
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
+        // RAIN
+        "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
+        "RainThresholdNew": "New Rain threshold set !",
+        "RainThreshold": "Rain threshold is: ",
+        "RainThresholdNotSet": "Rain threshold isn't set yet.",
+        "RainTimerNew": "New Rain timer set !",
+        "RainTimer": "Clouds are gathering, it feels likes it start raining sometime in the next ",
+        "RainTimerUnit": " minutes.",
+        "RainTimerNotSet": "Rain timer not set yet !",
+        "RainAvailibleAmount" :"Available rain : ",
+        "RainPerUser" : " rain drops for each online user (",
+        "RainNow_1" : "Give ",
+        "RainNow_2" : " from " ,
+        "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
+        "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
+        "RainCannotFindRainBalance" : "Could not fing the Rain balance for the user : "  ,
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
 
     this.userTxt = {
+        // GENERAL
+        "Locked" : " , sorry your already doing a transaction. \n Wait a moment before starting a new one.",
         // GET BALANCES
         "BaseCurrency": "Dash",
         "BalanceIs": " your tip jar contains: ",
@@ -74,16 +94,17 @@ var texts = function () {
         // WITHDRAW
         "Withdrawal_1": "Withdrawal of ",
         "WithdrawalTransaction": " transaction: ",
-        "InsufficientBalance": " insufficient balance.",
+        "InsufficientBalance_1" : "Sorry ",
+        "InsufficientBalance_2": " insufficient balance.",
         // SEND
         "SendPublicMessage_1": ":clap: ",
         "SendPublicMessage_2": " tipped ",
         "SendPrivateMssSendingUser": " you're a great Dash Chat user :thumbsup: \nLets see how much there is left in your tip jar now: \n",
-        "SendPrivateMssRecievingUser_1" : "Hi there " , 
-        "SendPrivateMssRecievingUser_2" : ", you just received ",
-        "SendPrivateMssRecievingUser_3" : " from ",
-         "SendOops_1" : "Oops could not tip ",
-         "SendOops_2" : " to "
+        "SendPrivateMssRecievingUser_1": "Hi there ",
+        "SendPrivateMssRecievingUser_2": ", you just received ",
+        "SendPrivateMssRecievingUser_3": " from ",
+        "SendOops_1": "Oops could not tip ",
+        "SendOops_2": " to "
 
     };
 
