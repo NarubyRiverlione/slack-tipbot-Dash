@@ -80,13 +80,14 @@ var texts = function () {
         "RainDropSizeWithThreshold" : "If you wait for the rain *threshold* of ",
         "RainPerUser_1" : " raindrops of ",
         "RainPerUser_2" : " dash would fall",
-        "RainNow" : ":rain_cloud: :rain_cloud: :rain_cloud: \n" + 
-        "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" + 
-        ":rain_cloud: :rain_cloud: :rain_cloud: \n"+
-        "_Each current online user will get a raindrop of_  " ,
+        "RainClouds" : ":rain_cloud: :rain_cloud: :rain_cloud:" , 
+        "RainNow" : "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" +
+         "_Each current online user will get a raindrop of_  ", 
         "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
         "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
         "RainCannotFindRainBalance" : "Could not find the Rain balance for "  ,
+        "RainReqDonation_1" : "If you feel generous tip the  _@",
+        "RainReqDonation_2" : "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
 
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
