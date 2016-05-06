@@ -79,7 +79,7 @@ eg; `@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP`
 By default the tipbot joins the default `#general` channel, you can invite him into other channels just like you invite normal users into channels.
 
 
-When enabled by an admin you can request dash:
+When enabled by an admin you can ask dash:
 - ​*receive* <value + unit> @someone​  tell the bot to request coins from someone.  `@tipbot I want to receive 0.1 Dash from @bob` will request 0.1 Dash from @bob. After you've requested coins from someone that person will be asked if that is OK, replying with `yes`, `ok` or `sure` will make the transaction happen. The `<value + unit>` can be `0.1 Dash` or `10000000 Satoshi`  This command has a few aliases which you can use; `ask`, `demand`, `deserve`, `send me`, `give me`, `gimme` and `owes me` eg; `@tipbot I demand 0.1 Dash from @bob for making such a cool bot` or `@tipbot @bob please gimme 0.1 Dash for lunch`
 
 
