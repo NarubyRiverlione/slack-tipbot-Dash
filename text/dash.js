@@ -29,7 +29,11 @@ var texts = function () {
         " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n" +
         "\n" +
         " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
-        "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
+        "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n" +
+        "\n" +
+        "- *rain*\t\tcheck the available rain and threshold. \n " +
+        "\t\t\t\t\t\tAdmins can via the _rain threshold_ command set the threshold. \n" + 
+        "\t\t\t\t\t\tWhen the balance of the rain account reaches this threshold, raindrops will fall on all online users." ,
         // ALL BALANCES
         "RetrievingAllBalancesDisabled": "Retrieving all balances is disabled!",
         "RetrievingAllBalancesAdminOnly": "Only admins can list all balances!",
@@ -76,12 +80,14 @@ var texts = function () {
         "RainDropSizeWithThreshold" : "If you wait for the rain *threshold* of ",
         "RainPerUser_1" : " raindrops of ",
         "RainPerUser_2" : " dash would fall",
-        "RainNow" : "*And the Dash Rain Gods said*\n" +
-        ":rain_cloud: LET IT RAIN :rain_cloud: \n" +
-        "_Each current online user will get a raindrop of_  " ,
+        "RainClouds" : ":rain_cloud: :rain_cloud: :rain_cloud:" , 
+        "RainNow" : "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" +
+         "_Each current online user will get a raindrop of_  ", 
         "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
         "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
         "RainCannotFindRainBalance" : "Could not find the Rain balance for "  ,
+        "RainReqDonation_1" : "If you feel generous tip the  _@",
+        "RainReqDonation_2" : "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
 
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
