@@ -170,14 +170,15 @@ controller.on("team_join", function (bot, resp) {
 
 
 // ending connection to Slack
-controller.on("close", function (e) {
-    debug("tipbot:bot")("Close!!" + e);
+controller.on("close", function (bot, msg) {
+    debug("tipbot:bot")("Close!!" + msg);
 
     process.exit(1);
 });
 
-controller.on("error", function (error) {
-    debug("tipbot:bot")("Slack Error!!" + error);
+controller.on("error", function (bot, msg) {
+    debug("tipbot:bot")("*********** Slack Error!! ***********");
+    debug("tipbot:bot")("code:" + msg.error.code + " = " + msg.error.msg);
 
     process.exit(1);
 });
