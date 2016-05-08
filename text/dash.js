@@ -51,6 +51,7 @@ var texts = function () {
         // SEND
         "NoUserFound1": "Hello there ",
         "NoUserFound": ", I didn't catch the user you want to tip. You surely didn't want to tip yourself, did you ?",
+        "SendMessageUsed" : "\nThis message what used to send the tip : \n",
         // REQUEST
         "RequestingDisabled": "Requesting coins is disabled!",
         // MENTIONS MULTIPLE USERS
@@ -88,6 +89,7 @@ var texts = function () {
         "RainReqDonation_1": "If you feel generous tip the  _@",
         "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
         "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
+        "RainRecieved" : ":droplet: \n You got splashed this a Dash raindrop of ",
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
