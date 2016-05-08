@@ -16,7 +16,7 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 var OPTIONS = {
     ALL_BALANCES: true,
     DEMAND: false,
-    PRICE_CHANNEL: "bot_testing"
+    PRICE_CHANNEL: "price_speculation"
 };
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
@@ -91,7 +91,7 @@ function getChannel(bot, channelName, cb) {
             debug("tipbot:bot")("Error retrieving list of channels " + err);
             cb(err, null);
         }
-        var priceChannelID = _.filter(channelList.chanels, function (find) {
+        var priceChannelID = _.filter(channelList.channels, function (find) {
             return find.name.match(channelName, "i");
         });
 
