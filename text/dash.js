@@ -29,7 +29,11 @@ var texts = function () {
         " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n" +
         "\n" +
         " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
-        "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
+        "\t\t\t\t\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n" +
+        "\n" +
+        "- *rain*\t\tcheck the available rain and threshold. \n " +
+        "\t\t\t\t\t\tAdmins can via the _rain threshold_ command set the threshold. \n" +
+        "\t\t\t\t\t\tWhen the balance of the rain account reaches this threshold, raindrops will fall on all online users.",
         // ALL BALANCES
         "RetrievingAllBalancesDisabled": "Retrieving all balances is disabled!",
         "RetrievingAllBalancesAdminOnly": "Only admins can list all balances!",
@@ -47,6 +51,7 @@ var texts = function () {
         // SEND
         "NoUserFound1": "Hello there ",
         "NoUserFound": ", I didn't catch the user you want to tip. You surely didn't want to tip yourself, did you ?",
+        "SendMessageUsed" : "\nThis message what used to send the tip : \n",
         // REQUEST
         "RequestingDisabled": "Requesting coins is disabled!",
         // MENTIONS MULTIPLE USERS
@@ -63,6 +68,7 @@ var texts = function () {
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
         // RAIN
+<<<<<<< HEAD
         "RainAdminOnly": "Only Admins can make it rain because there the Rain Gods.",
         "RainThresholdNew": "New Rain threshold set !",
         "RainThreshold": "Rain threshold is: ",
@@ -78,13 +84,41 @@ var texts = function () {
         "RainCannotFindRainAccount_1" : "Could not find the Rain user : '*"  ,
         "RainCannotFindRainAccount_2" : "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
         "RainCannotFindRainBalance" : "Could not fing the Rain balance for the user : "  ,
+=======
+        // "RainAdminOnly": "Only Admins can make it rain because they are the Rain Gods.",
+        "RainThreshold": "Rain threshold is: ",
+        "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
+        "Rainimminent": ":cloud: :cloud: :cloud: \n _When will those clouds all disappear?_ Will it rain soon? \n  :cloud: :cloud: :cloud:",
+        "RainTimer": " Rain timer is set to ",
+        "RainTimerUnit": " _minutes_ ",
+        "RainTimerNotSet": "Dear Rain God, the rain timer not set yet.  \n You can do that with the *rain timer _minutes_* command.",
+        "RainAvailibleAmount": "Available rain : ",
+        "RainPerUserNow": "If you let it rain *now* ",
+        "RainDropSizeWithThreshold": "If you wait for the rain *threshold* of ",
+        "RainPerUser_1": " raindrops of ",
+        "RainPerUser_2": " dash would fall",
+        "RainClouds": ":rain_cloud: :rain_cloud: :rain_cloud:",
+        "RainNow": "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" +
+        "_Each current online user will get a raindrop of_  ",
+        "RainCannotFindRainAccount_1": "Could not find the Rain user : '*",
+        "RainCannotFindRainAccount_2": "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
+        "RainCannotFindRainBalance": "Could not find the Rain balance for ",
+        "RainReqDonation_1": "If you feel generous tip the  _@",
+        "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
+        "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
+        "RainRecieved" : ":droplet: \n You got splashed this a Dash raindrop of ",
+>>>>>>> feature/Rain
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
 
     this.userTxt = {
         // GENERAL
+<<<<<<< HEAD
         "Locked" : " , sorry your already doing a transaction. \n Wait a moment before starting a new one.",
+=======
+        "Locked": " , sorry your already doing a transaction. \n Wait a moment before starting a new one.",
+>>>>>>> feature/Rain
         // GET BALANCES
         "BaseCurrency": "Dash",
         "BalanceIs": " your tip jar contains: ",
@@ -94,7 +128,11 @@ var texts = function () {
         // WITHDRAW
         "Withdrawal_1": "Withdrawal of ",
         "WithdrawalTransaction": " transaction: ",
+<<<<<<< HEAD
         "InsufficientBalance_1" : "Sorry ",
+=======
+        "InsufficientBalance_1": "Sorry ",
+>>>>>>> feature/Rain
         "InsufficientBalance_2": " insufficient balance.",
         // SEND
         "SendPublicMessage_1": ":clap: ",
