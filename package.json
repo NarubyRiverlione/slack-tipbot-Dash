@@ -1,6 +1,6 @@
 {
   "name": "slack-tipbot-node",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Dash Slack TipBot - Using local wallet",
   "main": "bot.js",
   "dependencies": {
@@ -10,9 +10,10 @@
     "blocktrail-sdk": "~2.0.0",
     "botkit": "^0.1.1",
     "debug": "~2.1.1",
-    "lodash": "~3.1.0",
+    "lodash": "^3.1.0",
     "minimist": "^1.1.0",
-    "request": "~2.53.0"
+    "request": "~2.53.0",
+    "waitjs": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {},
@@ -26,9 +27,9 @@
     "tipbot",
     "dash"
   ],
-  "author": "Naruby Riverlione <naruby.riverlione@gmail.com>",
+  "author": "Naruby Riverlione <naruby.riverlione@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/narubyriverlione/slack-tipbot/issues"
+    "url": "https://github.com/NarubyRiverlione/slack-tipbot-Dash/issues"
   }
 }
