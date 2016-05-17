@@ -93,7 +93,7 @@ var texts = function () {
         "RainReqDonation_1": "If you feel generous tip the  _@",
         "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
         "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
-        "RainRecieved" : ":droplet: \n You got splashed this a Dash raindrop of ",
+        "RainRecieved" : ":droplet: \n You got splashed with a Dash raindrop of ",
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
