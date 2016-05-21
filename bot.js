@@ -16,7 +16,8 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 var OPTIONS = {
     ALL_BALANCES: true,
     DEMAND: false,
-    PRICE_CHANNEL: "price_speculation"
+    PRICE_CHANNEL: "price_speculation",
+    MODERATOR_CHANNEL: "moderators"
 };
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
@@ -73,7 +74,7 @@ controller.on("hello", function (bot, message) {
     debug("tipbot:bot")("BOT CONNECTED: " + message);
 
     // find channelID of PRICE_CHANNEL to broadcast price messages
-    getChannel(bot,OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
+    getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
         if (err) {
             debug("tipbot:bot")("No price channel to broadcast.");
         } else {
@@ -82,10 +83,21 @@ controller.on("hello", function (bot, message) {
             tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
         }
     });
+
+    // find channelID of MODERATOR_CHANNEL to post warn messages
+    getChannel(bot, OPTIONS.MODERATOR_CHANNEL, function (err, moderatorChannel) {
+        if (err) {
+            debug("tipbot:bot")("No Moderator channel to broadcast.");
+        } else {
+            debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL + " = " + moderatorChannel.id);
+            // set moderator channel for tipbot
+            tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
+        }
+    });
 });
 
 function getChannel(bot, channelName, cb) {
- //   var self = this;
+    //   var self = this;
     bot.api.channels.list({}, function (err, channelList) {
         if (err) {
             debug("tipbot:bot")("Error retrieving list of channels " + err);
@@ -98,7 +110,7 @@ function getChannel(bot, channelName, cb) {
         if (priceChannelID.length === 1) {
             cb(null, priceChannelID[0]);
         } else {
-           // debug("tipbot:bot")("Didn't found the " + channelName + ", looking in private groups now.");
+            // debug("tipbot:bot")("Didn't found the " + channelName + ", looking in private groups now.");
             bot.api.groups.list({}, function (err, groupList) {
                 if (err) {
                     debug("tipbot:bot")("Error retrieving list of private channels (groups)" + err);

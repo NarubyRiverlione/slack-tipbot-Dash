@@ -53,8 +53,8 @@ var texts = function () {
         // WITHDRAW
         "WithdrawQuestion": "",
         // SEND
-        "NoUserFound1": "Hello there ",
-        "NoUserFound": ", I didn't catch the user you want to tip. You surely didn't want to tip yourself, did you ?",
+        "Hello": "Hello there ",
+        "NoUserFoundForTip": ", I didn't catch the user you want to tip. You surely didn't want to tip yourself, did you ?",
         "SendMessageUsed" : "\nThis message what used to send the tip : \n",
         // REQUEST
         "RequestingDisabled": "Requesting coins is disabled!",
@@ -94,6 +94,13 @@ var texts = function () {
         "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
         "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
         "RainRecieved" : ":droplet: \n You got splashed with a Dash raindrop of ",
+        // WARN
+        "NoUserFoundWarn" : ", you need to provided a user to warn.",
+        "WarnNoPrivateChannel" : "Could not reach the user: ",
+        "WarnText" : ", please refrain from using insults and profane language in #dash_chat .\n" + 
+           "You are welcome to continue your conversation in the #arena, where anything goes.",
+        "InformOtherAdmins1" : "The user ",
+        "InformOtherAdmins2" : " was issued a moderator warning.",
         // OOPS
         "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
     };
