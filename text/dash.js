@@ -3,45 +3,52 @@ var texts = function () {
     this.tipbotTxt = {
         // HELPTEXT   
         "helpText": "*DashBot commands* \n",
-        "help_balance": " - *balance*\t\task the bot for your current balance\n" +
+        
+        "help_balance": 
+        "*balance*\t\task the bot for your current balance\n" +
         "\t\t_@DashBot what is my balance_ \n",
         
-        "help_send": " - *send*\t\t\t\ttell the bot to send coins to someone; \n" +
+        "help_send": 
+        "*send*\t\t\t\ttell the bot to send coins to someone; \n" +
         "\t\t_@DashBot send 0.1 DASH to @someone_ \n" +
         "\t\t_aliases: give, tip_ \n" +
         "\t\tWorks also with major fiat currencies (use *currencies* command to see the list); \n" +
         "\t\t_@DashBot give 4 USD to @someone_ \n",
         
         "help_deposit":
-        " - *deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_ \n",
+        "*deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_ \n",
         
         "help_withdraw":
-        " - *withdraw*\ttell the bot to withdraw to a address; \n" +
+        "*withdraw*\ttell the bot to withdraw to a address; \n" +
         "\t\t_@DashBot withdraw 1 DASH to 1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_ \n" ,
-
-        "tx_fee" : "The transaction fee is set to ",
-        
-        "help_demand": " - *receive*\t\ttell the bot to request coins from to someone; _@DashBot receive 0.1 DASH from @someone_ \n" +
+               
+        "help_demand": 
+        "*receive*\t\ttell the bot to request coins from to someone; _@DashBot receive 0.1 DASH from @someone_ \n" +
         " \t\t_aliases: demand, ask, deserve, get, give me, owes me_ \n" +
         "\n",
 
-        "help_currencies": " - *currencies*\task the bot for a list of supported currencies.\n" +
+        "help_currencies": 
+        "*currencies*\task the bot for a list of supported currencies.\n" +
         "\t\t_@DashBot what currencies do you know?_ \n",
        
         "help_price":
-        " - *price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
+        "*price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
         "\t\t_@DashBot price in USD!_ \n",
        
         "help_pricelist":
-        " - *priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n",
+        "*priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n",
        
         "help_convert":
-        " - *convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
+        "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
         "\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n" ,
        
-        "help_rain": "- *rain*\t\tcheck the available rain and threshold. \n " +
-        //      "\t\tAdmins can via the _rain threshold_ command set the threshold. \n" +
+        "help_rain": 
+        "*rain*\t\tcheck the available rain and threshold. \n " +
         "\t\tAdmins can also release the rain with the *rain now* command.\n",
+        
+         "tx_fee" : "The transaction fee is set to ",
+         
+        //      "\t\tAdmins can via the _rain threshold_ command set the threshold. \n" +
         //       "\t\tWhen the balance of the rain account reaches this threshold, \n " +
         //       "\t\traindrops will fall on each online users.",
       
