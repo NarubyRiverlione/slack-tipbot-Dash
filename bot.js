@@ -42,7 +42,7 @@ controller.spawn({
     if (err) {
         throw new Error(err);
     }
-
+    // get info where bot is active
     var channels = [],
         groups = [];
 
@@ -64,7 +64,7 @@ controller.spawn({
     debug("tipbot:bot")("As well as (groups): %s", groups.join(", "));
 
     // init the tipbot
-    setTimeout(function () {
+    setTimeout(function () {  //setTimeout 0 = It's a useful trick for executing asynchronous code in a single thread.  The coder's algorithm is non-blocking and asynchronous, but the its execution is blocked into an efficient, linear sequence.
         tipbot.init(bot);
     }, 0);
 });
@@ -131,17 +131,15 @@ function getChannel(bot, channelName, cb) {
 }
 
 
-// listen to messages
+// listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears(".*", ["direct_message", "direct_mention", "mention"], function (bot, message) {
-    // debug messages to seperate channel so we only log them when explicitly enabled
-    // debug("tipbot:messages")("MESSAGE", message.type, message.channel, message.user, message.text);
-    // if (message.type === "message") {
     var member, channel;
-
+    // get the user that posted the message
     bot.api.users.info({ "user": message.user }, function (err, response) {
         if (err) throw new Error(err);
         member = response.user;
 
+        // find the place where the message was posted
         var firstCharOfChannelID = message.channel.substring(0, 1);
         if (firstCharOfChannelID === "C") {
             // in Public channel
@@ -160,7 +158,7 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
                 tipbot.onMessage(channel, member, message.text);
             });
         } else if (firstCharOfChannelID === "D") {
-            // in Direct Message channel
+            // in Direct Message channel =  id -> create channel object
             // let tipbot handle the message
             var DMchannelID = { "id": message.channel };
             tipbot.onMessage(DMchannelID, member, message.text);
@@ -183,7 +181,7 @@ controller.on("team_join", function (bot, resp) {
 
 // ending connection to Slack
 controller.on("close", function (bot, msg) {
-    debug("tipbot:bot")("Close!!" + msg);
+    debug("tipbot:bot")("!!! BOTKIT CLOSED DOWN !!!" + msg);
 
     process.exit(1);
 });
