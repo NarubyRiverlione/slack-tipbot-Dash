@@ -1,9 +1,9 @@
 var _ = require("lodash");
 var debug = require("debug");
 var Botkit = require("botkit");
-var TipBot = require("./lib/tipbot");
 var assert = require("assert");
 var parseArgs = require("minimist");
+var TipBot = require("./lib/tipbot");
 
 var argv = parseArgs(process.argv.slice(2));
 
@@ -16,8 +16,8 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 var OPTIONS = {
     ALL_BALANCES: true,
     DEMAND: false,
-    PRICE_CHANNEL: "price_speculation",
-    MODERATOR_CHANNEL: "moderators"
+    PRICE_CHANNEL:  "bot_testing", //  "price_speculation",
+    MODERATOR_CHANNEL: "moderators"   
 };
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
@@ -34,6 +34,7 @@ var controller = Botkit.slackbot({
 
 // Setup TipBot
 var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+
 
 // spawns the slackbot
 controller.spawn({
@@ -64,12 +65,12 @@ controller.spawn({
     debug("tipbot:bot")("As well as (groups): %s", groups.join(", "));
 
     // init the tipbot
-    setTimeout(function () {  //setTimeout 0 = It's a useful trick for executing asynchronous code in a single thread.  The coder's algorithm is non-blocking and asynchronous, but the its execution is blocked into an efficient, linear sequence.
+    setTimeout(function () {  //setTimeout 0 = It"s a useful trick for executing asynchronous code in a single thread.  The coder"s algorithm is non-blocking and asynchronous, but the its execution is blocked into an efficient, linear sequence.
         tipbot.init(bot);
     }, 0);
 });
 
-// when bot is connected, show price list in channel 
+// when bot is connected, show priceTicker
 controller.on("hello", function (bot, message) {
     debug("tipbot:bot")("BOT CONNECTED: " + message);
 
@@ -81,9 +82,19 @@ controller.on("hello", function (bot, message) {
             debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL + " = " + priceChannel.id);
             // tell all prices on the price list
             tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
+            // set initial priceTicker boundaries
+            tipbot.updatePriceTicker();
+            // update priceTicker at interval
+         //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
+                setInterval(function () {
+                    tipbot.updatePriceTicker();
+                },
+                    tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
+        //    }
         }
     });
 
+    
     // find channelID of MODERATOR_CHANNEL to post warn messages
     getChannel(bot, OPTIONS.MODERATOR_CHANNEL, function (err, moderatorChannel) {
         if (err) {
@@ -110,7 +121,7 @@ function getChannel(bot, channelName, cb) {
         if (priceChannelID.length === 1) {
             cb(null, priceChannelID[0]);
         } else {
-            // debug("tipbot:bot")("Didn't found the " + channelName + ", looking in private groups now.");
+            // debug("tipbot:bot")("Didn"t found the " + channelName + ", looking in private groups now.");
             bot.api.groups.list({}, function (err, groupList) {
                 if (err) {
                     debug("tipbot:bot")("Error retrieving list of private channels (groups)" + err);
