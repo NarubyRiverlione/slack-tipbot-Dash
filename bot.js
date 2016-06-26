@@ -74,25 +74,26 @@ controller.spawn({
 controller.on("hello", function (bot, message) {
     debug("tipbot:bot")("BOT CONNECTED: " + message);
 
-    // find channelID of PRICE_CHANNEL to broadcast price messages
-    getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
-        if (err) {
-            debug("tipbot:bot")("No price channel to broadcast.");
-        } else {
-            debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL + " = " + priceChannel.id);
-            // tell all prices on the price list
-            tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
-            // set initial priceTicker boundaries
-            tipbot.updatePriceTicker();
-            // update priceTicker at interval
-         //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
-                setInterval(function () {
-                    tipbot.updatePriceTicker();
-                },
-                    tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
-        //    }
-        }
-    });
+    // // find channelID of PRICE_CHANNEL to broadcast price messages
+    // getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
+    //     if (err) {
+    //         debug("tipbot:bot")("No price channel to broadcast.");
+    //     } else {
+    //         debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL + " = " + priceChannel.id);
+    //         // tell all prices on the price list
+    //         tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
+           
+    //         // set initial priceTicker boundaries
+    //         tipbot.updatePriceTicker();
+    //         // update priceTicker at interval
+    //      //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
+    //             setInterval(function () {
+    //                 tipbot.updatePriceTicker();
+    //             },
+    //                 tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
+    //     //    }
+    //     }
+    // });
 
     
     // find channelID of MODERATOR_CHANNEL to post warn messages
@@ -114,12 +115,12 @@ function getChannel(bot, channelName, cb) {
             debug("tipbot:bot")("Error retrieving list of channels " + err);
             cb(err, null);
         }
-        var priceChannelID = _.filter(channelList.channels, function (find) {
+        var foundChannelIDs = _.filter(channelList.channels, function (find) {
             return find.name.match(channelName, "i");
         });
 
-        if (priceChannelID.length === 1) {
-            cb(null, priceChannelID[0]);
+        if (foundChannelIDs.length === 1) {
+            cb(null, foundChannelIDs[0]);
         } else {
             // debug("tipbot:bot")("Didn"t found the " + channelName + ", looking in private groups now.");
             bot.api.groups.list({}, function (err, groupList) {
