@@ -17,7 +17,6 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 
 var OPTIONS = {
     ALL_BALANCES: false,
-    DEMAND: false,
     PRICE_CHANNEL: "bot_testing", //  "price_speculation",
     MODERATOR_CHANNEL: "moderators",
     DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
@@ -167,8 +166,29 @@ controller.on("hello", function (bot, message) {
     });
 });
 // response to ticks
-controller.on("tick", function (bot) {
+controller.on("tick", function () {
     //debug("tipbot:bot")(event);
+    if (tipbot.OPTIONS.RAIN_TIMER !== undefined) {
+        // rain timer is set
+        if (tipbot.OPTIONS.RAIN_RANDOM_TIME == undefined) {
+            // set random timer between 1 second and the set rain_time seconds
+            tipbot.OPTIONS.RAIN_RANDOM_TIME = Math.floor((Math.random() * tipbot.OPTIONS.RAIN_TIMER) + 1);
+            debug("tipbot:rain")("RAIN random timer set to :" + tipbot.OPTIONS.RAIN_RANDOM_TIME);
+        } else {
+            tipbot.OPTIONS.RAIN_RANDOM_TIME--;
+            if (tipbot.OPTIONS.RAIN_RANDOM_TIME <= 0) {
+                debug("tipbot:rain")("RAIN timer reached !");
+                tipbot.OPTIONS.RAIN_TIMER = undefined;
+                tipbot.OPTIONS.RAIN_RANDOM_TIME = undefined;
+                getChannel(tipbot.slack, "dash_talk", function (err, mainChannelID) {
+                    if (!err) {
+                        tipbot.raiNow(mainChannelID);
+                    }
+                });
+            }
+        }
+    }
+
 });
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears(".*", ["direct_message", "direct_mention", "mention"], function (bot, message) {
