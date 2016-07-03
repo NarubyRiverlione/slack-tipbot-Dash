@@ -182,7 +182,7 @@ controller.on("tick", function () {
                 tipbot.OPTIONS.RAIN_RANDOM_TIME = undefined;
                 getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
                     if (err)  debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
-                    else  tipbot.raiNow(mainChannelID);
+                    else  tipbot.rainNow(mainChannelID);
                 });
             }
         }
