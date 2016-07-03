@@ -5,7 +5,7 @@ var debug = require("debug");
 var Botkit = require("botkit");
 var assert = require("assert");
 var parseArgs = require("minimist");
-var TipBot = require("./lib/tipbot");
+var mongoose = require("mongoose");
 
 var argv = parseArgs(process.argv.slice(2));
 
@@ -19,8 +19,11 @@ var OPTIONS = {
     ALL_BALANCES: false,
     DEMAND: false,
     PRICE_CHANNEL: "bot_testing", //  "price_speculation",
-    MODERATOR_CHANNEL: "moderators"
+    MODERATOR_CHANNEL: "moderators",
+    DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
 };
+
+var tipbot;
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -34,11 +37,24 @@ var controller = Botkit.slackbot({
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
 });
 
-// Setup TipBot
-var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+// open mongoose connection
+mongoose.connect(OPTIONS.DB);
+var db = mongoose.connection;
+db.on("error", function () {
+    debug("tipbot:db")("ERROR: unable to connect to database at " + OPTIONS.DB);
 
-// make conennection to Slack
-connect(controller);
+});
+db.once("open", function () {
+    require("./model/tipper"); // load mongoose Tipper model
+    debug("tipbot:db")("Database connected");
+    // Setup TipBot after mongoose model is loaded
+    var TipBot = require("./lib/tipbot");
+    tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+    // make conennection to Slack
+    connect(controller);
+
+});
+
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
@@ -115,7 +131,7 @@ function getChannel(bot, channelName, cb) {
 
 // when bot is connected, show priceTicker
 controller.on("hello", function (bot, message) {
-    debug("tipbot:bot")("BOT CONNECTED: " + message);
+    debug("tipbot:bot")("BOT CONNECTED: " + message.type);
 
     // // find channelID of PRICE_CHANNEL to broadcast price messages
     // getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
@@ -151,7 +167,7 @@ controller.on("hello", function (bot, message) {
     });
 });
 // response to ticks
-controller.on("tick", function (bot, event) {
+controller.on("tick", function (bot) {
     //debug("tipbot:bot")(event);
 });
 // listen to direct messages to the bot, or when the bot is mentioned in a message
@@ -203,6 +219,7 @@ controller.on("close", function (bot, msg) {
     debug("tipbot:bot")("CLOSE message: " + msg);
     // destroy bot before ending script
     bot.destroy();
+    db.close();
     process.exit(1);
 });
 
@@ -212,6 +229,6 @@ controller.on("error", function (bot, msg) {
     debug("tipbot:bot")("ERROR code:" + msg.error.code + " = " + msg.error.msg);
 
     //process.exit(1);
-    // don't quit but reconnect
+    // don"t quit but reconnect
     connect(controller);
 });
