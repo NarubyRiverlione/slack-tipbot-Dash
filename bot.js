@@ -180,10 +180,9 @@ controller.on("tick", function () {
                 debug("tipbot:rain")("RAIN timer reached !");
                 tipbot.OPTIONS.RAIN_TIMER = undefined;
                 tipbot.OPTIONS.RAIN_RANDOM_TIME = undefined;
-                getChannel(tipbot.slack, "dash_talk", function (err, mainChannelID) {
-                    if (!err) {
-                        tipbot.raiNow(mainChannelID);
-                    }
+                getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
+                    if (err)  debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
+                    else  tipbot.raiNow(mainChannelID);
                 });
             }
         }
