@@ -8,7 +8,7 @@
     "bitcoin": "^3.0.1",
     "bitcoinjs-lib": "~1.4.3",
     "blocktrail-sdk": "~2.0.0",
-    "botkit": "^0.1.1",
+    "botkit": "^0.2.0",
     "debug": "~2.1.1",
     "lodash": "^3.1.0",
     "minimist": "^1.1.0",

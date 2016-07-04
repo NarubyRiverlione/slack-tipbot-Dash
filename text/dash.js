@@ -51,7 +51,12 @@ var texts = function () {
         //      "\t\tAdmins can via the _rain threshold_ command set the threshold. \n" +
         //       "\t\tWhen the balance of the rain account reaches this threshold, \n " +
         //       "\t\traindrops will fall on each online users.",
-
+        // NEW USER
+        "WarningNewUser_1": "The new user ",
+        "WarningNewUser_2": " has joined ! Go and greet them, plz.",
+        // USER LEFT
+        "WarnUserLeft_1": "The user ",
+        "WarnUserLeft_2": " has left the slack team. Think about his/her tip jar.",
         // ALL BALANCES
         "RetrievingAllBalancesDisabled": "Retrieving all balances is disabled!",
         "RetrievingAllBalancesAdminOnly": "Only admins can list all balances!",

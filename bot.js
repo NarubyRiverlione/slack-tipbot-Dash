@@ -225,10 +225,12 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
 });
 // when a user change his profile (other username,...)
 controller.on("user_change", function (bot, resp) {
+    debug("tipbot:bot")("User " + resp.user.name + " has changed his/her profile.");
     tipbot.onUserChange(bot, resp.user);
 });
 // when a new user joins the Slack Team to the user.id can be added
 controller.on("team_join", function (bot, resp) {
+    debug("tipbot:bot")("User " + resp.user.name + " has joined !");
     tipbot.onUserChange(bot, resp.user);
 });
 
