@@ -18,7 +18,7 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 var OPTIONS = {
     ALL_BALANCES: false,
     PRICE_CHANNEL: "bot_testing", //  "price_speculation",
-    MODERATOR_CHANNEL: "moderators",
+    MODERATOR_CHANNEL_NAME: "moderators",
     DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
 };
 
@@ -154,16 +154,18 @@ controller.on("hello", function (bot, message) {
     // });
 
 
-    // find channelID of MODERATOR_CHANNEL to post warn messages
-    getChannel(bot, OPTIONS.MODERATOR_CHANNEL, function (err, moderatorChannel) {
-        if (err) {
-            debug("tipbot:bot")("No Moderator channel to broadcast.");
-        } else {
-            debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL + " = " + moderatorChannel.id);
-            // set moderator channel for tipbot
-            tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
-        }
-    });
+    // find channelID of MODERATOR_CHANNEL_NAME to post warn messages
+    if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
+        getChannel(bot, OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
+            if (err) {
+                debug("tipbot:bot")("ERROR: No Moderator channel found to send admin messages to.");
+            } else {
+                debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL_NAME + " = " + moderatorChannel.id);
+                // set moderator channel for tipbot
+                tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
+            }
+        });
+    }
 });
 // response to ticks
 controller.on("tick", function () {
@@ -181,8 +183,8 @@ controller.on("tick", function () {
                 tipbot.OPTIONS.RAIN_TIMER = undefined;
                 tipbot.OPTIONS.RAIN_RANDOM_TIME = undefined;
                 getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
-                    if (err)  debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
-                    else  tipbot.rainNow(mainChannelID);
+                    if (err) debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
+                    else tipbot.rainNow(mainChannelID);
                 });
             }
         }
