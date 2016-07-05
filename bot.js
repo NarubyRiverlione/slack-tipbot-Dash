@@ -30,7 +30,7 @@ assert(RPC_PASSWORD, "--rpc-password or TIPBOT_RPC_PASSWORD is required");
 
 // setup Slack Controller
 var controller = Botkit.slackbot({
-    logLevel: 6,
+    logLevel: 5,
     debug: true
     //include "log: false" to disable logging
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
