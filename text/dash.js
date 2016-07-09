@@ -121,7 +121,20 @@ var texts = function () {
         "InformOtherAdmins1": "The user ",
         "InformOtherAdmins2": " was issued a moderator warning.",
         // OOPS
-        "Oops": " but I did not understand that.\nUse the *help* command to see the valid options."
+        "Oops": "Use the *help* command to see the valid options.",
+        "NoCommandFound": [
+            "Remember it's never the machine it's always the operator. Check your syntax and try again.",
+            "Of course, this error isn't your fault. Maybe you should consider buying a new keyboard.",
+            "Ker chunk, ker chunk,,,blaaahhhh.  Ran out of gas.  Try again.",
+            "What was that?  Can you hear me now?  Nope.  Try again.",
+            "Wa wa wa wa wak wak.   Game over Pac Man.   Try again.",
+            "You've lost the battle but you can win the war. Try again!",
+            "What language is that?  That makes no sense to me.",
+            "Stop collaborate and listen, ice is back with a brand new invention....but not with that syntax.",
+            "Syntax Error.   That's all I am going to say about that.",
+            "Gibberish is not accepted.  English please.",
+            "You talking to me? Try again."
+        ]
     };
 
     this.userTxt = {
