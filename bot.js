@@ -20,9 +20,11 @@ var OPTIONS = {
     PRICE_CHANNEL: "bot_testing", //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
     DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
+
 };
 
 var tipbot;
+var sunTicker = 0; // decrease ticker until 0 => check sun balance > thershold
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -167,30 +169,45 @@ controller.on("hello", function (bot, message) {
         });
     }
 });
+
 // response to ticks
 controller.on("tick", function () {
     //debug("tipbot:bot")(event);
-    if (tipbot.OPTIONS.RAIN_TIMER !== undefined) {
-        // rain timer is set
-        if (tipbot.OPTIONS.RAIN_RANDOM_TIME == undefined) {
-            // set random timer between 1 second and the set rain_time seconds
-            tipbot.OPTIONS.RAIN_RANDOM_TIME = Math.floor((Math.random() * tipbot.OPTIONS.RAIN_TIMER) + 1);
-            debug("tipbot:rain")("RAIN random timer set to :" + tipbot.OPTIONS.RAIN_RANDOM_TIME);
+    if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
+        && tipbot.OPTIONS.SUN_TIMER !== undefined
+        && tipbot.SunUser !== undefined) {
+        // only check sun balance every SUN_TIMER min
+        if (sunTicker === 0) {
+            debug("tipbot:sun")("SUN: check balance > threshold now");
+            tipbot.sunCheckThreshold();
+            // reset ticker
+            sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
         } else {
-            tipbot.OPTIONS.RAIN_RANDOM_TIME--;
-            if (tipbot.OPTIONS.RAIN_RANDOM_TIME <= 0) {
-                debug("tipbot:rain")("RAIN timer reached !");
-                tipbot.OPTIONS.RAIN_TIMER = undefined;
-                tipbot.OPTIONS.RAIN_RANDOM_TIME = undefined;
-                getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
-                    if (err) debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
-                    else tipbot.rainNow(mainChannelID);
-                });
-            }
+            // decrease sunTicker until 0
+            sunTicker--;
         }
+
+
+        // if (tipbot.OPTIONS.SUN_RANDOM_TIME == undefined) {
+        //     // set random timer between 1 second and the set rain_time seconds
+        //     tipbot.OPTIONS.SUN_RANDOM_TIME = Math.floor((Math.random() * tipbot.OPTIONS.SUN_TIMER) + 1);
+        //     debug("tipbot:rain")("SUN random timer set to :" + tipbot.OPTIONS.SUN_RANDOM_TIME);
+        // } else {
+        //     tipbot.OPTIONS.SUN_RANDOM_TIME--;
+        //     if (tipbot.OPTIONS.SUN_RANDOM_TIME <= 0) {
+        //         debug("tipbot:rain")("SUN timer reached !");
+        //         tipbot.OPTIONS.SUN_TIMER = undefined;
+        //         tipbot.OPTIONS.SUN_RANDOM_TIME = undefined;
+        //         getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
+        //             if (err) debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
+        //             else tipbot.rainNow(mainChannelID);
+        //         });
+        //     }
+        // }
     }
 
 });
+
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears(".*", ["direct_message", "direct_mention", "mention"], function (bot, message) {
     var member, channel;
@@ -225,11 +242,13 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
         }
     });
 });
+
 // when a user change his profile (other username,...)
 controller.on("user_change", function (bot, resp) {
     debug("tipbot:bot")("User " + resp.user.name + " has changed his/her profile.");
     tipbot.onUserChange(bot, resp.user);
 });
+
 // when a new user joins the Slack Team to the user.id can be added
 controller.on("team_join", function (bot, resp) {
     debug("tipbot:bot")("User " + resp.user.name + " has joined !");

@@ -88,7 +88,7 @@ var texts = function () {
         "SupportedBase": "And does it need saying: *DASH* is supported !",
      
         // // RAIN
-         "RainReplacedBySun" : "Really you want rain? It's summertime ! _sorry south hemisphere_ \n "+
+        "RainReplacedBySun" : "Really you want rain? It's summertime ! _sorry south hemisphere_ \n "+
             "You whant *sun* my dear human friend.",
 
         //  "RainThreshold": "Rain threshold is: ",
@@ -164,8 +164,7 @@ var texts = function () {
             "You talking to me? Try again."
         ],
 
-        "ERRORreadingDb" : "ERROR reading db:",
-
+        "ERRORreadingDb" : "ERROR reading db:"
     };
 
     this.userTxt = {
