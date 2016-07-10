@@ -22,11 +22,6 @@ var texts = function () {
         "*withdraw*\ttell the bot to withdraw to a address; \n" +
         "\t\t_@DashBot withdraw 1 DASH to 1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_ \n",
 
-        "help_demand":
-        "*receive*\t\ttell the bot to request coins from to someone; _@DashBot receive 0.1 DASH from @someone_ \n" +
-        " \t\t_aliases: demand, ask, deserve, get, give me, owes me_ \n" +
-        "\n",
-
         "help_currencies":
         "*currencies*\task the bot for a list of supported currencies.\n" +
         "\t\t_@DashBot what currencies do you know?_ \n",
@@ -46,12 +41,11 @@ var texts = function () {
         "*rain*\t\tcheck the available rain and threshold. \n " +
         "\t\tAdmins can also release the rain with the *rain now* command.\n",
 
+        "help_sun": "*sun*\t\tcheck the available sunrays. \n ",
+       
         "tx_fee": "The transaction fee is set to ",
 
-        //      "\t\tAdmins can via the _rain threshold_ command set the threshold. \n" +
-        //       "\t\tWhen the balance of the rain account reaches this threshold, \n " +
-        //       "\t\traindrops will fall on each online users.",
-        // NEW USER
+             // NEW USER
         "WarningNewUser_1": "The new user ",
         "WarningNewUser_2": " has joined ! Go and greet them, plz.",
         // USER LEFT
@@ -82,44 +76,78 @@ var texts = function () {
         // CONVERT
         "NotEnoughCurrencies": ": not enough currencies!",
         "ToMuchCurrencies": ": too many currencies!",
+    
         // PRICE
         "PriceBase": "1 Dash is ",
         "PriceInfoFrom": " (price of coinmarketcap)",
+    
         // CURRENCIES
         "CurrenciesTitle": "Price info from coinmarketcap \n",
         "SupportedCurrenciesFull": "Supported currencies: ",
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
-        // RAIN
-        // "RainAdminOnly": "Only Admins can make it rain because they are the Rain Gods.",
-        "RainThreshold": "Rain threshold is: ",
-        "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
-        "Rainimminent": ":cloud: :cloud: :cloud: \n _When will those clouds all disappear?_ Will it rain soon? \n  :cloud: :cloud: :cloud:",
-        "RainTimer": " It will rain random in the next *",
-        "RainTimerUnit": " minute(s)* ",
-        "RainTimerNotSet": "Dear Rain God, the rain timer not set yet.  \n You can do that with the *rain timer _minutes_* command.",
-        "RainAvailibleAmount": "Available rain : ",
-        "RainPerUserNow": "If you let it rain *now* ",
-        "RainDropSizeWithThreshold": "If you wait for the rain *threshold* of ",
-        "RainPerUser_1": " raindrops of ",
-        "RainPerUser_2": " dash would fall",
-        "RainClouds": ":rain_cloud: :rain_cloud: :rain_cloud:",
-        "RainNow": "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" +
-        "_Each current online user will get a raindrop of_  ",
-        "RainCannotFindRainAccount_1": "Could not find the Rain user : '*",
-        "RainCannotFindRainAccount_2": "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
-        "RainCannotFindRainBalance": "Could not find the Rain balance for ",
-        "RainReqDonation_1": "If you feel generous tip the  _@",
-        "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
-        "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
-        "RainRecieved": ":droplet: \n You got splashed with a Dash raindrop of ",
-        // WARN
+     
+        // // RAIN
+         "RainReplacedBySun" : "Really you want rain? It's summertime ! _sorry south hemisphere_ \n "+
+            "You whant *sun* my dear human friend.",
+
+        //  "RainThreshold": "Rain threshold is: ",
+        // "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
+        // "Rainimminent": ":cloud: :cloud: :cloud: \n _When will those clouds all disappear?_ Will it rain soon? \n  :cloud: :cloud: :cloud:",
+        // "RainTimer": " It will rain random in the next *",
+        // "RainTimerUnit": " minute(s)* ",
+        // "RainTimerNotSet": "Dear Rain God, the rain timer not set yet.  \n You can do that with the *rain timer _minutes_* command.",
+        // "RainAvailibleAmount": "Available rain : ",
+        // "RainPerUserNow": "If you let it rain *now* ",
+        // "RainDropSizeWithThreshold": "If you wait for the rain *threshold* of ",
+        // "RainPerUser_1": " raindrops of ",
+        // "RainPerUser_2": " dash would fall",
+        // "RainClouds": ":rain_cloud: :rain_cloud: :rain_cloud:",
+        // "RainNow": "*And the Dash Rain Gods said _LET IT RAIN DASH_* \n" +
+        //         "_Each current online user will get a raindrop of_  ",
+        // "RainCannotFindRainAccount_1": "Could not find the Rain user : '*",
+        // "RainCannotFindRainAccount_2": "*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.",
+        // "RainCannotFindRainBalance": "Could not find the Rain balance for ",
+        // "RainReqDonation_1": "If you feel generous tip the  _@",
+        // "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
+        // "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
+        // "RainRecieved": ":droplet: \n You got splashed with a Dash raindrop of ",
+    
+        // SUN
+        "SunThreshold_1" : "Sun threshold is: ",
+        "SunThreshold_2": "Sun will be cast when sun balance > threshold.",
+        "SunThresholdNotSet" : "Dear Dash God, the Sun threshold isn't set yet. \n"+
+            " You can do that with the *sun threshold _amount_* command.",
+        "SunImminet" : "Look at that big bright sun :sunny: ! \n" +
+            " Sunrays will be cast soon(TM).",
+        "SunTimer" : "Sunrays will be cast in the next *",
+        "SunTimerUnit" : " minute(s)*",
+        "SunTimerNotSet" : "Dear Dash God, the sun timer not set yet.  \n"+
+            " You can do that with the *sun timer _minutes_* command.",
+        "SunAvailibleAmount" : "Available sunrays: ",
+        "SunExplain" : "Each user that has tipped an other user will recieve a _sunray_ for the sun fund.",
+        "SunAmountEligibleUsers" : " users are at the moment eligible for a sunray.",
+        "SunRay" : ":sunny: :sunny: :sunny:",
+        "SunCannotFindSunAccount_1": "Could not find the Sun user : '*",
+        "SunCannotFindSunAccount_2": "*' \n Ask the Slack Admin(s) if the Sun feature is correctly setup.",
+        "SunCannotFindSunBalance": "Could not find the Sun balance for ",
+        "SunReqDonation_1": "If you feel generous tip  _@",
+        "SunReqDonation_2": "The complete balance of _@",
+        "SunReqDonation_3" :"_ will be redistributed as _sunrays_.",
+        "SunEmpty": ":sun_behind_cloud:  no sunrays available to cast. :disappointed:",
+        "SunRecieved": "As reward of tipping your fellow Dash user(s) you revieved a sunray of ",
+        "SunEligibleUsersList": "*This users have tipped* \n",
+        "SunErrorResettingCounter" :"Error cannot rested counts. Inform the admin.",
+        "SunCountIsReset" : "All tip count records are removed.",
+
+  // WARN
         "NoUserFoundWarn": ", you need to provided a user to warn.",
         "WarnNoPrivateChannel": "Could not reach the user: ",
         "WarnText": ", please refrain from using insults and profane language in #dash_chat .\n" +
         "You are welcome to continue your conversation in the #arena, where anything goes.",
         "InformOtherAdmins1": "The user ",
         "InformOtherAdmins2": " was issued a moderator warning.",
+    
         // OOPS
         "Oops": "Use the *help* command to see the valid options.",
         "NoCommandFound": [
@@ -134,7 +162,10 @@ var texts = function () {
             "Syntax Error.   That's all I am going to say about that.",
             "Gibberish is not accepted.  English please.",
             "You talking to me? Try again."
-        ]
+        ],
+
+        "ERRORreadingDb" : "ERROR reading db:",
+
     };
 
     this.userTxt = {
