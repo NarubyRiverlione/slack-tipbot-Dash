@@ -1,1 +1,35 @@
-{"language":"en","ignoreWordsList":["TipBot","npm","TIPBOT_SLACK_TOKEN","tipbot","testnet","TIPBOT_SLACK_TOKEN","Satoshi","ToDo","https","mkdir","tmp","github","slack","PLX","1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp","supervisord","GBP_​","tipbot","TIPBOT_SLACK_TOKEN"],"mistakeTypeToStatus":{"Spelling":"Warning","Passive Voice":"Warning","Complex Expression":"Warning","Hyphen Required":"Error"},"languageIDs":["markdown","text"],"ignoreRegExp":[]}
+{
+    "language": "en",
+    "ignoreWordsList": [
+        "TipBot",
+        "npm",
+        "TIPBOT_SLACK_TOKEN",
+        "tipbot",
+        "testnet",
+        "TIPBOT_SLACK_TOKEN",
+        "Satoshi",
+        "ToDo",
+        "https",
+        "mkdir",
+        "tmp",
+        "github",
+        "slack",
+        "PLX",
+        "1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp",
+        "supervisord",
+        "GBP_​",
+        "tipbot",
+        "TIPBOT_SLACK_TOKEN"
+    ],
+    "mistakeTypeToStatus": {
+        "Spelling": "Warning",
+        "Passive Voice": "Warning",
+        "Complex Expression": "Warning",
+        "Hyphen Required": "Error"
+    },
+    "languageIDs": [
+       // "markdown",
+       // "text"
+    ],
+    "ignoreRegExp": []
+}

@@ -19,8 +19,8 @@ var texts = function () {
         "*deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_ \n",
 
         "help_withdraw":
-        "*withdraw*\ttell the bot to withdraw to a address; \n" +
-        "\t\t_@DashBot withdraw 1 DASH to 1dice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_ \n",
+        "*withdraw*\ttell the bot to withdraw to an address; \n" +
+        "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_ \n",
 
         "help_currencies":
         "*currencies*\task the bot for a list of supported currencies.\n" +
@@ -31,7 +31,7 @@ var texts = function () {
         "\t\t_@DashBot price in USD!_ \n",
 
         "help_pricelist":
-        "*priceticker*\t\t\tshows all the know prices. Use * priceticker short* for a limited list.  \n",
+        "*priceticker*\t\t\tshows all the known prices. Use * priceticker short* for a limited list.  \n",
 
         "help_convert":
         "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
@@ -41,7 +41,7 @@ var texts = function () {
         "*rain*\t\tcheck the available rain and threshold. \n " +
         "\t\tAdmins can also release the rain with the *rain now* command.\n",
 
-        "help_sun": "*sun*\t\tcheck the available sunrays. \n ",
+        "help_sun": "*sun*\t\tcheck the available sunshine. \n ",
        
         "tx_fee": "The transaction fee is set to ",
 
@@ -118,11 +118,9 @@ var texts = function () {
         "SunThreshold_2": "Sun will be cast when sun balance > threshold.",
         "SunThresholdNotSet" : "Dear Dash God, the Sun threshold isn't set yet. \n"+
             " You can do that with the *sun threshold _amount_* command.",
-        "SunImminet" : "Look at that big bright sun :sunny: ! \n" +
-            " Sunrays will be cast soon(TM).",
-        "SunTimer" : "Sunrays will be cast in the next *",
+        "SunTimer" : "Sunshine will be checked every *",
         "SunTimerUnit" : " minute(s)*",
-        "SunTimerNotSet" : "Dear Dash God, the sun timer not set yet.  \n"+
+        "SunTimerNotSet" : "Dear Dash God, the sun timer is not set yet.  \n"+
             " You can do that with the *sun timer _minutes_* command.",
         "SunAvailibleAmount" : "Available sunrays: ",
         "SunExplain" : "Each user that has tipped an other user will recieve a _sunray_ from the sun fund.",
@@ -135,13 +133,13 @@ var texts = function () {
         "SunReqDonation_2": "The complete balance of _@",
         "SunReqDonation_3" :"_ will be redistributed as _sunrays_.",
         "SunEmpty": ":sun_behind_cloud:  no sunrays available to cast. :disappointed:",
-        "SunRecieved": "As reward of tipping your fellow Dash user(s) you revieved a sunray of ",
-        "SunEligibleUsersList": "*This users have tipped* \n",
-        "SunErrorResettingCounter" :"Error cannot rested counts. Inform the admin.",
+        "SunRecieved": "As reward of tipping your fellow Dash user(s) you received a sunray of ",
+        "SunEligibleUsersList": "*These users have tipped* \n",
+        "SunErrorResettingCounter" :"Error cannot reset counts. Inform the admin.",
         "SunCountIsReset" : "All tip count records are removed.",
 
   // WARN
-        "NoUserFoundWarn": ", you need to provided a user to warn.",
+        "NoUserFoundWarn": ", you need to provide a user to warn.",
         "WarnNoPrivateChannel": "Could not reach the user: ",
         "WarnText": ", please refrain from using insults and profane language in #dash_chat .\n" +
         "You are welcome to continue your conversation in the #arena, where anything goes.",
@@ -169,7 +167,7 @@ var texts = function () {
 
     this.userTxt = {
         // GENERAL
-        "Locked": " , sorry your already doing a transaction. \n Wait a moment before starting a new one.",
+        "Locked": " , sorry you're already doing a transaction. \n Wait a moment before starting a new one.",
 
         // GET BALANCES
         "BaseCurrency": "Dash",
