@@ -17,8 +17,9 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 
 var OPTIONS = {
     ALL_BALANCES: false,
-    PRICE_CHANNEL: "bot_testing", //  "price_speculation",
+    PRICE_CHANNEL_NAME: "bot_testing", //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
+    MAIN_CHANNEL_NAME : "bot_testing", //  " "dash_chat", 
     DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
 
 };
@@ -95,40 +96,7 @@ function connect(controller) {
     });
 }
 
-// get ID of a channel
-function getChannel(bot, channelName, cb) {
-    //   var self = this;
-    bot.api.channels.list({}, function (err, channelList) {
-        if (err) {
-            debug("tipbot:bot")("Error retrieving list of channels " + err);
-            cb(err, null);
-        }
-        var foundChannelIDs = _.filter(channelList.channels, function (find) {
-            return find.name.match(channelName, "i");
-        });
 
-        if (foundChannelIDs.length === 1) {
-            cb(null, foundChannelIDs[0]);
-        } else {
-            // debug("tipbot:bot")("Didn"t found the " + channelName + ", looking in private groups now.");
-            bot.api.groups.list({}, function (err, groupList) {
-                if (err) {
-                    debug("tipbot:bot")("Error retrieving list of private channels (groups)" + err);
-                    cb(err, null);
-                }
-                var priceGroupID = _.filter(groupList.groups, function (find) {
-                    return find.name.match(channelName, "i");
-                });
-                if (priceGroupID.length === 1) {
-                    cb(null, priceGroupID[0]);
-                } else {
-                    debug("tipbot:bot")("Didn't found the " + channelName + ", in private groups also.");
-                }
-            });
-        }
-
-    });
-}
 
 // when bot is connected, show priceTicker
 controller.on("hello", function (bot, message) {
@@ -156,15 +124,28 @@ controller.on("hello", function (bot, message) {
     // });
 
 
-    // find channelID of MODERATOR_CHANNEL_NAME to post warn messages
+    // find channelID of MODERATOR_CHANNEL_NAME to post warning messages
     if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
-        getChannel(bot, OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
+        tipbot.getChannel(OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
             if (err) {
                 debug("tipbot:bot")("ERROR: No Moderator channel found to send admin messages to.");
             } else {
                 debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL_NAME + " = " + moderatorChannel.id);
                 // set moderator channel for tipbot
                 tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
+            }
+        });
+    }
+
+        // find channelID of MAIN_CHANNEL to post general messages
+    if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
+        tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, mainChannel) {
+            if (err) {
+                debug("tipbot:bot")("ERROR: No Main channel found to send general messages to.");
+            } else {
+                debug("tipbot:bot")("Main channel " + OPTIONS.MAIN_CHANNEL_NAME + " = " + mainChannel.id);
+                // set moderator channel for tipbot
+                tipbot.OPTIONS.MAIN_CHANNEL = mainChannel;
             }
         });
     }

@@ -125,7 +125,7 @@ var texts = function () {
         "SunTimerNotSet" : "Dear Dash God, the sun timer not set yet.  \n"+
             " You can do that with the *sun timer _minutes_* command.",
         "SunAvailibleAmount" : "Available sunrays: ",
-        "SunExplain" : "Each user that has tipped an other user will recieve a _sunray_ for the sun fund.",
+        "SunExplain" : "Each user that has tipped an other user will recieve a _sunray_ from the sun fund.",
         "SunAmountEligibleUsers" : " users are at the moment eligible for a sunray.",
         "SunRay" : ":sunny: :sunny: :sunny:",
         "SunCannotFindSunAccount_1": "Could not find the Sun user : '*",
