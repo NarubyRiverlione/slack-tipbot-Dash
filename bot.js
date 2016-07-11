@@ -19,14 +19,16 @@ var OPTIONS = {
     ALL_BALANCES: true,
     PRICE_CHANNEL_NAME: "bot_testing",  //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
-    MAIN_CHANNEL_NAME : "bot_testing",  //  " "dash_chat", 
-    SHOW_RANDOM_HELP_TIMER : 360,         // show a random help command every X minutes (6 hours = 360 minutes)
+    MAIN_CHANNEL_NAME: "dash_chat",  //  " "dash_chat", bot_testing
+    SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
     DB: "mongodb://localhost/tipdb-dev" //tipbotdb
 };
 
 var tipbot;
-var sunTicker = 0; // decrease ticker until 0 => check sun balance > thershold
-var helpTicker = 0;// decrease ticker until 0 => show random help command text
+// decrease ticker until 0 => check sun balance > thershold
+var sunTicker = 0;
+// decrease ticker until 0 => show random help command text
+var helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER == undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER;
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -138,7 +140,7 @@ controller.on("hello", function (bot, message) {
         });
     }
 
-        // find channelID of MAIN_CHANNEL to post general messages
+    // find channelID of MAIN_CHANNEL to post general messages
     if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
         tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, mainChannel) {
             if (err) {
@@ -154,33 +156,37 @@ controller.on("hello", function (bot, message) {
 
 // response to ticks
 controller.on("tick", function () {
-    // check sun balance every X minutes
-    if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
-        && tipbot.OPTIONS.SUN_TIMER !== undefined
-        && tipbot.SunUser !== undefined) {
-        // only check sun balance every SUN_TIMER min
-        if (sunTicker === 0) {
-            debug("tipbot:sun")("SUN: check balance > threshold now");
-            tipbot.sunCheckThreshold();
-            // reset ticker
-            sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
-        } else {
-            // decrease sunTicker until 0
-            sunTicker--;
-        }
-    }
+    if (!tipbot.initializing) {
+        // only when TipBot is finished initializing
 
-    // show random help command text every X minutes
-    if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
-        // only check sun balance every SUN_TIMER min
-        if (helpTicker === 0) {
-            debug("tipbot:help")("Help ticker reached 0 : show random help text");
-            tipbot.showRandomHelp();
-            // reset ticker
-            helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
-        } else {
-            // decrease sunTicker until 0
-            helpTicker--;
+        // check sun balance every X minutes
+        if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
+            && tipbot.OPTIONS.SUN_TIMER !== undefined
+            && tipbot.sunUser !== undefined) {
+            // only check sun balance every SUN_TIMER min
+            if (sunTicker === 0) {
+                debug("tipbot:sun")("SUN: check balance > threshold now");
+                tipbot.sunCheckThreshold();
+                // reset ticker
+                sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
+            } else {
+                // decrease sunTicker until 0
+                sunTicker--;
+            }
+        }
+
+        // show random help command text every X minutes
+        if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+            // only check sun balance every SUN_TIMER min
+            if (helpTicker === 0) {
+                debug("tipbot:help")("Help ticker reached 0 : show random help text");
+                tipbot.showRandomHelp();
+                // reset ticker
+                helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
+            } else {
+                // decrease sunTicker until 0
+                helpTicker--;
+            }
         }
     }
 });

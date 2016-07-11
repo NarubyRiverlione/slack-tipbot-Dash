@@ -120,7 +120,7 @@ var texts = function () {
 
         // SUN
         "SunThreshold_1": "Sun threshold is: ",
-        "SunThreshold_2": "Sun will be cast when sun balance > threshold.",
+        "SunThreshold_2": "Sun will shine and distribute sunrays when sun balance is more then the set threshold.",
         "SunThresholdNotSet": "Dear Dash God, the Sun threshold isn't set yet. \n" +
         " You can do that with the *sun threshold _amount_* command.",
         // "SunTimer": "Sunshine will be checked every *",
@@ -136,7 +136,7 @@ var texts = function () {
         "SunCannotFindSunBalance": "Could not find the Sun balance for ",
         "SunReqDonation_1": "If you feel generous tip  _@",
         "SunReqDonation_2": "The complete balance of _@",
-        "SunReqDonation_3": "_ will be redistributed as _sunrays_.",
+        "SunReqDonation_3": "_ will be redistributed as _sunrays_ (aka free dash).",
         "SunEmpty": ":sun_behind_cloud:  no sunrays available to cast. :disappointed:",
         "SunRecieved": "As reward of tipping your fellow Dash user(s) you received a sunray of ",
         "SunEligibleUsersList": "*These users have tipped* \n",
