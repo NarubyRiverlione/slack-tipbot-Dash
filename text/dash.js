@@ -2,50 +2,54 @@
 var texts = function () {
     this.tipbotTxt = {
         // HELPTEXT   
-        "helpText": "*DashBot commands* \n",
+        "helpText": [
+            //"title": 
+            "*DashBot commands* \n",
 
-        "help_balance":
-        "*balance*\t\task the bot for your current balance\n" +
-        "\t\t_@DashBot what is my balance_ \n",
+            //"help_balance":
+            "*balance*\t\task the bot for your current balance\n" +
+            "\t\t_@DashBot what is my balance_",
 
-        "help_send":
-        "*send*\t\t\t\ttell the bot to send coins to someone; \n" +
-        "\t\t_@DashBot send 0.1 DASH to @someone_ \n" +
-        "\t\t_aliases: give, tip_ \n" +
-        "\t\tWorks also with major fiat currencies (use *currencies* command to see the list); \n" +
-        "\t\t_@DashBot give 4 USD to @someone_ \n",
+            //"help_send":
+            "*send*\t\t\t\ttell the bot to send coins to someone; \n" +
+            "\t\t_@DashBot send 0.1 DASH to @someone_ \n" +
+            "\t\t_aliases: give, tip_ \n" +
+            "\t\tWorks also with major fiat currencies (use *currencies* command to see the list); \n" +
+            "\t\t_@DashBot give 4 USD to @someone_",
 
-        "help_deposit":
-        "*deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_ \n",
+            // "help_deposit":
+            "*deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_",
 
-        "help_withdraw":
-        "*withdraw*\ttell the bot to withdraw to an address; \n" +
-        "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_ \n",
+            // "help_withdraw":
+            "*withdraw*\ttell the bot to withdraw to an address; \n" +
+            "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_",
 
-        "help_currencies":
-        "*currencies*\task the bot for a list of supported currencies.\n" +
-        "\t\t_@DashBot what currencies do you know?_ \n",
+            // "help_currencies":
+            "*currencies*\task the bot for a list of supported currencies.\n" +
+            "\t\t_@DashBot what currencies do you know?_ ",
 
-        "help_price":
-        "*price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
-        "\t\t_@DashBot price in USD!_ \n",
+            // "help_price":
+            "*price*\t\t\task the bot for the Dash price in a particular currency. Price info from coinmarketcap.\n " +
+            "\t\t_@DashBot price in USD!_ ",
 
-        "help_pricelist":
-        "*priceticker*\t\t\tshows all the known prices. Use * priceticker short* for a limited list.  \n",
+            // "help_pricelist":
+            "*priceticker*\t\t\tshows all the known prices. Use * priceticker short* for a limited list.",
 
-        "help_convert":
-        "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa);  \n" +
-        "\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
+            // "help_convert":
+            "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa)." +
+            "\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
 
-        "help_rain":
-        "*rain*\t\tcheck the available rain and threshold. \n " +
-        "\t\tAdmins can also release the rain with the *rain now* command.\n",
+            // "help_rain":
+            // "*rain*\t\tcheck the available rain and threshold. \n " +
+            // "\t\tAdmins can also release the rain with the *rain now* command.\n",
 
-        "help_sun": "*sun*\t\tcheck the available sunshine. \n ",
-       
+            // "help_sun": 
+            "*sun*\t\tcheck the available sunshine."
+        ],
         "tx_fee": "The transaction fee is set to ",
-
-             // NEW USER
+        "HelpRandom_1" : "Hi human friends, did you know about this command of me: ",
+        "HelpRandom_2" : "You can get information about all my other cool tricks via the *help* command. \n Have a nice day !",
+        // NEW USER
         "WarningNewUser_1": "The new user ",
         "WarningNewUser_2": " has joined ! Go and greet them, plz.",
         // USER LEFT
@@ -76,20 +80,20 @@ var texts = function () {
         // CONVERT
         "NotEnoughCurrencies": ": not enough currencies!",
         "ToMuchCurrencies": ": too many currencies!",
-    
+
         // PRICE
         "PriceBase": "1 Dash is ",
         "PriceInfoFrom": " (price of coinmarketcap)",
-    
+
         // CURRENCIES
         "CurrenciesTitle": "Price info from coinmarketcap \n",
         "SupportedCurrenciesFull": "Supported currencies: ",
         "SupportedSymbols": "use these currency abbreviations/symbols in your message: *",
         "SupportedBase": "And does it need saying: *DASH* is supported !",
-     
+
         // // RAIN
-        "RainReplacedBySun" : "Really you want rain? It's summertime ! _sorry south hemisphere_ \n "+
-            "You whant *sun* my dear human friend.",
+        "RainReplacedBySun": "Really you want rain? It's summertime ! _sorry south hemisphere_ \n " +
+        "You whant *sun* my dear human friend.",
 
         //  "RainThreshold": "Rain threshold is: ",
         // "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
@@ -112,40 +116,40 @@ var texts = function () {
         // "RainReqDonation_2": "_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.",
         // "RainEmpty": "Not a cloud in the sky, not rain available to fall down.",
         // "RainRecieved": ":droplet: \n You got splashed with a Dash raindrop of ",
-    
+
         // SUN
-        "SunThreshold_1" : "Sun threshold is: ",
+        "SunThreshold_1": "Sun threshold is: ",
         "SunThreshold_2": "Sun will be cast when sun balance > threshold.",
-        "SunThresholdNotSet" : "Dear Dash God, the Sun threshold isn't set yet. \n"+
-            " You can do that with the *sun threshold _amount_* command.",
-        "SunTimer" : "Sunshine will be checked every *",
-        "SunTimerUnit" : " minute(s)*",
-        "SunTimerNotSet" : "Dear Dash God, the sun timer is not set yet.  \n"+
-            " You can do that with the *sun timer _minutes_* command.",
-        "SunAvailibleAmount" : "Available sunrays: ",
-        "SunExplain" : "Each user that has tipped an other user will recieve a _sunray_ from the sun fund.",
-        "SunAmountEligibleUsers" : " users are at the moment eligible for a sunray.",
-        "SunRay" : ":sunny: :sunny: :sunny:",
+        "SunThresholdNotSet": "Dear Dash God, the Sun threshold isn't set yet. \n" +
+        " You can do that with the *sun threshold _amount_* command.",
+        "SunTimer": "Sunshine will be checked every *",
+        "SunTimerUnit": " minute(s)*",
+        "SunTimerNotSet": "Dear Dash God, the sun timer is not set yet.  \n" +
+        " You can do that with the *sun timer _minutes_* command.",
+        "SunAvailibleAmount": "Available sunrays: ",
+        "SunExplain": "Each user that has tipped an other user will recieve a _sunray_ from the sun fund.",
+        "SunAmountEligibleUsers": " users are at the moment eligible for a sunray.",
+        "SunRay": ":sunny: :sunny: :sunny:",
         "SunCannotFindSunAccount_1": "Could not find the Sun user : '*",
         "SunCannotFindSunAccount_2": "*' \n Ask the Slack Admin(s) if the Sun feature is correctly setup.",
         "SunCannotFindSunBalance": "Could not find the Sun balance for ",
         "SunReqDonation_1": "If you feel generous tip  _@",
         "SunReqDonation_2": "The complete balance of _@",
-        "SunReqDonation_3" :"_ will be redistributed as _sunrays_.",
+        "SunReqDonation_3": "_ will be redistributed as _sunrays_.",
         "SunEmpty": ":sun_behind_cloud:  no sunrays available to cast. :disappointed:",
         "SunRecieved": "As reward of tipping your fellow Dash user(s) you received a sunray of ",
         "SunEligibleUsersList": "*These users have tipped* \n",
-        "SunErrorResettingCounter" :"Error cannot reset counts. Inform the admin.",
-        "SunCountIsReset" : "All tip count records are removed.",
+        "SunErrorResettingCounter": "Error cannot reset counts. Inform the admin.",
+        "SunCountIsReset": "All tip count records are removed.",
 
-  // WARN
+        // WARN
         "NoUserFoundWarn": ", you need to provide a user to warn.",
         "WarnNoPrivateChannel": "Could not reach the user: ",
         "WarnText": ", please refrain from using insults and profane language in #dash_chat .\n" +
         "You are welcome to continue your conversation in the #arena, where anything goes.",
         "InformOtherAdmins1": "The user ",
         "InformOtherAdmins2": " was issued a moderator warning.",
-    
+
         // OOPS
         "Oops": "Use the *help* command to see the valid options.",
         "NoCommandFound": [
@@ -162,7 +166,7 @@ var texts = function () {
             "You talking to me? Try again."
         ],
 
-        "ERRORreadingDb" : "ERROR reading db:"
+        "ERRORreadingDb": "ERROR reading db:"
     };
 
     this.userTxt = {

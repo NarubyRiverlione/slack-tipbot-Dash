@@ -17,15 +17,16 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 
 var OPTIONS = {
     ALL_BALANCES: false,
-    PRICE_CHANNEL_NAME: "bot_testing", //  "price_speculation",
+    PRICE_CHANNEL_NAME: "bot_testing",  //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
-    MAIN_CHANNEL_NAME : "bot_testing", //  " "dash_chat", 
-    DB: "mongodb://localhost/tipdb-dev"  //tipbotdb
-
+    MAIN_CHANNEL_NAME : "bot_testing",  //  " "dash_chat", 
+    SHOW_RANDOM_HELP_TIMER : 2,         // show a random help command every X minutes (6 hours = 360 minutes)
+    DB: "mongodb://localhost/tipdb-dev" //tipbotdb
 };
 
 var tipbot;
 var sunTicker = 0; // decrease ticker until 0 => check sun balance > thershold
+var helpTicker = 0;// decrease ticker until 0 => show random help command text
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -153,7 +154,7 @@ controller.on("hello", function (bot, message) {
 
 // response to ticks
 controller.on("tick", function () {
-    //debug("tipbot:bot")(event);
+    // check sun balance every X minutes
     if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
         && tipbot.OPTIONS.SUN_TIMER !== undefined
         && tipbot.SunUser !== undefined) {
@@ -167,26 +168,21 @@ controller.on("tick", function () {
             // decrease sunTicker until 0
             sunTicker--;
         }
-
-
-        // if (tipbot.OPTIONS.SUN_RANDOM_TIME == undefined) {
-        //     // set random timer between 1 second and the set rain_time seconds
-        //     tipbot.OPTIONS.SUN_RANDOM_TIME = Math.floor((Math.random() * tipbot.OPTIONS.SUN_TIMER) + 1);
-        //     debug("tipbot:rain")("SUN random timer set to :" + tipbot.OPTIONS.SUN_RANDOM_TIME);
-        // } else {
-        //     tipbot.OPTIONS.SUN_RANDOM_TIME--;
-        //     if (tipbot.OPTIONS.SUN_RANDOM_TIME <= 0) {
-        //         debug("tipbot:rain")("SUN timer reached !");
-        //         tipbot.OPTIONS.SUN_TIMER = undefined;
-        //         tipbot.OPTIONS.SUN_RANDOM_TIME = undefined;
-        //         getChannel(tipbot.slack, "dash_chat", function (err, mainChannelID) {
-        //             if (err) debug("tipbot:rain")("ERROR rain: timer reached but no channel to report, rain cannceled");
-        //             else tipbot.rainNow(mainChannelID);
-        //         });
-        //     }
-        // }
     }
 
+    // show random help command text every X minutes
+    if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+        // only check sun balance every SUN_TIMER min
+        if (helpTicker === 0) {
+            debug("tipbot:help")("Help ticker reached 0 : show random help text");
+            tipbot.showRandomHelp();
+            // reset ticker
+            helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
+        } else {
+            // decrease sunTicker until 0
+            helpTicker--;
+        }
+    }
 });
 
 // listen to direct messages to the bot, or when the bot is mentioned in a message
