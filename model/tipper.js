@@ -1,0 +1,20 @@
+
+// Tipper model
+
+var mongoose = require("mongoose"),
+    Schema = mongoose.Schema;
+
+var TipperShema = new Schema({
+    name: String,
+    id: String,
+    tipCount: Number,
+    lastTipDate: Date
+});
+
+TipperShema.virtual("date")
+    .get(function () {
+        return this._id.getTimestamp();
+    });
+
+mongoose.model("Tipper", TipperShema);
+

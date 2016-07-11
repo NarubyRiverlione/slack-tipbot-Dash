@@ -5,7 +5,7 @@ var debug = require("debug");
 var Botkit = require("botkit");
 var assert = require("assert");
 var parseArgs = require("minimist");
-var TipBot = require("./lib/tipbot");
+var mongoose = require("mongoose");
 
 var argv = parseArgs(process.argv.slice(2));
 
@@ -16,11 +16,19 @@ var RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998;
 var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD;
 
 var OPTIONS = {
-    ALL_BALANCES: false,
-    DEMAND: false,
-    PRICE_CHANNEL: "bot_testing", //  "price_speculation",
-    MODERATOR_CHANNEL: "moderators"
+    ALL_BALANCES: true,
+    PRICE_CHANNEL_NAME: "bot_testing",  //  "price_speculation",
+    MODERATOR_CHANNEL_NAME: "moderators",
+    MAIN_CHANNEL_NAME: "dash_chat",  //  " "dash_chat", bot_testing
+    SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
+    DB: "mongodb://localhost/tipdb-dev" //tipbotdb
 };
+
+var tipbot;
+// decrease ticker until 0 => check sun balance > thershold
+var sunTicker = 0;
+// decrease ticker until 0 => show random help command text
+var helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER == undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER;
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -28,17 +36,30 @@ assert(RPC_PASSWORD, "--rpc-password or TIPBOT_RPC_PASSWORD is required");
 
 // setup Slack Controller
 var controller = Botkit.slackbot({
-    logLevel: 6,
+    logLevel: 5,
     debug: true
     //include "log: false" to disable logging
     //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
 });
 
-// Setup TipBot
-var tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+// open mongoose connection
+mongoose.connect(OPTIONS.DB);
+var db = mongoose.connection;
+db.on("error", function () {
+    debug("tipbot:db")("ERROR: unable to connect to database at " + OPTIONS.DB);
 
-// make conennection to Slack
-connect(controller);
+});
+db.once("open", function () {
+    require("./model/tipper"); // load mongoose Tipper model
+    debug("tipbot:db")("Database connected");
+    // Setup TipBot after mongoose model is loaded
+    var TipBot = require("./lib/tipbot");
+    tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+    // make conennection to Slack
+    connect(controller);
+
+});
+
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
@@ -78,44 +99,11 @@ function connect(controller) {
     });
 }
 
-// get ID of a channel
-function getChannel(bot, channelName, cb) {
-    //   var self = this;
-    bot.api.channels.list({}, function (err, channelList) {
-        if (err) {
-            debug("tipbot:bot")("Error retrieving list of channels " + err);
-            cb(err, null);
-        }
-        var foundChannelIDs = _.filter(channelList.channels, function (find) {
-            return find.name.match(channelName, "i");
-        });
 
-        if (foundChannelIDs.length === 1) {
-            cb(null, foundChannelIDs[0]);
-        } else {
-            // debug("tipbot:bot")("Didn"t found the " + channelName + ", looking in private groups now.");
-            bot.api.groups.list({}, function (err, groupList) {
-                if (err) {
-                    debug("tipbot:bot")("Error retrieving list of private channels (groups)" + err);
-                    cb(err, null);
-                }
-                var priceGroupID = _.filter(groupList.groups, function (find) {
-                    return find.name.match(channelName, "i");
-                });
-                if (priceGroupID.length === 1) {
-                    cb(null, priceGroupID[0]);
-                } else {
-                    debug("tipbot:bot")("Didn't found the " + channelName + ", in private groups also.");
-                }
-            });
-        }
-
-    });
-}
 
 // when bot is connected, show priceTicker
 controller.on("hello", function (bot, message) {
-    debug("tipbot:bot")("BOT CONNECTED: " + message);
+    debug("tipbot:bot")("BOT CONNECTED: " + message.type);
 
     // // find channelID of PRICE_CHANNEL to broadcast price messages
     // getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
@@ -139,21 +127,70 @@ controller.on("hello", function (bot, message) {
     // });
 
 
-    // find channelID of MODERATOR_CHANNEL to post warn messages
-    getChannel(bot, OPTIONS.MODERATOR_CHANNEL, function (err, moderatorChannel) {
-        if (err) {
-            debug("tipbot:bot")("No Moderator channel to broadcast.");
-        } else {
-            debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL + " = " + moderatorChannel.id);
-            // set moderator channel for tipbot
-            tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
-        }
-    });
+    // find channelID of MODERATOR_CHANNEL_NAME to post warning messages
+    if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
+        tipbot.getChannel(OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
+            if (err) {
+                debug("tipbot:bot")("ERROR: No Moderator channel found to send admin messages to.");
+            } else {
+                debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL_NAME + " = " + moderatorChannel.id);
+                // set moderator channel for tipbot
+                tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
+            }
+        });
+    }
+
+    // find channelID of MAIN_CHANNEL to post general messages
+    if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
+        tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, mainChannel) {
+            if (err) {
+                debug("tipbot:bot")("ERROR: No Main channel found to send general messages to.");
+            } else {
+                debug("tipbot:bot")("Main channel " + OPTIONS.MAIN_CHANNEL_NAME + " = " + mainChannel.id);
+                // set moderator channel for tipbot
+                tipbot.OPTIONS.MAIN_CHANNEL = mainChannel;
+            }
+        });
+    }
 });
+
 // response to ticks
-controller.on("tick", function (bot, event) {
-    //debug("tipbot:bot")(event);
+controller.on("tick", function () {
+    if (!tipbot.initializing) {
+        // only when TipBot is finished initializing
+
+        // check sun balance every X minutes
+        if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
+            && tipbot.OPTIONS.SUN_TIMER !== undefined
+            && tipbot.sunUser !== undefined) {
+            // only check sun balance every SUN_TIMER min
+            if (sunTicker === 0) {
+                debug("tipbot:sun")("SUN: check balance > threshold now");
+                tipbot.sunCheckThreshold();
+                // reset ticker
+                sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
+            } else {
+                // decrease sunTicker until 0
+                sunTicker--;
+            }
+        }
+
+        // show random help command text every X minutes
+        if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+            // only check sun balance every SUN_TIMER min
+            if (helpTicker === 0) {
+                debug("tipbot:help")("Help ticker reached 0 : show random help text");
+                tipbot.showRandomHelp();
+                // reset ticker
+                helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
+            } else {
+                // decrease sunTicker until 0
+                helpTicker--;
+            }
+        }
+    }
 });
+
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears(".*", ["direct_message", "direct_mention", "mention"], function (bot, message) {
     var member, channel;
@@ -188,12 +225,16 @@ controller.hears(".*", ["direct_message", "direct_mention", "mention"], function
         }
     });
 });
+
 // when a user change his profile (other username,...)
 controller.on("user_change", function (bot, resp) {
+    debug("tipbot:bot")("User " + resp.user.name + " has changed his/her profile.");
     tipbot.onUserChange(bot, resp.user);
 });
+
 // when a new user joins the Slack Team to the user.id can be added
 controller.on("team_join", function (bot, resp) {
+    debug("tipbot:bot")("User " + resp.user.name + " has joined !");
     tipbot.onUserChange(bot, resp.user);
 });
 
@@ -203,6 +244,7 @@ controller.on("close", function (bot, msg) {
     debug("tipbot:bot")("CLOSE message: " + msg);
     // destroy bot before ending script
     bot.destroy();
+    db.close();
     process.exit(1);
 });
 
@@ -212,6 +254,6 @@ controller.on("error", function (bot, msg) {
     debug("tipbot:bot")("ERROR code:" + msg.error.code + " = " + msg.error.msg);
 
     //process.exit(1);
-    // don't quit but reconnect
+    // don"t quit but reconnect
     connect(controller);
 });
