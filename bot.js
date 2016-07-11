@@ -25,8 +25,10 @@ var OPTIONS = {
 };
 
 var tipbot;
-var sunTicker = 0; // decrease ticker until 0 => check sun balance > thershold
-var helpTicker = 0;// decrease ticker until 0 => show random help command text
+// decrease ticker until 0 => check sun balance > thershold
+var sunTicker = 0; 
+// decrease ticker until 0 => show random help command text
+var helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER == undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER ;
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -157,7 +159,7 @@ controller.on("tick", function () {
     // check sun balance every X minutes
     if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined
         && tipbot.OPTIONS.SUN_TIMER !== undefined
-        && tipbot.SunUser !== undefined) {
+        && tipbot.sunUser !== undefined) {
         // only check sun balance every SUN_TIMER min
         if (sunTicker === 0) {
             debug("tipbot:sun")("SUN: check balance > threshold now");
