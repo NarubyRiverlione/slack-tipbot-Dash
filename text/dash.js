@@ -44,7 +44,8 @@ var texts = function () {
             // "\t\tAdmins can also release the rain with the *rain now* command.\n",
 
             // "help_sun": 
-            "*sun*\t\tcheck the available sunshine."
+            "*sun*\t\tcheck the available sunshine. \n" +
+            "\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund."
         ],
         "tx_fee": "The transaction fee is set to ",
         "HelpRandom_1" : "Hi human friends, did you know about this command of me: ",
@@ -122,10 +123,10 @@ var texts = function () {
         "SunThreshold_2": "Sun will be cast when sun balance > threshold.",
         "SunThresholdNotSet": "Dear Dash God, the Sun threshold isn't set yet. \n" +
         " You can do that with the *sun threshold _amount_* command.",
-        "SunTimer": "Sunshine will be checked every *",
-        "SunTimerUnit": " minute(s)*",
-        "SunTimerNotSet": "Dear Dash God, the sun timer is not set yet.  \n" +
-        " You can do that with the *sun timer _minutes_* command.",
+        // "SunTimer": "Sunshine will be checked every *",
+        // "SunTimerUnit": " minute(s)*",
+        // "SunTimerNotSet": "Dear Dash God, the sun timer is not set yet.  \n" +
+        // " You can do that with the *sun timer _minutes_* command.",
         "SunAvailibleAmount": "Available sunrays: ",
         "SunExplain": "Each user that has tipped an other user will recieve a _sunray_ from the sun fund.",
         "SunAmountEligibleUsers": " users are at the moment eligible for a sunray.",

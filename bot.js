@@ -16,11 +16,11 @@ var RPC_PORT = argv["rpc-port"] || process.env.TIPBOT_RPC_PORT || 9998;
 var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD;
 
 var OPTIONS = {
-    ALL_BALANCES: false,
+    ALL_BALANCES: true,
     PRICE_CHANNEL_NAME: "bot_testing",  //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
     MAIN_CHANNEL_NAME : "bot_testing",  //  " "dash_chat", 
-    SHOW_RANDOM_HELP_TIMER : 2,         // show a random help command every X minutes (6 hours = 360 minutes)
+    SHOW_RANDOM_HELP_TIMER : 360,         // show a random help command every X minutes (6 hours = 360 minutes)
     DB: "mongodb://localhost/tipdb-dev" //tipbotdb
 };
 
