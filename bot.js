@@ -17,7 +17,7 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 
 var OPTIONS = {
     ALL_BALANCES: true,
-    PRICE_CHANNEL_NAME: "bot_testing",  //  "price_speculation",
+    PRICE_CHANNEL_NAME_NAME: "price_speculation",  //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
     MAIN_CHANNEL_NAME: "dash_chat",  //  " "dash_chat", bot_testing
     SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
@@ -105,28 +105,29 @@ function connect(controller) {
 controller.on("hello", function (bot, message) {
     debug("tipbot:bot")("BOT CONNECTED: " + message.type);
 
-    // // find channelID of PRICE_CHANNEL to broadcast price messages
-    // getChannel(bot, OPTIONS.PRICE_CHANNEL, function (err, priceChannel) {
-    //     if (err) {
-    //         debug("tipbot:bot")("No price channel to broadcast.");
-    //     } else {
-    //         debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL + " = " + priceChannel.id);
-    //         // tell all prices on the price list
-    //         tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
+    // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
+    if (OPTIONS.PRICE_CHANNEL_NAME !== undefined) {
+        tipbot.getChannel(bot, OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
+            if (err) {
+                debug("tipbot:bot")("No price channel to broadcast.");
+            } else {
+                debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL_NAME + " = " + priceChannel.id);
+                // tell all prices on the price list
+                tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
 
-    //         // set initial priceTicker boundaries
-    //         tipbot.updatePriceTicker();
-    //         // update priceTicker at interval
-    //      //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
-    //             setInterval(function () {
-    //                 tipbot.updatePriceTicker();
-    //             },
-    //                 tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
-    //     //    }
-    //     }
-    // });
-
-
+                //     // set initial priceTicker boundaries
+                //     tipbot.updatePriceTicker();
+                //     // update priceTicker at interval
+                //  //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
+                //         setInterval(function () {
+                //             tipbot.updatePriceTicker();
+                //         },
+                //             tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
+                // //    }
+            }
+        });
+    }
+    
     // find channelID of MODERATOR_CHANNEL_NAME to post warning messages
     if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
         tipbot.getChannel(OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
