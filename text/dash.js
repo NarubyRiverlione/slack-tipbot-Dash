@@ -21,8 +21,9 @@ var texts = function () {
             "*deposit*\t\task the bot for a deposit address; _@DashBot let me deposit!_",
 
             // "help_withdraw":
-            "*withdraw*\ttell the bot to withdraw to an address; \n" +
-            "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_",
+            "*withdraw*\ttell the bot to withdraw an amount to an address. \n"+
+            "\t\tYou can also use _all_ to withdraw your complete balance (minus the tx fee) \n" +
+            "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_" ,
 
             // "help_currencies":
             "*currencies*\task the bot for a list of supported currencies.\n" +
@@ -48,7 +49,7 @@ var texts = function () {
             "\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund."
         ],
         "tx_fee": "The transaction fee is set to ",
-        "HelpRandom_1" : "Hi human friends, did you know about this command of me: ",
+        "HelpRandom_1" : "Hi humans, did you know about this command: ",
         "HelpRandom_2" : "You can get information about all my other cool tricks via the *help* command. \n Have a nice day !",
         // NEW USER
         "WarningNewUser_1": "The new user ",
@@ -93,8 +94,8 @@ var texts = function () {
         "SupportedBase": "And does it need saying: *DASH* is supported !",
 
         // // RAIN
-        "RainReplacedBySun": "Really you want rain? It's summertime ! _sorry south hemisphere_ \n " +
-        "You whant *sun* my dear human friend.",
+        "RainReplacedBySun": "Really you want rain? It's summertime ! _sorry southtern hemisphere_ \n " +
+        "You want *sun* my dear human friend.",
 
         //  "RainThreshold": "Rain threshold is: ",
         // "RainThresholdNotSet": "Dear Rain God, the rain threshold isn't set yet. \n You can do that with the *rain threshold _amount_* command.",
