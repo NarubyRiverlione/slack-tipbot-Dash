@@ -86,6 +86,8 @@ var texts = function () {
         // PRICE
         "PriceBase": "1 Dash is ",
         "PriceInfoFrom": " (price of coinmarketcap)",
+        "LocationOfPriceList_1" : "Hi, I've posted the price information in the #",
+        "LocationOfPriceList_2" : " channel to prevent a lot of text in the other channels.",
 
         // CURRENCIES
         "CurrenciesTitle": "Price info from coinmarketcap \n",

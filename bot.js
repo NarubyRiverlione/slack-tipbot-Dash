@@ -17,9 +17,9 @@ var WALLET_PASSW = argv["wallet-password"] || process.env.TIPBOT_WALLET_PASSWORD
 
 var OPTIONS = {
     ALL_BALANCES: true,
-    PRICE_CHANNEL_NAME_NAME: "price_speculation",  //  "price_speculation",
+    PRICE_CHANNEL_NAME: "price_speculation",  //  "price_speculation",
     MODERATOR_CHANNEL_NAME: "moderators",
-    MAIN_CHANNEL_NAME: "dash_chat",  //  " "dash_chat", bot_testing
+    MAIN_CHANNEL_NAME: "dash_chat",  //   bot_testing
     SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
     DB: "mongodb://localhost/tipdb-dev" //tipbotdb
 };
@@ -28,7 +28,7 @@ var tipbot;
 // decrease ticker until 0 => check sun balance > thershold
 var sunTicker = 0;
 // decrease ticker until 0 => show random help command text
-var helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER == undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER;
+var helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER == undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
 
 assert(SLACK_TOKEN, "--slack-token or TIPBOT_SLACK_TOKEN is required");
 assert(RPC_USER, "--rpc-user or TIPBOT_RPC_USER is required");
@@ -103,15 +103,15 @@ function connect(controller) {
 
 // when bot is connected, show priceTicker
 controller.on("hello", function (bot, message) {
-    debug("tipbot:bot")("BOT CONNECTED: " + message.type);
+    debug("tipbot:bot")("**** BOT CONNECTED: " + message.type);
 
     // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
     if (OPTIONS.PRICE_CHANNEL_NAME !== undefined) {
-        tipbot.getChannel(bot, OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
+        tipbot.getChannel(OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
             if (err) {
-                debug("tipbot:bot")("No price channel to broadcast.");
+                debug("tipbot:bot")("Init: No price channel to broadcast.");
             } else {
-                debug("tipbot:bot")("Price channel " + OPTIONS.PRICE_CHANNEL_NAME + " = " + priceChannel.id);
+                debug("tipbot:bot")("Init: Price channel " + OPTIONS.PRICE_CHANNEL_NAME + " = " + priceChannel.id);
                 // tell all prices on the price list
                 tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
 
@@ -134,7 +134,7 @@ controller.on("hello", function (bot, message) {
             if (err) {
                 debug("tipbot:bot")("ERROR: No Moderator channel found to send admin messages to.");
             } else {
-                debug("tipbot:bot")("Moderator channel " + OPTIONS.MODERATOR_CHANNEL_NAME + " = " + moderatorChannel.id);
+                debug("tipbot:bot")("Init: Moderator channel " + OPTIONS.MODERATOR_CHANNEL_NAME + " = " + moderatorChannel.id);
                 // set moderator channel for tipbot
                 tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
             }
@@ -147,7 +147,7 @@ controller.on("hello", function (bot, message) {
             if (err) {
                 debug("tipbot:bot")("ERROR: No Main channel found to send general messages to.");
             } else {
-                debug("tipbot:bot")("Main channel " + OPTIONS.MAIN_CHANNEL_NAME + " = " + mainChannel.id);
+                debug("tipbot:bot")("Init: Main channel " + OPTIONS.MAIN_CHANNEL_NAME + " = " + mainChannel.id);
                 // set moderator channel for tipbot
                 tipbot.OPTIONS.MAIN_CHANNEL = mainChannel;
             }
