@@ -14,7 +14,7 @@ var texts = function () {
             "*send*\t\t\t\ttell the bot to send coins to someone; \n" +
             "\t\t_@DashBot send 0.1 DASH to @someone_ \n" +
             "\t\t_aliases: give, tip_ \n" +
-            "\t\tWorks also with major fiat currencies (use *currencies* command to see the list); \n" +
+            "\t\t\t\tWorks also with major fiat currencies (use *currencies* command to see the list); \n" +
             "\t\t_@DashBot give 4 USD to @someone_",
 
             // "help_deposit":
@@ -22,7 +22,7 @@ var texts = function () {
 
             // "help_withdraw":
             "*withdraw*\ttell the bot to withdraw an amount to an address. \n"+
-            "\t\tYou can also use _all_ to withdraw your complete balance (minus the tx fee) \n" +
+            "\t\t\t\t\tYou can also use _all_ to withdraw your complete balance (minus the tx fee) \n" +
             "\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_" ,
 
             // "help_currencies":
@@ -34,10 +34,10 @@ var texts = function () {
             "\t\t_@DashBot price in USD!_ ",
 
             // "help_pricelist":
-            "*priceticker*\t\t\tshows all the known prices. Use * priceticker short* for a limited list.",
+            "*priceticker*\t\tshows all the known prices. Use * priceticker short* for a limited list.",
 
             // "help_convert":
-            "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa)." +
+            "*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa).\n" +
             "\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n",
 
             // "help_rain":
@@ -45,9 +45,29 @@ var texts = function () {
             // "\t\tAdmins can also release the rain with the *rain now* command.\n",
 
             // "help_sun": 
-            "*sun*\t\tcheck the available sunshine. \n" +
-            "\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund."
+            "*sun*\t\t\tcheck the available sunshine. \n" +
+            "\t\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund."
         ],
+
+        "helpAdminOnly" : 
+        "===== *ADMIN ONLY COMMANDS* =====\n"+
+        "*balance all*\tshow all the tip jars \n"+
+        "\n"+
+        "*warn*\t\tSend a standard warning message to a users as dashbot.\n"+
+        "\t\t\t\tProbaly depricated by the _whisper_ command.\n"+
+        "\n"+
+        "*whisper*\tSend a message in a private channel to a users as dashbot.\n"+
+        "\t\t\t\t\tUse case :moderator warning.\n"+
+        "\t\t_@Dashbot whisper @narbuy stop beeing silly man._\n"+
+        "\n"+
+        "*sun threshold*\t set the threshold on where the balance of the sun account will be distributed\n"+
+        "\t\t\t\tbetween all the users that tipped. Defaults to 5 Dash.\n"+
+        "\t\t_@dashbot sun threshold 2.5 dash_\n"+
+        "\n"+
+        "*sun eligible*\tSee which users are eligible for a sunray.\n"+
+        "\n"+
+        "*sun reset*\t\tReset all tip counts, not needed normaly as tip counters are resetted when sun is shining.",
+
         "tx_fee": "The transaction fee is set to ",
         "HelpRandom_1" : "Hi humans, did you know about this command: ",
         "HelpRandom_2" : "You can get information about all my other cool tricks via the *help* command. \n Have a nice day !",
