@@ -1,4 +1,4 @@
-
+'use strict';
 // Tipper model
 
 var mongoose = require("mongoose"),
