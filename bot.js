@@ -184,7 +184,7 @@ controller.on('tick', function () {
         }
 
         // show random help command text every X minutes
-        if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+         if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
             // only check sun balance every SUN_TIMER min
             if (helpTicker === 0) {
                 debug('tipbot:help')('Help ticker reached 0 : show random help text');
