@@ -1,4 +1,4 @@
-
+'use strict';
 // Tipper model
 
 var mongoose = require("mongoose"),
@@ -8,7 +8,8 @@ var TipperShema = new Schema({
     name: String,
     id: String,
     tipCount: Number,
-    lastTipDate: Date
+    lastTipDate: Date,
+    gotSunshine: {type:Boolean, default:false}
 });
 
 TipperShema.virtual("date")

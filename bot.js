@@ -15,12 +15,19 @@ var RPC_PASSWORD = argv['rpc-password'] || process.env.TIPBOT_RPC_PASSWORD;
 var RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9998;
 var WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWORD;
 
-var OPTIONS = {
+var TIPBOT_OPTIONS = {
+    WALLET_PASSW: WALLET_PASSW,
     ALL_BALANCES: true,
+    SUN_USERNAME: 'dashsun',
+};
+
+var OPTIONS = {
     PRICE_CHANNEL_NAME: 'price_speculation',  //  'price_speculation',
     MODERATOR_CHANNEL_NAME: 'moderators',
     MAIN_CHANNEL_NAME: 'dash_chat',  //   bot_testing
+
     SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
+    
     DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
 
@@ -94,7 +101,7 @@ db.once('open', function () {
     debug('tipbot:db')('Database connected');
     // Setup TipBot after mongoose model is loaded
     var TipBot = require('./lib/tipbot');
-    tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS, WALLET_PASSW);
+    tipbot = new TipBot(RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS);
     // make conennection to Slack
     connect(controller);
 
@@ -177,7 +184,7 @@ controller.on('tick', function () {
         }
 
         // show random help command text every X minutes
-        if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+         if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
             // only check sun balance every SUN_TIMER min
             if (helpTicker === 0) {
                 debug('tipbot:help')('Help ticker reached 0 : show random help text');
@@ -197,7 +204,7 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
     var member, channel;
     // get the user that posted the message
     bot.api.users.info({ 'user': message.user }, function (err, response) {
-        if (err) {throw new Error(err);}
+        if (err) { throw new Error(err); }
         member = response.user;
 
         // find the place where the message was posted
@@ -205,7 +212,7 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
         if (firstCharOfChannelID === 'C') {
             // in Public channel
             bot.api.channels.info({ 'channel': message.channel }, function (err, response) {
-                if (err) {throw new Error(err);}
+                if (err) { throw new Error(err); }
                 channel = response.channel;
                 // let tipbot handle the message
                 tipbot.onMessage(channel, member, message.text);
@@ -213,7 +220,7 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
         } else if (firstCharOfChannelID === 'G') {
             // in Private channel = Group
             bot.api.groups.info({ 'channel': message.channel }, function (err, response) {
-                if (err) {throw new Error(err);}
+                if (err) { throw new Error(err); }
                 channel = response.group;
                 // let tipbot handle the message
                 tipbot.onMessage(channel, member, message.text);
