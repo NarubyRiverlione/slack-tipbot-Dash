@@ -51,15 +51,20 @@ const tipbotTxt = {
 
     'helpAdminOnly':
     '===== *ADMIN ONLY COMMANDS* =====\n' +
-    '*balance all*\tshow all the tip jars \n' +
+    '*emergency restart*\tRestart the Slack connection of tipbot. \n'+
+    '\t\t\t\t*Only use in real emergency*\n\n'+
+    '*balance all*\tshow all the tip jars (must be enabled in code)\n' +
     '\n' +
+    '*balance check*\tshow the balance of a specific user (must be enabled in code) \n' +
+    '\t\t_@dashbot balance check @naruby_ \n' +
+    '\n\n' +
     '*warn*\t\tSend a standard warning message to a users as dashbot.\n' +
     '\t\t\t\tProbaly depricated by the _whisper_ command.\n' +
     '\n' +
     '*whisper*\tSend a message in a private channel to a users as dashbot.\n' +
     '\t\t\t\t\tUse case :moderator warning.\n' +
     '\t\t_@Dashbot whisper @narbuy stop beeing silly man._\n' +
-    '\n' +
+    '\n\n' +
     '*sun threshold*\t set the threshold on where the balance of the sun account will be distributed\n' +
     '\t\t\t\tbetween all the users that tipped. Defaults to 5 Dash.\n' +
     '\t\t_@dashbot sun threshold 2.5 dash_\n' +
@@ -81,7 +86,11 @@ const tipbotTxt = {
     'RetrievingAllBalancesDisabled': 'Retrieving all balances is disabled!',
     'RetrievingAllBalancesAdminOnly': 'Only admins can list all balances!',
     'RetrievingAllBalancesWait': 'Retrieving all balances... might take a while depending on the amount of users!',
-    // GENERAL
+    // CHECK BALANCE 
+    'CheckBalanceDisabled': 'Cheking balance of an other user is disabled!',
+    'CheckBalanceAdminOnly': 'Only admins can check other balances!',
+    'CheckBalanceNoUserFound': 'No user found to check. Did you use the prefix @ ?',
+   // GENERAL
     'NoAmountFound': ' couldn\'t find the amount. Did you forget the decimal ?',
     'NoValidAddress': ' that\'s not a valid address!',
     'MoreThen1Address': ' I can\'t do a withdraw to more than 1 address',
@@ -202,7 +211,7 @@ const userTxt = {
     'BalanceIs': ' your tip jar contains: ',
     'UnconfirmedBalance1': 'you have an unconfirmed balance (less than ',
     'UnconfirmedBalance2': ' confirmations) of ',
-    'BalanceWarningHigh': 'Your tip jar is filling up. Please consider withdrawing some Dash.',
+    'BalanceWarningHigh': 'This tip jar is filling up. Please consider withdrawing some Dash.',
     // WITHDRAW
     'Withdrawal1': 'Withdrawal of ',
     'WithdrawalTransaction': ' transaction: ',
