@@ -48,7 +48,7 @@ assert(SLACK_TOKEN, '--slack-token or TIPBOT_SLACK_TOKEN is required');
 assert(RPC_USER, '--rpc-user or TIPBOT_RPC_USER is required');
 assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required');
 
-/* 
+/*
 1) setup slack controller
 2) connect to mongoDb
 3) connect to slack
@@ -116,31 +116,26 @@ function connect(controller) {
 db.once('open', function () {
     require('./model/tipper'); // load mongoose Tipper model
     debug('tipbot:db')('******** Database connected ********');
-    // make conennection to Slack
+    // make connnection to Slack
     connect(controller);
 
 });
 
 // connection to Slack has ended
 controller.on('rtm_close', function () {
-    debug('tipbot:bot')('!!! BOTKIT CLOSED DOWN !!!');
-    // // destroy bot before ending script
-    // bot.destroy();
-    // db.close();
-    // process.exit(1);
-
-    // don't quit but reconnect
+    debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
+    // reset tipbot and reconnect to slack
     tipbot = null;
     connect(controller);
 });
 
 // botkit had an oopsie
 controller.on('error', function (bot, msg) {
-    debug('tipbot:bot')('*********** Slack Error!! ***********');
+    debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
     debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
 
-    //process.exit(1);
-    // don't quit but reconnect
+    // reset tipbot and reconnect to slack
+    tipbot = null;
     connect(controller);
 });
 
@@ -258,7 +253,9 @@ controller.hears('emergency', ['direct_message'], function (bot, message) {
 
             if (message.text.match(/\brestart\b/i)) {
                 debug('tipbot:EMERGENCY')('**** Emergency connection restart ****');
-                bot.closeRTM();
+                if (initializing) {
+                    debug('tipbot:EMERGENCY')('++++ Tried a restart while still initializing, restart aborted.');
+                } else { bot.closeRTM(); }
             }
 
             if (message.text.match(/\bstop\b/i)) {
