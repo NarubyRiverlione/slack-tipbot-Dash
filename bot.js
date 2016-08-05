@@ -9,11 +9,13 @@ let mongoose = require('mongoose');
 
 let argv = parseArgs(process.argv.slice(2));
 
-let SLACK_TOKEN = argv['slack-token'] || process.env.TIPBOT_SLACK_TOKEN;
-let RPC_USER = argv['rpc-user'] || process.env.TIPBOT_RPC_USER;
-let RPC_PASSWORD = argv['rpc-password'] || process.env.TIPBOT_RPC_PASSWORD;
-let RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9998;
-let WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWORD;
+const SLACK_TOKEN = argv['slack-token'] || process.env.TIPBOT_SLACK_TOKEN;
+const RPC_USER = argv['rpc-user'] || process.env.TIPBOT_RPC_USER;
+const RPC_PASSWORD = argv['rpc-password'] || process.env.TIPBOT_RPC_PASSWORD;
+const RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9998;
+const WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWORD;
+
+const debugMode = process.env.NODE_ENV === 'development' ? true : false;
 
 const TIPBOT_OPTIONS = {
     WALLET_PASSW: WALLET_PASSW,
@@ -22,15 +24,19 @@ const TIPBOT_OPTIONS = {
     SUN_USERNAME: 'dashsun',
 };
 
+
+
 let OPTIONS = {
-    PRICE_CHANNEL_NAME: 'price_speculation',  //  'price_speculation',
+    PRICE_CHANNEL_NAME: debugMode ? 'bot_testing' : 'price_speculation',
     MODERATOR_CHANNEL_NAME: 'moderators',
-    MAIN_CHANNEL_NAME: 'dash_chat',  //   bot_testing
+    MAIN_CHANNEL_NAME: debugMode ? 'bot_testing' : 'dash_chat',
 
     SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
 
     DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
+
+let initializing = false;
 
 let tipbot = null;
 // decrease ticker until 0 => check sun balance > thershold
@@ -68,6 +74,12 @@ db.on('error', function () {
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
+    // prevent multiple connections
+    if (initializing) {
+        debug('tipbot:bot')('Already initializing...');
+        return;
+    }
+    initializing = true;
     // spawns the slackbot
     controller.spawn({
         token: SLACK_TOKEN,
@@ -134,14 +146,15 @@ controller.on('error', function (bot, msg) {
 
 
 // when bot is connected, get all needed channels
-controller.on('hello', function (bot, message) {
+controller.on('hello', function (bot) {
+    // connection is ready = clear initializing flag
+    initializing = false;
     // setup tipbot
-    if (!tipbot) {
-        debug('tipbot:bot')('******** Setup TipBot ********')
-        // Setup TipBot after mongoose model is loaded
+    if (tipbot === null) {
+        debug('tipbot:bot')('******** Setup TipBot ********');
+        // load TipBot after mongoose model is loaded
         var TipBot = require('./lib/tipbot');
         tipbot = new TipBot(bot, RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS);
-
     }
 
     // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
@@ -196,7 +209,7 @@ controller.on('hello', function (bot, message) {
 
 // response to ticks
 controller.on('tick', function () {
-    if (tipbot !== null && !tipbot.initializing) {
+    if (!initializing && tipbot !== null && !tipbot.initializing) {
         // only when TipBot is finished initializing
 
         // check sun balance every X minutes
@@ -258,7 +271,11 @@ controller.hears('emergency', ['direct_message'], function (bot, message) {
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function (bot, message) {
     let member, channel;
-    // TODO: not needed as there is an array of users in TipBot that's always up to date ?
+    if (tipbot === null) {
+        debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
+        return;
+    }
+    // TODO : not needed as there is an array of users in TipBot that's always up to date ?
     // get the user that posted the message
     bot.api.users.info({ 'user': message.user }, function (err, response) {
         if (err) { throw new Error(err); }
