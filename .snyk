@@ -1,0 +1,35 @@
+version: v1.5.2
+ignore: {}
+patch:
+  'npm:hawk:20160119':
+    - botkit > twilio > request > hawk:
+        patched: '2016-08-06T06:59:21.308Z'
+  'npm:minimatch:20160620':
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > fstream > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > fstream-ignore > fstream > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > tar > fstream > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar > fstream > rimraf > glob > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > fstream-ignore > minimatch:
+        patched: '2016-08-06T06:59:21.308Z'
+  'npm:request:20160119':
+    - botkit > twilio > request:
+        patched: '2016-08-06T06:59:21.308Z'
+    - blocktrail-sdk > html-pdf > phantomjs > request:
+        patched: '2016-08-06T06:59:21.308Z'
+    - botkit > localtunnel > request:
+        patched: '2016-08-06T06:59:21.308Z'
+  'npm:tough-cookie:20160722':
+    - botkit > localtunnel > request > tough-cookie:
+        patched: '2016-08-06T06:59:21.308Z'
+    - blocktrail-sdk > html-pdf > phantomjs > request > tough-cookie:
+        patched: '2016-08-06T06:59:21.308Z'
+    - nodemon > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
+        patched: '2016-08-06T06:59:21.308Z'
