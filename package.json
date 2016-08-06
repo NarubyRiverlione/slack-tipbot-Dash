@@ -7,17 +7,22 @@
     "async": "^2.0.0-rc.3",
     "bitcoin": "^3.0.1",
     "bitcoinjs-lib": "~1.4.3",
-    "blocktrail-sdk": "~2.0.0",
-    "botkit": "^0.2.0",
-    "debug": "~2.1.1",
+    "blocktrail-sdk": "^2.0.1",
+    "botkit": "^0.2.2",
+    "debug": "^2.2.0",
     "lodash": "^3.1.0",
     "minimist": "^1.1.0",
     "mongoose": "^4.5.7",
-    "request": "~2.53.0",
-    "waitjs": "^0.2.0"
+    "request": "^2.68.0",
+    "waitjs": "^0.2.0",
+    "snyk": "^1.18.0"
   },
   "devDependencies": {},
-  "scripts": {},
+  "scripts": {
+    "test": "snyk test",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/narubyriverlione/slack-tipbot"
@@ -32,5 +37,6 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/NarubyRiverlione/slack-tipbot-Dash/issues"
-  }
+  },
+  "snyk": true
 }
