@@ -1,9 +1,9 @@
 'use strict';
 
 const tipbotTxt = {
-    // HELPTEXT   
+    // HELPTEXT
     'helpText': [
-        //'title': 
+        //'title':
         '*DashBot commands* \n',
 
         //'help_balance':
@@ -44,7 +44,7 @@ const tipbotTxt = {
         // '*rain*\t\tcheck the available rain and threshold. \n ' +
         // '\t\tAdmins can also release the rain with the *rain now* command.\n',
 
-        // 'help_sun': 
+        // 'help_sun':
         '*sun*\t\t\tcheck the available sunshine. \n' +
         '\t\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund.'
     ],
@@ -58,9 +58,6 @@ const tipbotTxt = {
     '*balance check*\tshow the balance of a specific user (must be enabled in code) \n' +
     '\t\t_@dashbot balance check @naruby_ \n' +
     '\n\n' +
-    '*warn*\t\tSend a standard warning message to a users as dashbot.\n' +
-    '\t\t\t\tProbaly depricated by the _whisper_ command.\n' +
-    '\n' +
     '*whisper*\tSend a message in a private channel to a users as dashbot.\n' +
     '\t\t\t\t\tUse case :moderator warning.\n' +
     '\t\t_@Dashbot whisper @narbuy stop beeing silly man._\n' +
@@ -86,7 +83,7 @@ const tipbotTxt = {
     'RetrievingAllBalancesDisabled': 'Retrieving all balances is disabled!',
     'RetrievingAllBalancesAdminOnly': 'Only admins can list all balances!',
     'RetrievingAllBalancesWait': 'Retrieving all balances... might take a while depending on the amount of users!',
-    // CHECK BALANCE 
+    // CHECK BALANCE
     'CheckBalanceDisabled': 'Cheking balance of an other user is disabled!',
     'CheckBalanceAdminOnly': 'Only admins can check other balances!',
     'CheckBalanceNoUserFound': 'No user found to check. Did you use the prefix @ ?',

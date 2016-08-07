@@ -1,7 +1,7 @@
 'use strict';
 // Tipper model
 
-var mongoose = require("mongoose"),
+var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var TipperShema = new Schema({
@@ -12,10 +12,10 @@ var TipperShema = new Schema({
     gotSunshine: {type:Boolean, default:false}
 });
 
-TipperShema.virtual("date")
+TipperShema.virtual('date')
     .get(function () {
         return this._id.getTimestamp();
     });
 
-mongoose.model("Tipper", TipperShema);
+mongoose.model('Tipper', TipperShema);
 

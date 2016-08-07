@@ -24,8 +24,6 @@ const TIPBOT_OPTIONS = {
     SUN_USERNAME: 'dashsun',
 };
 
-
-
 let OPTIONS = {
     PRICE_CHANNEL_NAME: debugMode ? 'bot_testing' : 'price_speculation',
     MODERATOR_CHANNEL_NAME: 'moderators',
@@ -115,7 +113,7 @@ function connect(controller) {
 // database connection open =  conncect to slack
 db.once('open', function () {
     require('./model/tipper'); // load mongoose Tipper model
-    debug('tipbot:db')('******** Database connected ********');
+    debug('tipbot:db')('********* Database connected ********');
     // make connnection to Slack
     connect(controller);
 

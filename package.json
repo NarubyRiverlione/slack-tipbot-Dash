@@ -1,10 +1,10 @@
 {
   "name": "slack-tipbot-node",
-  "version": "1.1.0",
+  "version": "2.1.2",
   "description": "Dash Slack TipBot - Using local wallet",
   "main": "bot.js",
   "dependencies": {
-    "async": "^2.0.0-rc.3",
+    "async": "^2.0.0",
     "bitcoin": "^3.0.1",
     "bitcoinjs-lib": "~1.4.3",
     "blocktrail-sdk": "^2.0.1",
@@ -14,8 +14,8 @@
     "minimist": "^1.1.0",
     "mongoose": "^4.5.7",
     "request": "^2.68.0",
-    "waitjs": "^0.2.0",
-    "snyk": "^1.18.0"
+    "snyk": "^1.18.0",
+    "waitjs": "^0.2.0"
   },
   "devDependencies": {},
   "scripts": {
