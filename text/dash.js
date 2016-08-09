@@ -71,8 +71,8 @@ const tipbotTxt = {
     '*sun reset*\t\tReset all tip counts, not needed normaly as tip counters are resetted when sun is shining.',
 
     'tx_fee': 'The transaction fee is set to ',
-    'HelpRandom1': 'Hi humans, did you know about this command: ',
-    'HelpRandom2': 'You can get information about all my other cool tricks via the *help* command. \n Have a nice day !',
+    'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
+    // 'HelpRandom2': 'You can get information about all my other cool tricks via the *help* command. \n Have a nice day !',
     // NEW USER
     'WarningNewUser1': 'The new user ',
     'WarningNewUser2': ' has joined ! Go and greet them, plz.',
@@ -172,13 +172,13 @@ const tipbotTxt = {
     'SunErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
     'SunCountIsReset': 'All tip count records are removed.',
 
-    // WARN
-    'NoUserFoundWarn': ', you need to provide a user to warn.',
-    'WarnNoPrivateChannel': 'Could not reach the user: ',
-    'WarnText': ', please refrain from using insults and profane language in #dash_chat .\n' +
-    'You are welcome to continue your conversation in the #arena, where anything goes.',
-    'InformOtherAdmins1': 'The user ',
-    'InformOtherAdmins2': ' was issued a moderator warning.',
+    // // WARN
+    // 'NoUserFoundWarn': ', you need to provide a user to warn.',
+    // 'WarnNoPrivateChannel': 'Could not reach the user: ',
+    // 'WarnText': ', please refrain from using insults and profane language in #dash_chat .\n' +
+    // 'You are welcome to continue your conversation in the #arena, where anything goes.',
+    // 'InformOtherAdmins1': 'The user ',
+    // 'InformOtherAdmins2': ' was issued a moderator warning.',
 
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',

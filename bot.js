@@ -29,7 +29,7 @@ let OPTIONS = {
     MODERATOR_CHANNEL_NAME: 'moderators',
     MAIN_CHANNEL_NAME: debugMode ? 'bot_testing' : 'dash_chat',
 
-    SHOW_RANDOM_HELP_TIMER: 360,         // show a random help command every X minutes (6 hours = 360 minutes)
+    SHOW_RANDOM_HELP_TIMER: 720,         // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
     DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
