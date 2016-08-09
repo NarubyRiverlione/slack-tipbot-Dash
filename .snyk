@@ -3,7 +3,7 @@ ignore: {}
 patch:
   'npm:hawk:20160119':
     - botkit > twilio > request > hawk:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
   'npm:minimatch:20160620':
     - nodemon > chokidar > fsevents > node-pre-gyp > tar-pack > fstream > rimraf > glob > minimatch:
         patched: '2016-08-06T06:59:21.308Z'
@@ -21,15 +21,15 @@ patch:
         patched: '2016-08-06T06:59:21.308Z'
   'npm:request:20160119':
     - botkit > twilio > request:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
     - blocktrail-sdk > html-pdf > phantomjs > request:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
     - botkit > localtunnel > request:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
   'npm:tough-cookie:20160722':
     - botkit > localtunnel > request > tough-cookie:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
     - blocktrail-sdk > html-pdf > phantomjs > request > tough-cookie:
-        patched: '2016-08-06T07:14:00.087Z'
+        patched: '2016-08-08T08:04:30.290Z'
     - nodemon > chokidar > fsevents > node-pre-gyp > request > tough-cookie:
         patched: '2016-08-06T06:59:21.308Z'
