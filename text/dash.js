@@ -96,7 +96,7 @@ const tipbotTxt = {
     'UnsupportedCurrency': ': we don\'t support that currency yet!',
     'InvalidAmount': ': that\'s an invalid amount',
     // WITHDRAW
-    'WithdrawQuestion': '',
+    'WithdrawQuestion': ['You want to withdraw ' , ' to ' ,'.\n Is this correct (yes/no) ?'],
     // SEND
     'Hello': 'Hello there ',
     'NoUserFoundForTip': ', I didn\'t catch the user you want to tip. You surely didn\'t want to tip yourself, did you ?',
