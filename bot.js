@@ -78,7 +78,7 @@ function connect(controller) {
         debug('tipbot:bot')('Already initializing...');
         return;
     }
-    initializing = true;
+    initializing = true;    // will be cleared in the hello event
     // spawns the slackbot
     controller.spawn({
         token: SLACK_TOKEN,
@@ -133,16 +133,17 @@ controller.on('error', function (bot, msg) {
     debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
     debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
 
+//TODO: follow up: don't restart connection on error here because it will be restarted on the rtm_close event
+/*
     // reset tipbot and reconnect to slack
     tipbot = null;
     connect(controller);
+*/    
 });
 
 
 // when bot is connected, get all needed channels
 controller.on('hello', function (bot) {
-    // connection is ready = clear initializing flag
-    initializing = false;
     // setup tipbot
     if (tipbot === null) {
         debug('tipbot:bot')('******** Setup TipBot ********');
@@ -189,6 +190,9 @@ controller.on('hello', function (bot) {
             }
         });
     }
+
+    // connection is ready = clear initializing flag
+    initializing = false;
 });
 
 // response to ticks
@@ -264,7 +268,7 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
         debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
         return;
     }
-    // TODO: not needed as there is an array of users in TipBot that's always up to date ?
+    // TODO: (changed, follow up) not needed as there is an array of users in TipBot that's always up to date ?
     // get the user that posted the message
     // bot.api.users.info({ 'user': message.user }, function (err, response) {
     //     if (err) { throw new Error(err); }
