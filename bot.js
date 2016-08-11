@@ -22,6 +22,7 @@ const TIPBOT_OPTIONS = {
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
     SUN_USERNAME: 'dashsun',
+    SUN_TIMER : debugMode ? 1 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
@@ -159,16 +160,6 @@ controller.on('hello', function (bot) {
                 debug('tipbot:bot')('Init: Price channel ' + OPTIONS.PRICE_CHANNEL_NAME + ' = ' + priceChannel.id);
                 // tell all prices on the price list
                 tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
-
-                //     // set initial priceTicker boundaries
-                //     tipbot.updatePriceTicker();
-                //     // update priceTicker at interval
-                //  //   if (tipbot.OPTIONS.PRICETICKER_TIMER !== undefined) {
-                //         setInterval(function () {
-                //             tipbot.updatePriceTicker();
-                //         },
-                //             tipbot.OPTIONS.PRICETICKER_TIMER * 60 * 1000);
-                // //    }
             }
         });
     }
@@ -212,7 +203,8 @@ controller.on('tick', function () {
             // only check sun balance every SUN_TIMER min
             if (sunTicker === 0) {
                 debug('tipbot:sun')('SUN: check balance > threshold now');
-                tipbot.sunCheckThreshold();
+                tipbot.checkForSun();
+
                 // reset ticker
                 sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
             } else {
@@ -312,5 +304,3 @@ controller.on('team_join', function (bot, resp) {
     debug('tipbot:bot')('User ' + resp.user.name + ' has joined !');
     tipbot.onUserChange(bot, resp.user);
 });
-
-
