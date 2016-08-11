@@ -22,7 +22,7 @@ const TIPBOT_OPTIONS = {
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
     SUN_USERNAME: 'dashsun',
-    SUN_TIMER : debugMode ? 1 : 30  // debug = check sun every minute, production check every 30 minutes
+    SUN_TIMER: debugMode ? 1 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
@@ -255,44 +255,46 @@ controller.hears('emergency', ['direct_message'], function (bot, message) {
     });
 
 });
+
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function (bot, message) {
-    let member, channel;
+    const member = message.user;
+    let channel;
     if (tipbot === null) {
         debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
         return;
     }
-    // TODO : not needed as there is an array of users in TipBot that's always up to date ?
+    // TODO: not needed as there is an array of users in TipBot that's always up to date ?
     // get the user that posted the message
-    bot.api.users.info({ 'user': message.user }, function (err, response) {
-        if (err) { throw new Error(err); }
-        member = response.user;
+    // bot.api.users.info({ 'user': message.user }, function (err, response) {
+    //     if (err) { throw new Error(err); }
+    //     member = response.user;
 
-        // find the place where the message was posted
-        let firstCharOfChannelID = message.channel.substring(0, 1);
-        if (firstCharOfChannelID === 'C') {
-            // in Public channel
-            bot.api.channels.info({ 'channel': message.channel }, function (err, response) {
-                if (err) { throw new Error(err); }
-                channel = response.channel;
-                // let tipbot handle the message
-                tipbot.onMessage(channel, member, message.text);
-            });
-        } else if (firstCharOfChannelID === 'G') {
-            // in Private channel = Group
-            bot.api.groups.info({ 'channel': message.channel }, function (err, response) {
-                if (err) { throw new Error(err); }
-                channel = response.group;
-                // let tipbot handle the message
-                tipbot.onMessage(channel, member, message.text);
-            });
-        } else if (firstCharOfChannelID === 'D') {
-            // in Direct Message channel =  id -> create channel object
+    // find the place where the message was posted
+    let firstCharOfChannelID = message.channel.substring(0, 1);
+    if (firstCharOfChannelID === 'C') {
+        // in Public channel
+        bot.api.channels.info({ 'channel': message.channel }, function (err, response) {
+            if (err) { throw new Error(err); }
+            channel = response.channel;
             // let tipbot handle the message
-            let DMchannelID = { 'id': message.channel };
-            tipbot.onMessage(DMchannelID, member, message.text);
-        }
-    });
+            tipbot.onMessage(channel, member, message.text);
+        });
+    } else if (firstCharOfChannelID === 'G') {
+        // in Private channel = Group
+        bot.api.groups.info({ 'channel': message.channel }, function (err, response) {
+            if (err) { throw new Error(err); }
+            channel = response.group;
+            // let tipbot handle the message
+            tipbot.onMessage(channel, member, message.text);
+        });
+    } else if (firstCharOfChannelID === 'D') {
+        // in Direct Message channel =  id -> create channel object
+        // let tipbot handle the message
+        let DMchannelID = { 'id': message.channel };
+        tipbot.onMessage(DMchannelID, member, message.text);
+    }
+    // });
 });
 // when a user change his profile (other username,...)
 controller.on('user_change', function (bot, resp) {
