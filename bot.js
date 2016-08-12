@@ -22,7 +22,7 @@ const TIPBOT_OPTIONS = {
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
     SUN_USERNAME: 'dashsun',
-    SUN_TIMER: debugMode ? 1 : 30  // debug = check sun every minute, production check every 30 minutes
+    SUN_TIMER: debugMode ? 15 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
@@ -35,7 +35,7 @@ let OPTIONS = {
     DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
 
-let initializing = false;
+let initializing = 0;
 
 let tipbot = null;
 // decrease ticker until 0 => check sun balance > thershold
@@ -73,12 +73,6 @@ db.on('error', function () {
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
-    // prevent multiple connections
-    if (initializing) {
-        debug('tipbot:bot')('Already initializing...');
-        return;
-    }
-    initializing = true;    // will be cleared in the hello event
     // spawns the slackbot
     controller.spawn({
         token: SLACK_TOKEN,
@@ -123,9 +117,11 @@ db.once('open', function () {
 // connection to Slack has ended
 controller.on('rtm_close', function () {
     debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
+    //TODO: follow up: don't restart connection on error here because these an auto reconnect
+
     // reset tipbot and reconnect to slack
-    tipbot = null;
-    connect(controller);
+    // tipbot = null;
+    // connect(controller);
 });
 
 // botkit had an oopsie
@@ -133,17 +129,25 @@ controller.on('error', function (bot, msg) {
     debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
     debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
 
-//TODO: follow up: don't restart connection on error here because it will be restarted on the rtm_close event
-/*
-    // reset tipbot and reconnect to slack
-    tipbot = null;
-    connect(controller);
-*/    
+    //TODO: follow up: don't restart connection on error here because it will be restarted on the rtm_close event
+    /*
+        // reset tipbot and reconnect to slack
+        tipbot = null;
+        connect(controller);
+    */
 });
 
 
 // when bot is connected, get all needed channels
 controller.on('hello', function (bot) {
+    // prevent multiple connections
+    debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
+    if (initializing > 0) {
+        debug('tipbot:bot')('Already initializing... (count ' + initializing + ')');
+        return;
+    }
+    initializing++;
+
     // setup tipbot
     if (tipbot === null) {
         debug('tipbot:bot')('******** Setup TipBot ********');
@@ -164,7 +168,6 @@ controller.on('hello', function (bot) {
             }
         });
     }
-
     // find channelID of MODERATOR_CHANNEL_NAME to post warning messages
     if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
         tipbot.getChannel(OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
@@ -177,7 +180,6 @@ controller.on('hello', function (bot) {
             }
         });
     }
-
     // find channelID of MAIN_CHANNEL to post general messages
     if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
         tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, mainChannel) {
@@ -192,12 +194,13 @@ controller.on('hello', function (bot) {
     }
 
     // connection is ready = clear initializing flag
-    initializing = false;
+    initializing--;
+    debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 });
 
 // response to ticks
 controller.on('tick', function () {
-    if (!initializing && tipbot !== null && !tipbot.initializing) {
+    if (initializing === 0 && tipbot !== null && !tipbot.initializing) {
         // only when TipBot is finished initializing
 
         // check sun balance every X minutes
@@ -230,7 +233,7 @@ controller.on('tick', function () {
                 helpTicker--;
             }
         }
-    }
+    } else if (initializing > 0) { debug('tipbot:init')('init counter ' + initializing); }
 });
 
 // emergency commands
