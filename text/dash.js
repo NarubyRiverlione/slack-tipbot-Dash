@@ -51,8 +51,8 @@ const tipbotTxt = {
 
     'helpAdminOnly':
     '===== *ADMIN ONLY COMMANDS* =====\n' +
-    '*emergency restart*\tRestart the Slack connection of tipbot. \n'+
-    '\t\t\t\t*Only use in real emergency*\n\n'+
+    '*emergency restart*\tRestart the Slack connection of tipbot. \n' +
+    '\t\t\t\t*Only use in real emergency*\n\n' +
     '*balance all*\tshow all the tip jars (must be enabled in code)\n' +
     '\n' +
     '*balance check*\tshow the balance of a specific user (must be enabled in code) \n' +
@@ -68,7 +68,14 @@ const tipbotTxt = {
     '\n' +
     '*sun eligible*\tSee which users are eligible for a sunray.\n' +
     '\n' +
-    '*sun reset*\t\tReset all tip counts, not needed normaly as tip counters are resetted when sun is shining.',
+    '*sun reset*\t\tReset all tip counts, not needed normaly as tip counters are resetted when sun is shining.'+
+    '\n' +
+    '*quiz list*\t\tShow all approved questions\n'+
+    '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n'+
+    '*quiz add*\t\t@dashbot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n'+
+    '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n'+
+    '*quiz delete _question number_*\tDelete a question.\n'+
+    '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot while ask amount.\n',
 
     'tx_fee': 'The transaction fee is set to ',
     'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
@@ -87,7 +94,7 @@ const tipbotTxt = {
     'CheckBalanceDisabled': 'Cheking balance of an other user is disabled!',
     'CheckBalanceAdminOnly': 'Only admins can check other balances!',
     'CheckBalanceNoUserFound': 'No user found to check. Did you use the prefix @ ?',
-   // GENERAL
+    // GENERAL
     'NoAmountFound': ' couldn\'t find the amount. Did you forget the decimal ?',
     'NoValidAddress': ' that\'s not a valid address!',
     'MoreThen1Address': ' I can\'t do a withdraw to more than 1 address',
@@ -96,7 +103,7 @@ const tipbotTxt = {
     'UnsupportedCurrency': ': we don\'t support that currency yet!',
     'InvalidAmount': ': that\'s an invalid amount',
     // WITHDRAW
-    'WithdrawQuestion': ['You want to withdraw ' , ' to ' ,'.\n Is this correct (yes/no) ?'],
+    'WithdrawQuestion': ['You want to withdraw ', ' to ', '.\n Is this correct (yes/no) ?'],
     // SEND
     'Hello': 'Hello there ',
     'NoUserFoundForTip': ', I didn\'t catch the user you want to tip. You surely didn\'t want to tip yourself, did you ?',
@@ -172,14 +179,28 @@ const tipbotTxt = {
     'SunErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
     'SunCountIsReset': 'All tip count records are removed.',
 
-    // // WARN
-    // 'NoUserFoundWarn': ', you need to provide a user to warn.',
-    // 'WarnNoPrivateChannel': 'Could not reach the user: ',
-    // 'WarnText': ', please refrain from using insults and profane language in #dash_chat .\n' +
-    // 'You are welcome to continue your conversation in the #arena, where anything goes.',
-    // 'InformOtherAdmins1': 'The user ',
-    // 'InformOtherAdmins2': ' was issued a moderator warning.',
-
+    //QUIZ
+    'QuizAddQuestion': 'Enter your new question.',
+    'QuizAddAnOtherQuestion': 'Will you add an other question (yes/no) ?',
+    'QuizAddAnser': 'Enter the anser to your question.',
+    'QuizConfirmNewQA': 'Is this the correct question and answer (yes/no) ?',
+    'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
+    'QuizAbortedSaving': 'Ok, I will ignore that question.',
+    'QuizListQuestions': '*I know about this questions:* \n',
+    'QuizDeleteQuestion': 'To delete a question say *@dashbot delete quiz _question number_*',
+    'QuizNoQAnumber': 'I didn\'t find the question number',
+    'QuizDeleteNOK':'I couldn\'t delete question ',
+    'QuizDeleteOk' :'Question is removed',
+    'QuizAnswerCorrect': 'Super ! You got that correct.',
+    'QuizAnswerWrong': 'Bummer, that was close but still wrong.',
+    'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
+    'QuizReview_1' : 'This question don\'t have a reward set:\n',
+    'QuizReview_2':'Use @dashbot quiz reward _question number_ to set a reward.',
+    'QuizRewardQuestion' : 'To approve a question set a reward with  *@dashbot quiz reward _question number_*.',
+    'QuizUnreviewed':'*This are the question that need to be reviewed:\n',
+    'QuizSetReward' :'What should the reward be for this question ?',
+    'QuizSetRewardNoAmountFound':'Cannot find the reward amount !',
+    'QuizSetRewardOk' :'Reward set, thanks for reviewing this question.',
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',
     'NoCommandFound': [
@@ -227,4 +248,4 @@ const userTxt = {
 };
 
 
-module.exports = {tipbotTxt, userTxt};
+module.exports = { tipbotTxt, userTxt };

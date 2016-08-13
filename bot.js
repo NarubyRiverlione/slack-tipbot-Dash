@@ -108,6 +108,7 @@ function connect(controller) {
 // database connection open =  conncect to slack
 db.once('open', function () {
     require('./model/tipper'); // load mongoose Tipper model
+    require('./model/quiz'); // load mongoose Quiz model
     debug('tipbot:db')('********* Database connected ********');
     // make connnection to Slack
     connect(controller);
