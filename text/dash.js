@@ -201,6 +201,13 @@ const tipbotTxt = {
     'QuizSetReward' :'What should the reward be for this question ?',
     'QuizSetRewardNoAmountFound':'Cannot find the reward amount !',
     'QuizSetRewardOk' :'Reward set, thanks for reviewing this question.',
+    'QuizErrorStarting' :'Sorry cannot start a quiz because: ',
+    'QuizStarted1' : 'A quiz has started !',
+    'QuizStarted2' : 'Go to the ',
+    'QuizStarted3' : ' channel to participate.',
+    'QuizStopped' : 'The quiz has been stopped.',
+    'QuizDone' :'You answered all the questions in this quiz.',
+    'QuizAskQuestion' :'Question ',
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',
     'NoCommandFound': [
