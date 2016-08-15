@@ -72,10 +72,15 @@ const tipbotTxt = {
     '\n' +
     '*quiz list*\t\tShow all approved questions\n'+
     '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n'+
+    '*quiz delete _question number_*\tDelete a question.\n'+
+    '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot while ask amount.\n'+
+    '*quiz start*\t\tStart a quiz.\n'+
+    '*quiz end*\t\tParticipant cannot answer anymore. Score will be displayed.\n'+
+    '*quiz abort*\t\tStop a quiz without showing results.\n'+
+
     '*quiz add*\t\t@dashbot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n'+
     '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n'+
-    '*quiz delete _question number_*\tDelete a question.\n'+
-    '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot while ask amount.\n',
+    '*quiz answer*\t\tParticipate in a quiz. You will get questions in a private channel.\n',
 
     'tx_fee': 'The transaction fee is set to ',
     'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
@@ -191,8 +196,10 @@ const tipbotTxt = {
     'QuizNoQAnumber': 'I didn\'t find the question number',
     'QuizDeleteNOK':'I couldn\'t delete question ',
     'QuizDeleteOk' :'Question is removed',
+
     'QuizAnswerCorrect': 'Super ! You got that correct.',
     'QuizAnswerWrong': 'Bummer, that was close but still wrong.',
+
     'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
     'QuizReview_1' : 'This question don\'t have a reward set:\n',
     'QuizReview_2':'Use @dashbot quiz reward _question number_ to set a reward.',
@@ -205,8 +212,9 @@ const tipbotTxt = {
     'QuizStarted1' : 'A quiz has started !',
     'QuizStarted2' : 'Go to the ',
     'QuizStarted3' : ' channel to participate.',
-    'QuizStopped' : 'The quiz has been stopped.',
-    'QuizDone' :'You answered all the questions in this quiz.',
+    'QuizEnded' : 'The quiz has ended.',
+'QuizAborted' : 'The quis has been aborted.',
+    'QuizDone' :'You answered all the questions in this quiz.\n Wait until the quiz is stopped to see your score.',
     'QuizAskQuestion' :'Question ',
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',
