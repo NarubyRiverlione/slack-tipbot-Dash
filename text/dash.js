@@ -212,10 +212,12 @@ const tipbotTxt = {
     'QuizStarted1' : 'A quiz has started !',
     'QuizStarted2' : 'Go to the ',
     'QuizStarted3' : ' channel to participate.',
-    'QuizEnded' : 'The quiz has ended.',
-'QuizAborted' : 'The quis has been aborted.',
+    'QuizEnded' : 'The quiz has ended. \nScoreboard :\n',
+    'QuizShowCorrectAnswers' : 'These where the questions and correct answers: \n',
+    'QuizAborted' : 'The quis has been aborted.',
     'QuizDone' :'You answered all the questions in this quiz.\n Wait until the quiz is stopped to see your score.',
     'QuizAskQuestion' :'Question ',
+    'QuizThanks' : 'Thanks for participating !',
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',
     'NoCommandFound': [
