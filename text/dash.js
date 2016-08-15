@@ -70,10 +70,10 @@ const tipbotTxt = {
     '\n' +
     '*sun reset*\t\tReset all tip counts, not needed normaly as tip counters are resetted when sun is shining.'+
     '\n' +
-    '*quiz list*\t\tShow all approved questions\n'+
+    '*quiz list*\t\tShow all approved questions.\n'+
     '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n'+
     '*quiz delete _question number_*\tDelete a question.\n'+
-    '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot while ask amount.\n'+
+    '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n'+
     '*quiz start*\t\tStart a quiz.\n'+
     '*quiz end*\t\tParticipant cannot answer anymore. Score will be displayed.\n'+
     '*quiz abort*\t\tStop a quiz without showing results.\n'+
