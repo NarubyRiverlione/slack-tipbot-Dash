@@ -21,6 +21,8 @@ const TIPBOT_OPTIONS = {
     WALLET_PASSW: WALLET_PASSW,
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
+    WARN_MODS_NEW_USER:  !debugMode,
+    WARN_MODS_USER_LEFT: !debugMode,
     SUN_USERNAME: 'dashsun',
     SUN_TIMER: debugMode ? 15 : 30  // debug = check sun every minute, production check every 30 minutes
 };
