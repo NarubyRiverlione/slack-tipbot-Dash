@@ -21,7 +21,7 @@ const TIPBOT_OPTIONS = {
     WALLET_PASSW: WALLET_PASSW,
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
-    WARN_MODS_NEW_USER:  !debugMode,
+    WARN_MODS_NEW_USER: !debugMode,
     WARN_MODS_USER_LEFT: !debugMode,
     SUN_USERNAME: 'dashsun',
     SUN_TIMER: debugMode ? 15 : 30  // debug = check sun every minute, production check every 30 minutes
@@ -66,12 +66,13 @@ let controller = Botkit.slackbot({
 });
 
 // open mongoose connection
-mongoose.connect(OPTIONS.DB);
-let db = mongoose.connection;
-db.on('error', function () {
-    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB);
-});
+mongoose.connect(OPTIONS.DB,
+    { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
 
+let db = mongoose.connection;
+db.on('error', function (err) {
+    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
+});
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
@@ -109,8 +110,8 @@ function connect(controller) {
 
 // database connection open =  conncect to slack
 db.once('open', function () {
-    require('./model/tipper'); // load mongoose Tipper model
-    require('./model/quiz'); // load mongoose Quiz model
+    require('./model/tipper');  // load mongoose Tipper model
+    require('./model/quiz');    // load mongoose Quiz model
     debug('tipbot:db')('********* Database connected ********');
     // make connnection to Slack
     connect(controller);
