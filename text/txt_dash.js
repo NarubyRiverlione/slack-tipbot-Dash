@@ -197,8 +197,9 @@ const tipbotTxt = {
     'QuizNoQAnumber': 'I didn\'t find the question number',
     'QuizDeleteNOK':'I couldn\'t delete question ',
     'QuizDeleteOk' :'Question is removed',
+
     'QuizAnswerCorrect': 'Super ! You got that correct.',
-    'QuizAnswerWrong': 'Bummer, that was close but still wrong.',
+    'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
 
     'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
     'QuizReview_1' : 'This question don\'t have a reward set:\n',
@@ -209,15 +210,19 @@ const tipbotTxt = {
     'QuizSetRewardNoAmountFound':'Cannot find the reward amount !',
     'QuizSetRewardOk' :'Reward set, thanks for reviewing this question.',
     'QuizErrorStarting' :'Sorry cannot start a quiz because: ',
+
     'QuizStarted1' : 'A quiz has started !',
     'QuizStarted2' : 'Go to the ',
     'QuizStarted3' : ' channel to participate.',
+
     'QuizEnded' : 'The quiz has ended. \nScoreboard :\n',
     'QuizShowCorrectAnswers' : 'These where the questions and correct answers: \n',
     'QuizAborted' : 'The quis has been aborted.',
-    'QuizDone' :'You answered all the questions in this quiz.\n Wait until the quiz is stopped to see your score.',
-    'QuizAskQuestion' :'Question ',
+    'QuizDone' :'All questions in this quiz are answered.\n Wait until the quiz is stopped to see your score.',
+    'QuizAskQuestion1' :'*To answer say: ',
+    'QuizAskQuestion2': ' quiz answer _your answer_*',
     'QuizThanks' : 'Thanks for participating !',
+
     // OOPS
     'Oops': 'Use the *help* command to see the valid options.',
     'NoCommandFound': [
