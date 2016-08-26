@@ -218,7 +218,7 @@ const tipbotTxt = {
     'QuizEnded' : 'The quiz has ended. \nScoreboard :\n',
     'QuizShowCorrectAnswers' : 'These where the questions and correct answers: \n',
     'QuizAborted' : 'The quis has been aborted.',
-    'QuizDone' :'All questions in this quiz are answered.\n Wait until the quiz is stopped to see your score.',
+    'QuizDone' :'All questions in this quiz are answered.' , // \n Wait until the quiz is stopped to see your score.',
     'QuizAskQuestion1' :'*To answer say: ',
     'QuizAskQuestion2': ' quiz answer _your answer_*',
     'QuizThanks' : 'Thanks for participating !',
