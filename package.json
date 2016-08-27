@@ -11,8 +11,8 @@
     "debug": "^2.2.0",
     "lodash": "^3.1.0",
     "minimist": "^1.1.0",
-    "mongodb-autoincrement": "^1.0.1",
     "mongoose": "^4.5.7",
+    "mongoose-auto-increment": "^5.0.1",
     "request": "^2.68.0",
     "snyk": "^1.18.0",
     "waitjs": "^0.2.0"

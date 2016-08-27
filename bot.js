@@ -6,6 +6,7 @@ let Botkit = require('botkit');
 let assert = require('assert');
 let parseArgs = require('minimist');
 let mongoose = require('mongoose');
+let autoIncrement = require('mongoose-auto-increment');
 
 let argv = parseArgs(process.argv.slice(2));
 
@@ -110,6 +111,7 @@ function connect(controller) {
 
 // database connection open =  conncect to slack
 db.once('open', function () {
+    autoIncrement.initialize(db);
     require('./model/tipper');  // load mongoose Tipper model
     require('./model/quiz');// load mongoose Quiz model
     debug('tipbot:db')('********* Database connected ********');

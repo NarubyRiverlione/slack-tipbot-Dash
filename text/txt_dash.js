@@ -204,7 +204,8 @@ const tipbotTxt = {
     'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
     'QuizReview_1': 'This question don\'t have a reward set:\n',
     'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
-    'QuizRewardQuestion': 'To approve a question set a reward with*@dashbot quiz reward _question number_*.',
+    'QuizRewardQuestion_1': 'To approve a question set a reward with * @' ,
+    'QuizRewardQuestion_2' : ' quiz reward _question number_ *',
     'QuizUnreviewed': '*This are the question that need to be reviewed*:\n',
     'QuizSetReward': 'What should the reward be for this question ?',
     'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
@@ -219,7 +220,7 @@ const tipbotTxt = {
     'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
     'QuizAborted': 'The quis has been aborted.',
     'QuizDone': 'All questions in this quiz are answered.', // \n Wait until the quiz is stopped to see your score.',
-    'QuizAskQuestion1': '*To answer say: ',
+    'QuizAskQuestion1': '*To answer say: @',
     'QuizAskQuestion2': ' quiz answer _your answer_*',
     'QuizThanks': 'Thanks for participating !',
 

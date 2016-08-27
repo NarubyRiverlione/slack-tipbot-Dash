@@ -1,12 +1,12 @@
 'use strict';
 // Quiz model
 
-var mongoose = require('mongoose'),
-    autoInc = require('mongodb-autoincrement'),
+let mongoose = require('mongoose'),
+    autoInc = require('mongoose-auto-increment'),
     Schema = mongoose.Schema;
 
 
-var QuizShema = new Schema({
+let QuizShema = new Schema({
     question: String,
     answer: String,
     reward: {type: Number, default: 0, index:true},
@@ -14,9 +14,10 @@ var QuizShema = new Schema({
 
 });
 
-QuizShema.plugin(autoInc.mongoosePlugin, {
+QuizShema.plugin(autoInc.plugin, {
+    model: 'Quiz',
     field: 'qaNumber',
-    step: 1
+    startAt: 10,
 });
 
 QuizShema.virtual('date')
