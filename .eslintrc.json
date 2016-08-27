@@ -9,12 +9,11 @@
     },
     "rules": {
         "indent": [
-            "error",
-            "tab"
+            "warn",
+            4
         ],
         "linebreak-style": [
-            "error",
-            "unix"
+            0
         ],
         "quotes": [
             "error",
@@ -24,7 +23,7 @@
             "error",
             "always"
         ],
-        "no-mixed-spaces-and-tabs": 
+        "no-mixed-spaces-and-tabs":
             ["warn", "smart-tabs"]
     }
 }
