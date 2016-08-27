@@ -17,7 +17,9 @@
     "snyk": "^1.18.0",
     "waitjs": "^0.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.4.0"
+  },
   "scripts": {
     "test": "snyk test",
     "snyk-protect": "snyk protect",
