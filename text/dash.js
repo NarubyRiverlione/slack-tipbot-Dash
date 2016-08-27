@@ -46,7 +46,7 @@ const tipbotTxt = {
 
         // 'help_sun':
         '*sun*\t\t\tcheck the available sunshine. \n' +
-        '\t\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund.'
+        '\t\t\tEach user that has tipped another users will receive a _sunray_ (read: free Dash) from the sun fund.'
     ],
 
     'helpAdminOnly':
