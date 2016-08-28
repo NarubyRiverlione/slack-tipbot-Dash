@@ -46,7 +46,12 @@ const tipbotTxt = {
 
         // 'help_sun':
         '*sun*\t\t\tcheck the available sunshine. \n' +
-        '\t\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund.'
+        '\t\t\tEach user that has tipped an other users will recieve a _sunray_ (read: free Dash) from the sun fund.',
+
+        // 'help_quiz'
+        '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n',
+            // +  '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n' +
+        '*quiz answer*\t\tPost an answer to a quiz question.\n'
     ],
 
     'helpAdminOnly':
@@ -75,12 +80,7 @@ const tipbotTxt = {
     '*quiz delete _question number_*\tDelete a question.\n' +
     '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
     '*quiz start*\t\tStart a quiz.\n' +
-    '*quiz end*\t\tParticipant cannot answer anymore. Score will be displayed.\n' +
-    '*quiz abort*\t\tStop a quiz without showing results.\n' +
-
-    '*quiz add*\t\t@dashbot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n' +
-    '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n' +
-    '*quiz answer*\t\tParticipate in a quiz. You will get questions in a private channel.\n',
+    '*quiz abort*\t\tStop a quiz without showing results.\n',
 
     'tx_fee': 'The transaction fee is set to ',
     'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
