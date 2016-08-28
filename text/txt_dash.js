@@ -192,6 +192,10 @@ const tipbotTxt = {
     'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
     'QuizAbortedSaving': 'Ok, I will ignore that question.',
     'QuizListQuestions': '*I know about this questions:* \n',
+    'QuizListReward_1' : '\tReward',
+    'QuizListReward_2' : ' points.',
+    'QuizQ' : 'Q: ',
+    'QuizA' : 'A: ',
     'QuizDeleteQuestion': 'To delete a question: *quiz delete _question number_*',
     'QuizChangeReward': 'To change the reward of a question: *quiz reward _question number_*',
     'QuizNoQAnumber': 'I didn\'t find the question number',
@@ -202,6 +206,7 @@ const tipbotTxt = {
     'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
 
     'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
+
     'QuizReview_1': 'This question don\'t have a reward set:\n',
     'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
     'QuizRewardQuestion_1': 'To approve a question set a reward with * @' ,
@@ -210,6 +215,7 @@ const tipbotTxt = {
     'QuizSetReward': 'What should the reward be for this question ?',
     'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
     'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
+
     'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
 
     'QuizStarted1': 'A quiz has started !',
@@ -217,11 +223,11 @@ const tipbotTxt = {
     'QuizStarted3': ' channel to participate.',
 
     'QuizEnded': 'The quiz has ended. \nScoreboard :\n',
-    'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
-    'QuizAborted': 'The quis has been aborted.',
-    'QuizDone': 'All questions in this quiz are answered.', // \n Wait until the quiz is stopped to see your score.',
+  //  'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
+    'QuizAborted': 'The quiz has been aborted.',
     'QuizAskQuestion1': '*To answer say: @',
     'QuizAskQuestion2': ' quiz answer _your answer_*',
+    'QuizScored' : ' scored ',
     'QuizThanks': 'Thanks for participating !',
 
     // OOPS
@@ -241,6 +247,13 @@ const tipbotTxt = {
     ],
 
     'ERRORreadingDb': 'ERROR reading db:'
+};
+
+const quizTxt = {
+    'alreadyRunning' : 'Already in a quiz',
+    'notStarted_noApprovedQ' :'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
+    'done': 'All questions in this quiz are answered.',
+    'notRunning':'Quiz isn\'t running at the moment'
 };
 
 const userTxt = {
@@ -271,4 +284,4 @@ const userTxt = {
 };
 
 
-module.exports = { tipbotTxt, userTxt };
+module.exports = { tipbotTxt, userTxt, quizTxt };

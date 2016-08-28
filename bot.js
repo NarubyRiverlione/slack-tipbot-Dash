@@ -123,30 +123,20 @@ db.once('open', function () {
 // connection to Slack has ended
 controller.on('rtm_close', function () {
     debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
-    //TODO: follow up: don't restart connection on error here because these an auto reconnect
-
-    // reset tipbot and reconnect to slack
-    // tipbot = null;
-    // connect(controller);
+    //don't restart connection on error here because these an auto reconnect
 });
 
 // botkit had an oopsie
 controller.on('error', function (bot, msg) {
     debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
     debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
-
-    //TODO: follow up: don't restart connection on error here because it will be restarted on the rtm_close event
-	/*
-	// reset tipbot and reconnect to slack
-	tipbot = null;
-	connect(controller);
-	*/
+    // don't restart connection on error here because it will be restarted on the rtm_close event
 });
 
 // when bot is connected, get all needed channels
 controller.on('hello', function (bot) {
     // prevent multiple connections
-    debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
+    // debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
     if (initializing > 0) {
         debug('tipbot:bot')('Already initializing... (count ' + initializing + ')');
         return;
@@ -200,7 +190,7 @@ controller.on('hello', function (bot) {
 
     // connection is ready = clear initializing flag
     initializing--;
-    debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
+    // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 });
 
 // response to ticks
@@ -276,11 +266,6 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
         debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
         return;
     }
-    // TODO: (changed, follow up) not needed as there is an array of users in TipBot that's always up to date ?
-    // get the user that posted the message
-    // bot.api.users.info({ 'user': message.user }, function (err, response) {
-    // if (err) { throw new Error(err); }
-    // member = response.user;
 
     // find the place where the message was posted
     let firstCharOfChannelID = message.channel.substring(0, 1);
