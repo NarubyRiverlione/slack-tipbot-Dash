@@ -7,17 +7,19 @@
     "async": "^2.0.0",
     "bitcoin": "^3.0.1",
     "bitcoinjs-lib": "~1.4.3",
-    "blocktrail-sdk": "^2.0.1",
     "botkit": "^0.2.2",
     "debug": "^2.2.0",
     "lodash": "^3.1.0",
     "minimist": "^1.1.0",
     "mongoose": "^4.5.7",
+    "mongoose-auto-increment": "^5.0.1",
     "request": "^2.68.0",
     "snyk": "^1.18.0",
     "waitjs": "^0.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.4.0"
+  },
   "scripts": {
     "test": "snyk test",
     "snyk-protect": "snyk protect",

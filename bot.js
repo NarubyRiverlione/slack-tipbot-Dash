@@ -6,6 +6,7 @@ let Botkit = require('botkit');
 let assert = require('assert');
 let parseArgs = require('minimist');
 let mongoose = require('mongoose');
+let autoIncrement = require('mongoose-auto-increment');
 
 let argv = parseArgs(process.argv.slice(2));
 
@@ -21,6 +22,8 @@ const TIPBOT_OPTIONS = {
     WALLET_PASSW: WALLET_PASSW,
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
+    WARN_MODS_NEW_USER: !debugMode,
+    WARN_MODS_USER_LEFT: !debugMode,
     SUN_USERNAME: 'dashsun',
     SUN_TIMER: debugMode ? 15 : 30  // debug = check sun every minute, production check every 30 minutes
 };
@@ -30,7 +33,7 @@ let OPTIONS = {
     MODERATOR_CHANNEL_NAME: 'moderators',
     MAIN_CHANNEL_NAME: debugMode ? 'bot_testing' : 'dash_chat',
 
-    SHOW_RANDOM_HELP_TIMER: 720,         // show a random help command every X minutes (6/12 hours = 360/720 minutes)
+    SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
     DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
@@ -64,12 +67,13 @@ let controller = Botkit.slackbot({
 });
 
 // open mongoose connection
-mongoose.connect(OPTIONS.DB);
-let db = mongoose.connection;
-db.on('error', function () {
-    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB);
-});
+mongoose.connect(OPTIONS.DB,
+    { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
 
+let db = mongoose.connection;
+db.on('error', function (err) {
+    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
+});
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
@@ -107,7 +111,9 @@ function connect(controller) {
 
 // database connection open =  conncect to slack
 db.once('open', function () {
-    require('./model/tipper'); // load mongoose Tipper model
+    autoIncrement.initialize(db);
+    require('./model/tipper');  // load mongoose Tipper model
+    require('./model/quiz');// load mongoose Quiz model
     debug('tipbot:db')('********* Database connected ********');
     // make connnection to Slack
     connect(controller);
@@ -117,31 +123,20 @@ db.once('open', function () {
 // connection to Slack has ended
 controller.on('rtm_close', function () {
     debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
-    //TODO: follow up: don't restart connection on error here because these an auto reconnect
-
-    // reset tipbot and reconnect to slack
-    // tipbot = null;
-    // connect(controller);
+    //don't restart connection on error here because these an auto reconnect
 });
 
 // botkit had an oopsie
 controller.on('error', function (bot, msg) {
     debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
     debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
-
-    //TODO: follow up: don't restart connection on error here because it will be restarted on the rtm_close event
-    /*
-        // reset tipbot and reconnect to slack
-        tipbot = null;
-        connect(controller);
-    */
+    // don't restart connection on error here because it will be restarted on the rtm_close event
 });
-
 
 // when bot is connected, get all needed channels
 controller.on('hello', function (bot) {
     // prevent multiple connections
-    debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
+    // debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
     if (initializing > 0) {
         debug('tipbot:bot')('Already initializing... (count ' + initializing + ')');
         return;
@@ -195,7 +190,7 @@ controller.on('hello', function (bot) {
 
     // connection is ready = clear initializing flag
     initializing--;
-    debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
+    // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 });
 
 // response to ticks
@@ -271,11 +266,6 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
         debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
         return;
     }
-    // TODO: (changed, follow up) not needed as there is an array of users in TipBot that's always up to date ?
-    // get the user that posted the message
-    // bot.api.users.info({ 'user': message.user }, function (err, response) {
-    //     if (err) { throw new Error(err); }
-    //     member = response.user;
 
     // find the place where the message was posted
     let firstCharOfChannelID = message.channel.substring(0, 1);
@@ -303,11 +293,13 @@ controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function
     }
     // });
 });
+
 // when a user change his profile (other username,...)
 controller.on('user_change', function (bot, resp) {
     debug('tipbot:bot')('User ' + resp.user.name + ' has changed his/her profile.');
     tipbot.onUserChange(bot, resp.user);
 });
+
 // when a new user joins the Slack Team to the user.id can be added
 controller.on('team_join', function (bot, resp) {
     debug('tipbot:bot')('User ' + resp.user.name + ' has joined !');

@@ -1,19 +1,27 @@
 'use strict';
+
 let _ = require('lodash');
 let debug = require('debug')('tipbot:tipbot');
 let async = require('async');
 let request = require('request');
+<<<<<<< HEAD
 //let blocktrail = require('blocktrail-sdk');
+=======
+>>>>>>> feature/quiz
 let User = require('./user');
-//let Trigger = require('./trigger');
 let bitcoin = require('bitcoinjs-lib');
 let path = require('path');
 let fs = require('fs');
 let dashd = require('bitcoin');
-
-let helpTexts = require('../text/dash.js').tipbotTxt;
+<<<<<<< HEAD
+let texts = require('../text/dash.js').tipbotTxt;
+=======
+let texts = require('../text/txt_dash.js').tipbotTxt;
+>>>>>>> feature/quiz
 let sun = require('./sun');
-require('waitjs');
+let quiz = require('./quiz');
+let waits = require('waitjs');
+let dash = require('./dash');
 
 const BLACKLIST_CURRENCIES = ['DASH'];
 
@@ -34,12 +42,15 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
     let self = this;
     if (!bot) { throw new Error('Connection with Slack not availible for tipbot'); }
 
+<<<<<<< HEAD
     self.HighBalanceWarningMark = toDuff(2.0);
+=======
+    self.HighBalanceWarningMark = dash.toDuff(2.0);
+>>>>>>> feature/quiz
 
     self.initializing = false;
 
     self.users = {};
-    // self.triggers = [];
 
     self.slack = bot;
     self.sunUser = null;
@@ -47,27 +58,31 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
     // default options
     self.OPTIONS = _.defaults(OPTIONS, {
         TMP_DIR: path.resolve(__dirname, '../tmp'),
+<<<<<<< HEAD
         ALL_BALANCES: false,                // default admins cannnot see all balances
-<<<<<<< Updated upstream
-        OTHER_BALANCES: false,              // default admins cannot see a balance of an other specific ser
-        TX_FEE: blocktrail.toSatoshi(0.0001),     // TX fee, used in withdrawing, in satochi
-=======
         OTHER_BALANCES: false,              // default admins cannot see a balance of an other specific user
         WARN_MODS_NEW_USER: false,
         WARN_MODS_USER_LEFT: false,
         TX_FEE: toDuff(0.0001),     // TX fee, used in withdrawing, in satochi
->>>>>>> Stashed changes
+=======
+        ALL_BALANCES: false,// default admins cannnot see all balances
+        OTHER_BALANCES: false,  // default admins cannot see a balance of an other specific user
+        WARN_MODS_NEW_USER: false,
+        WARN_MODS_USER_LEFT: false,
+        TX_FEE: dash.toDuff(0.0001), // TX fee, used in withdrawing, in satochi
+>>>>>>> feature/quiz
         WALLET_PASSW: null,
 
         PRICE_UPDATE_EVERY: 30, // minuts
-        PRICETICKER_CHANNEL: null,
-        PRICETICKER_TIMER: 30,  // show the complete price list every X minutes in the PRICE_CHANNEL_NAME channel
-        PRICETICKER_BOUNDARY: 0.5, // check boundaries ever x minutes
 
         SUN_USERNAME: null,
         SUN_SEND_THROTTLE: 1250, // ms wait between sunrays to cast (prevent slack spam protection)
         SUN_TIMER: 30, // check sun balance > threshold every X minutes
+<<<<<<< HEAD
         SUN_THRESHOLD: toDuff(5) // satoshis
+=======
+        SUN_THRESHOLD: dash.toDuff(5) // satoshis
+>>>>>>> feature/quiz
     });
 
     // create connection via RPC to wallet
@@ -102,8 +117,6 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
             }
         }
         self.CURRENCY_REGEX = new RegExp('\\b(Satoshis?|DASH|' + self.CURRENCIES.join('|') + ')\\b', 'ig'); // added \b: bugfix for only finding the currencr symbol instead parts of words (aud = audit)
-
-        // self.CURRENCY_REGEX = new RegExp('(Satoshis?|DASH|' + self.CURRENCIES.join('|') + ')', 'ig');
     });
 
     // Init tipbot
@@ -117,9 +130,9 @@ TipBot.prototype.tellPrice = function (currency, cb) {
     self.getPriceRates(function (err, rates) {
         let rate = rates[currency];
         if (!rate) {
-            cb(helpTexts.UnsupportedCurrency, null);
+            cb(texts.UnsupportedCurrency, null);
         } else {
-            cb(null, helpTexts.PriceBase + rate.toPrecision(4) + ' ' + currency);
+            cb(null, texts.PriceBase + rate.toPrecision(4) + ' ' + currency);
         }
     });
 };
@@ -143,7 +156,7 @@ TipBot.prototype.showPriceList = function (tellInChannel, all) {
         function (err) {
             // add  where price information is pulled from
             if (err) { debug(err); return; }
-            reply.text += helpTexts.PriceInfoFrom;
+            reply.text += texts.PriceInfoFrom;
             self.slack.say(reply);
         }
     );
@@ -182,11 +195,11 @@ TipBot.prototype.getPriceRates = function (cb) {
             rates.tsp = 1.0 / 6.0;
 
             if (rates.eur) {
-                rates['€'] = rates.eur;
-                rates.euro = rates.eur;
+            rates['€'] = rates.eur;
+            rates.euro = rates.eur;
             }
             if (rates.usd) {
-                rates.dollar = rates.usd;
+            rates.dollar = rates.usd;
             }
             */
         }
@@ -231,8 +244,6 @@ TipBot.prototype.clearPriceRatesCache = function (cacheDir, cb) {
 // read current cached file (not older then PRICE_UPDATE_EVERY minuts) or download a new one from coinmarketcap
 // return price info as object via the callback (err, rates)
 TipBot.prototype._getPriceRates = function (filename, cb) {
-    // let self = this;
-
     fs.exists(filename, function (exists) {
         if (exists) {
             fs.readFile(filename, 'utf8', function (err, data) {
@@ -270,12 +281,12 @@ TipBot.prototype.addUser = function (user, updateRegex) {
     }
 
     // warn admins that new users has arrived, only when not initializing the tipbot
-    if (self.OPTIONS.MODERATOR_CHANNEL !== undefined && !self.initializing) {
+    if (self.OPTIONS.WARN_MODS_NEW_USER && self.OPTIONS.MODERATOR_CHANNEL !== undefined && !self.initializing) {
         let newUserMsg = {
             channel: self.OPTIONS.MODERATOR_CHANNEL.id,
-            text: helpTexts.WarningNewUser1 +
+            text: texts.WarningNewUser1 +
             user.name +
-            helpTexts.WarningNewUser2
+            texts.WarningNewUser2
         };
         self.slack.say(newUserMsg);
     }
@@ -294,12 +305,12 @@ TipBot.prototype.updateUserFromMember = function (member, updateRegex) {
 
     if (member.deleted || member.is_bot) {
         // warn admins that  users has left, only when not initializing the tipbot
-        if (self.OPTIONS.MODERATOR_CHANNEL !== undefined && !self.initializing) {
+        if (self.OPTIONS.WARN_MODS_USER_LEFT && self.OPTIONS.MODERATOR_CHANNEL !== undefined && !self.initializing) {
             let userLeftMsg = {
                 channel: self.OPTIONS.MODERATOR_CHANNEL.id,
-                text: helpTexts.WarnUserLeft1 +
+                text: texts.WarnUserLeft1 +
                 member.name +
-                helpTexts.WarnUserLeft2
+                texts.WarnUserLeft2
             };
             self.slack.say(userLeftMsg);
         }
@@ -354,7 +365,7 @@ TipBot.prototype.getDirectMessageChannelID = function (channel, userID, cb) {
 // get ID of a channel
 TipBot.prototype.getChannel = function (channelName, cb) {
     let self = this;
-    let findNameExp = new RegExp( channelName + '(?![\\w-])', 'i'); // word boundaries that include the '-'
+    let findNameExp = new RegExp(channelName + '(?![\\w-])', 'i'); // word boundaries that include the '-'
     self.slack.api.channels.list({}, function (err, channelList) {
         if (err) {
             debug('ERROR retrieving list of channels ' + err);
@@ -420,7 +431,7 @@ TipBot.prototype.init = function () {
                 debug('I am <@%s:%s> of %s', self.slack.identity.id, self.slack.identity.name, self.slack.team_info.name);
                 debug('***** TipBot ready! *****');
                 // debug('We have the following . + Object.keys(self.users).length +  known users; ', _.map(self.users, function(user) {
-                //     return user.name;
+                // return user.name;
                 // }).join(', '));
 
                 self.initializing = false;
@@ -444,9 +455,15 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, cb) {
                 debug(err);
                 cb(null, null, null, null, 'ERROR');
             }
+<<<<<<< HEAD
             let value = toDuff(balance);
             debug('Log: using ALL balance of ' + user.name + ' = ' + balance);
             cb(value, null, null, null, toDash(value) + ' DASH');
+=======
+            let value = dash.toDuff(balance);
+            debug('Log: using ALL balance of ' + user.name + ' = ' + balance);
+            cb(value, null, null, null, dash.toDash(value) + ' DASH');
+>>>>>>> feature/quiz
         });
 
     } else {
@@ -456,7 +473,11 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, cb) {
             value = parseInt(inputValue);
         } else if (unit.match(/DASH/i)) {
             currency = 'DASH';
+<<<<<<< HEAD
             value = toDuff(inputValue);
+=======
+            value = dash.toDuff(inputValue);
+>>>>>>> feature/quiz
         } else {
             currency = unit.trim().toLowerCase();
             if (self.CURRENCIES.indexOf(currency) !== -1) {
@@ -482,24 +503,32 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, cb) {
                 let newValue = Math.ceil(value / rate * 1e8);
 
                 let text = value.toFixed(2) + ' ' + currency + ' ' +
+<<<<<<< HEAD
                     '(' + toDash(newValue) + ' DASH at ' + rate.toFixed(2) + ' ' + currency + ' / DASH)';
+=======
+                    '(' + dash.toDash(newValue) + ' DASH at ' + rate.toFixed(2) + ' ' + currency + ' / DASH)';
+>>>>>>> feature/quiz
                 // return converted value in dash,  convertion rate, originalCurrency, originalValue, text about the convertion
                 return cb(newValue, rate, currency, value, text);
             }
         });
     } else {
         // amount is in Dash, return only value, no convertion rate
+<<<<<<< HEAD
         return cb(value, null, null, null, toDash(value) + ' DASH');
+=======
+        return cb(value, null, null, null, dash.toDash(value) + ' DASH');
+>>>>>>> feature/quiz
     }
 };
 
 // tell all help text, if call by an admin show also the admin-only commands
 TipBot.prototype.tellHelp = function (is_admin) {
-    let text = _.reduce(helpTexts.helpText, function (completeHelpText, helpPart) {
+    let text = _.reduce(texts.helpText, function (completeHelpText, helpPart) {
         return completeHelpText + helpPart + '\n';
     }, '');
     if (is_admin) {
-        text += '\n\n' + helpTexts.helpAdminOnly;
+        text += '\n\n' + texts.helpAdminOnly;
     }
     return text;
 };
@@ -511,15 +540,20 @@ TipBot.prototype.showRandomHelp = function () {
         debug('ERROR: cannot show random helptext because Main Chat channel is not set.');
         return;
     }
-    let helpCount = helpTexts.helpText.length;
+    let helpCount = texts.helpText.length;
     let getHelpNR = Math.floor((Math.random() * helpCount));
+<<<<<<< HEAD
     getHelpNR = getHelpNR === 0 ? 1 : getHelpNR;                         // don\'t show title
-    let helpTxt = helpTexts.helpText[getHelpNR].replace(/[*]/g, '').replace(/[_]/g, '');     // * for bold doesn't show in a code block
+    let helpTxt = texts.helpText[getHelpNR].replace(/[*]/g, '').replace(/[_]/g, '');     // * for bold doesn't show in a code block
+=======
+    getHelpNR = getHelpNR === 0 ? 1 : getHelpNR; // don\'t show title
+    let helpTxt = texts.helpText[getHelpNR].replace(/[*]/g, '').replace(/[_]/g, ''); // * for bold doesn't show in a code block
+>>>>>>> feature/quiz
     debug('show helptext number ' + getHelpNR);
 
     let helpMsg = {
         channel: self.OPTIONS.MAIN_CHANNEL.id,
-        text: '>>>' + helpTexts.HelpRandom1 + '\n' +
+        text: '>>>' + texts.HelpRandom1 + '\n' +
         '```' + helpTxt + '```'
     };
     self.slack.say(helpMsg);
@@ -542,9 +576,9 @@ TipBot.prototype.checkForSun = function () {
                 // show public announcement
                 let reply = {
                     channel: self.OPTIONS.MAIN_CHANNEL.id,
-                    text: helpTexts.SunRay + '\n' +
-                    helpTexts.SunExplain + '\n' +
-                    helpTexts.SunRay + '\n'
+                    text: texts.SunRay + '\n' +
+                    texts.SunExplain + '\n' +
+                    texts.SunRay + '\n'
                 };
                 self.slack.say(reply);
                 //send private message to each revieced user
@@ -552,7 +586,7 @@ TipBot.prototype.checkForSun = function () {
                 async.forEachSeries(reviecedUsers,
                     function (oneUser, asyncCB) {
                         // wait the time set via sun Throttle to prevent slack spam protection
-                        wait(self.OPTIONS.SUN_SEND_THROTTLE, function () {
+                        waits.wait(self.OPTIONS.SUN_SEND_THROTTLE, function () {
                             // ignore all response to prevent wall of text in public, sender = sun User = not usefull to inform
                             // custom message to reciever:
                             self.getDirectMessageChannelID(null, oneUser.id, function (err, DMchannelRecievingUser) {
@@ -560,11 +594,11 @@ TipBot.prototype.checkForSun = function () {
                                     // send private message to lucky user
                                     let recievingUserMessage = {
                                         'channel': DMchannelRecievingUser,
-<<<<<<< Updated upstream
-                                        'text': helpTexts.SunRecieved + blocktrail.toBTC(sunraySize) + ' dash'
-=======
+<<<<<<< HEAD
                                         'text': texts.SunRecieved + toDash(sunraySize) + ' dash'
->>>>>>> Stashed changes
+=======
+                                        'text': texts.SunRecieved + dash.toDash(sunraySize) + ' dash'
+>>>>>>> feature/quiz
                                     };
                                     self.slack.say(recievingUserMessage);
                                 }
@@ -633,7 +667,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
 
         // MENTIONS MULTIPLE USER
         if (userMatches.length > 1) {
-            reply.text = 'Sorry ' + user.handle + helpTexts.ToMuchUsers;
+            reply.text = 'Sorry ' + user.handle + texts.ToMuchUsers;
             self.slack.say(reply);
             return;
         }
@@ -681,7 +715,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             if (user.is_admin) {
                 // check if recieving user was provided
                 if (userMatches.length === 0) {
-                    reply.text = helpTexts.Hello + user.handle + helpTexts.NoUserFoundForTip;
+                    reply.text = texts.Hello + user.handle + texts.NoUserFoundForTip;
                     self.slack.say(reply);
                     return;
                 } else if (userMatches.length === 1) {
@@ -702,24 +736,24 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //     * BALANCE
+        // * BALANCE
         if (message.match(/\bbalance\b/i)) {
             let balanceOfUser = user; // default show own balance (see balance check cmd)
 
-            //     * ALL BALANCES (admin only, needs to be enabled via OPTIONS.ALL_BALANCES)
+            // * ALL BALANCES (admin only, needs to be enabled via OPTIONS.ALL_BALANCES)
             if (message.match(/\ball\b/i)) {
                 if (self.OPTIONS.ALL_BALANCES === false) {
-                    reply.text = helpTexts.RetrievingAllBalancesDisabled;
+                    reply.text = texts.RetrievingAllBalancesDisabled;
                     self.slack.say(reply);
                     return;
                 }
                 if (!user.is_admin) {
-                    reply.text = helpTexts.RetrievingAllBalancesAdminOnly;
+                    reply.text = texts.RetrievingAllBalancesAdminOnly;
                     self.slack.say(reply);
                     return;
                 }
                 // warn that this can take a while
-                reply.text = helpTexts.RetrievingAllBalancesWait;
+                reply.text = texts.RetrievingAllBalancesWait;
                 self.slack.say(reply);
 
                 async.mapLimit(Object.keys(
@@ -751,18 +785,18 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             // feature asked for verifying dummy, fake, slack accounts
             if (message.match(/\bcheck\b/i)) {
                 if (self.OPTIONS.OTHER_BALANCES === false) {
-                    privateReply.text = helpTexts.CheckBalanceDisabled;
+                    privateReply.text = texts.CheckBalanceDisabled;
                     self.slack.say(privateReply);
                     return;
                 }
                 if (!user.is_admin) {
-                    privateReply.text = helpTexts.CheckBalanceAdminOnly;
+                    privateReply.text = texts.CheckBalanceAdminOnly;
                     self.slack.say(privateReply);
                     return;
                 }
                 // check if  user was provided
                 if (userMatches.length === 0) {
-                    privateReply.text = helpTexts.Hello + user.handle + helpTexts.CheckBalanceNoUserFound;
+                    privateReply.text = texts.Hello + user.handle + texts.CheckBalanceNoUserFound;
                     self.slack.say(privateReply);
                     return;
                 }
@@ -784,7 +818,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //     * DEPOSIT
+        // * DEPOSIT
         if (message.match(/\bdeposit\b/i)) {
             user.tellDepositeAddress(function (err, line) {
                 if (err) {
@@ -798,11 +832,11 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //     * WITHDRAW
+        // * WITHDRAW
         if (message.match(/\bwithdraw\b/i)) {
             amount = message.match(self.AMOUNT_OR_ALL_REGEX); // only the number, no currency
             if (amount === null) {
-                reply.text = user.name + helpTexts.NoAmountFound;
+                reply.text = user.name + texts.NoAmountFound;
                 self.slack.say(reply);
                 return;
             }
@@ -829,43 +863,43 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                 }));
 
                 if (!address.length) {
-                    reply.text = 'Sorry ' + user.handle + helpTexts.NoValidAddress;
+                    reply.text = 'Sorry ' + user.handle + texts.NoValidAddress;
                     self.slack.say(reply);
                     return;
                 } else if (address.length > 1) {
-                    reply.text = 'Sorry ' + user.handle + helpTexts.MoreThen1Address + ' [' + address.join(', ') + ']';
+                    reply.text = 'Sorry ' + user.handle + texts.MoreThen1Address + ' [' + address.join(', ') + ']';
                     self.slack.say(reply);
                     return;
                 }
 
             } else {
                 // no address
-                reply.text = 'Sorry ' + user.handle + helpTexts.NoAddress;
+                reply.text = 'Sorry ' + user.handle + texts.NoAddress;
                 self.slack.say(reply);
                 return;
             }
             // no amount
             if (!amount) {
-                reply.text = 'Sorry ' + user.handle + helpTexts.NoAmountOrCurrency;
+                reply.text = 'Sorry ' + user.handle + texts.NoAmountOrCurrency;
                 self.slack.say(reply);
                 return;
             }
             // convert amount if currency isn't Dash
             self.normalizeValue(amount[1], amount[2], user, function (value, rate, originalCurrency, originalValue, valueText) {
                 if (rate === false) {
-                    reply.text = user.handle + helpTexts.UnsupportedCurrency;
+                    reply.text = user.handle + texts.UnsupportedCurrency;
                     self.slack.say(reply);
                 } else if (!value) {
-                    reply.text = user.handle + helpTexts.InvalidAmount;
+                    reply.text = user.handle + texts.InvalidAmount;
                     self.slack.say(reply);
                 } else {
                     // ask for confirmation (needed if doing a conversion: withdraw x euro)
                     let privateConversation = { user: user.id };
                     self.slack.startPrivateConversation(privateConversation, function (err, convo) {
                         convo.ask(
-                            helpTexts.WithdrawQuestion[0] + valueText +
-                            helpTexts.WithdrawQuestion[1] + address +
-                            helpTexts.WithdrawQuestion[2],
+                            texts.WithdrawQuestion[0] + valueText +
+                            texts.WithdrawQuestion[1] + address +
+                            texts.WithdrawQuestion[2],
                             [
                                 {
                                     pattern: self.slack.utterances.yes,
@@ -897,39 +931,20 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                                 }
                             ]);
                     });
-                    /*
-                    self.triggers.push(new Trigger(
-                        self,
-                        function (channel, message, _user) {
-                            let trigger = this;
+<<<<<<< HEAD
 
-
-                            if (channel.id === privateReply.channel && _user.id === user.id && message.match(/(OK|yes|fine|sure)/i)) {
-
-                                trigger.destroy();
-                                return true;
-                            } else if (channel.id === privateReply.channel && _user.id === user.id && message.match(/(no|cancel|abort)/i)) {
-                                trigger.destroy();
-
-                                return true;
-                            }
-                            return false;
-                        },
-                        {
-                            timeout: 600000 // 10min
-                        }
-                    ));
-                    */
+=======
+>>>>>>> feature/quiz
                 }
             });
             return;
         }
 
-        //     * SEND / TIP
+        // * SEND / TIP
         if (message.match(/\b(send|give|sent|tip)\b/i)) {
             // check if recieving user was provided
             if (userMatches.length === 0) {
-                reply.text = helpTexts.Hello + user.handle + helpTexts.NoUserFoundForTip;
+                reply.text = texts.Hello + user.handle + texts.NoUserFoundForTip;
                 self.slack.say(reply);
                 return;
             } else if (userMatches.length === 1) {
@@ -938,7 +953,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                 // get only the number, no currency
                 amount = message.match(self.AMOUNT_REGEX);
                 if (amount === null) {
-                    reply.text = user.name + helpTexts.NoAmountFound;
+                    reply.text = user.name + texts.NoAmountFound;
                     self.slack.say(reply);
                     return;
                 }
@@ -955,10 +970,10 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                 // convert if currency isn't Dash
                 self.normalizeValue(amount[1], amount[2], user, function (value, rate) {
                     if (rate === false) {
-                        reply.text = user.handle + helpTexts.UnsupportedCurrency;
+                        reply.text = user.handle + texts.UnsupportedCurrency;
                         self.slack.say(reply);
                     } else if (!value) {
-                        reply.text = user.handle + helpTexts.InvalidAmount;
+                        reply.text = user.handle + texts.InvalidAmount;
                         self.slack.say(reply);
                     } else {
                         // send amount (move between accounts in wallet)
@@ -982,7 +997,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                                         let recievingUserMessage = {
                                             'channel': DMchannelRecievingUser,
                                             'text': responses.privateToReciever +
-                                            helpTexts.SendMessageUsed +
+                                            texts.SendMessageUsed +
                                             '_' + message + '_'
                                         };
                                         self.slack.say(recievingUserMessage);
@@ -997,35 +1012,28 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                 return;
             }
         }
-
-        /*
-           // TMP TRIGGERS
-        let triggers = self.triggers.slice();
-        if (_.any(triggers, function (trigger) {
-            return trigger.match(channel, message, user, userMatches);
-        })) {
-
-            return;
-        }
-        */
+<<<<<<< HEAD
 
         //     * CONVERT
+=======
+        // 	* CONVERT
+>>>>>>> feature/quiz
         if (message.match(/\b(convert|rate|to)\b/i)) {
             let currencies = message.match(self.CURRENCY_REGEX);
             if (currencies === null || currencies.length < 2) {
-                reply.text = user.handle + helpTexts.NotEnoughCurrencies;
+                reply.text = user.handle + texts.NotEnoughCurrencies;
                 self.slack.say(reply);
                 return;
             }
             if (currencies.length > 2) {
-                reply.text = user.handle + helpTexts.ToMuchCurrencies;
+                reply.text = user.handle + texts.ToMuchCurrencies;
                 self.slack.say(reply);
                 return;
             }
 
             amount = message.match(self.AMOUNT_REGEX); // only the number, no currency
             if (amount === null) {
-                reply.text = user.name + helpTexts.NoAmountFound;
+                reply.text = user.name + texts.NoAmountFound;
                 self.slack.say(reply);
                 return;
             } else if (amount) {
@@ -1035,9 +1043,9 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                     // Dash -> other
                     self.normalizeValue(amount[1], toCurrency, user, function (value, rate) {
                         if (rate === false) {
-                            reply.text = user.handle + helpTexts.UnsupportedCurrency;
+                            reply.text = user.handle + texts.UnsupportedCurrency;
                         } else if (!value) {
-                            reply.text = user.handle + helpTexts.InvalidAmount;
+                            reply.text = user.handle + texts.InvalidAmount;
                         } else {
                             let newValue = rate * amount[1];
                             reply.text = amount[1] + ' ' + fromCurrency + ' = ' + newValue.toPrecision(4) + '  ' + toCurrency +
@@ -1049,11 +1057,15 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                     // other -> dash
                     self.normalizeValue(amount[1], fromCurrency, user, function (value, rate) {
                         if (rate === false) {
-                            reply.text = user.handle + helpTexts.UnsupportedCurrency;
+                            reply.text = user.handle + texts.UnsupportedCurrency;
                         } else if (!value) {
-                            reply.text = user.handle + helpTexts.InvalidAmount;
+                            reply.text = user.handle + texts.InvalidAmount;
                         } else {
+<<<<<<< HEAD
                             reply.text = amount[1] + ' ' + fromCurrency + ' = ' + toDash(value) + '  ' + toCurrency +
+=======
+                            reply.text = amount[1] + ' ' + fromCurrency + ' = ' + dash.toDash(value) + '  ' + toCurrency +
+>>>>>>> feature/quiz
                                 ' ( 1.0 ' + fromCurrency + ' = ' + (1.0 / rate).toPrecision(4) + ' DASH)';
                         }
                         self.slack.say(reply);
@@ -1064,7 +1076,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //     * PRICE
+        // 	* PRICE
         if (message.match(/\bprice\b/i)) {
             currency = message.match(self.CURRENCY_REGEX);
 
@@ -1076,7 +1088,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                         return;
                     }
                     // tell where price is pulled from
-                    reply.text = response + '\n' + helpTexts.PriceInfoFrom;
+                    reply.text = response + '\n' + texts.PriceInfoFrom;
                     self.slack.say(reply);
                     return;
                 });
@@ -1087,7 +1099,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //     * PRICE TICKER
+        // 	* PRICE TICKER
         if (message.match(/\bpriceticker\b/i)) {
             let tellChannel = self.OPTIONS.PRICETICKER_CHANNEL;
             if (self.OPTIONS.PRICETICKER_CHANNEL === undefined) {
@@ -1103,23 +1115,23 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                 // show all currencies in the dedicated channel to prevent wall of text in other channels
                 self.showPriceList(tellChannel, true);
                 // inform the user about its location
-                privateReply.text = helpTexts.LocationOfPriceList1 + self.OPTIONS.PRICETICKER_CHANNEL.name + helpTexts.LocationOfPriceList2;
+                privateReply.text = texts.LocationOfPriceList1 + self.OPTIONS.PRICETICKER_CHANNEL.name + texts.LocationOfPriceList2;
                 self.slack.say(privateReply);
             }
             return;
         }
 
-        //     * LIST CURRENCIES
+        // 	* LIST CURRENCIES
         if (message.match(/\bcurrencies\b/i)) {
-            reply.text = helpTexts.CurrenciesTitle +
-                helpTexts.SupportedCurrenciesFull + self.SUPPORTED_CURRENCIES.join(', ') + '\n' +
-                helpTexts.SupportedSymbols + self.CURRENCIES.join(', ') + '* \n' +
-                helpTexts.SupportedBase;
+            reply.text = texts.CurrenciesTitle +
+                texts.SupportedCurrenciesFull + self.SUPPORTED_CURRENCIES.join(', ') + '\n' +
+                texts.SupportedSymbols + self.CURRENCIES.join(', ') + '* \n' +
+                texts.SupportedBase;
             self.slack.say(reply);
             return;
         }
 
-        //    * HELP
+        //	* HELP
         if (message.match(/\bhelp\b/i)) {
             self.getDirectMessageChannelID(channel, user.id, function (err, DMchannelID) {
                 if (err === null) {
@@ -1131,43 +1143,43 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //   * RAIN (replaced by SUN)
+        //  * RAIN (replaced by SUN)
         if (message.match(/\brain\b/i)) {
-            reply.text = helpTexts.RainReplacedBySun;
+            reply.text = texts.RainReplacedBySun;
             self.slack.say(reply);
             return;
         }
 
-        //   * SUN (reward to users that have tipped others)
+        //  * SUN (reward to users that have tipped others)
         if (message.match(/\bsun\b/i)) {
 
             // all users can check the balance of the Sun Account
             // get Sun User for OPTIONS
             if (self.sunUser === undefined || self.sunUser === null) {
-                reply.text = helpTexts.SunCannotFindSunAccount1 + self.OPTIONS.SUN_USERNAME + helpTexts.SunCannotFindSunAccount2;
-                reply.text += helpTexts.SunExplain;
+                reply.text = texts.SunCannotFindSunAccount1 + self.OPTIONS.SUN_USERNAME + texts.SunCannotFindSunAccount2;
+                reply.text += texts.SunExplain;
                 self.slack.say(reply);
                 return;
             }
             // show balance of Sun Account, available to non-admin user
             sun.getSunBalance(self.sunUser, function (err, sunBalance) {
                 if (err) {
-                    reply.text = helpTexts.SunCannotFindSunBalance + self.OPTIONS.SUN_USERNAME;
+                    reply.text = texts.SunCannotFindSunBalance + self.OPTIONS.SUN_USERNAME;
                     self.slack.say(reply);
                     return;
                 } else {
                     if (sunBalance !== undefined && sunBalance > 2e-8) {
-                        reply.text = helpTexts.SunAvailibleAmount + sunBalance + ' dash';
+                        reply.text = texts.SunAvailibleAmount + sunBalance + ' dash';
                     } else {
-                        reply.text = helpTexts.SunEmpty;
+                        reply.text = texts.SunEmpty;
                     }
-                    reply.text += '\n' + helpTexts.SunReqDonation1 + self.OPTIONS.SUN_USERNAME + '_';
-                    reply.text += '\n' + helpTexts.SunReqDonation2 + self.OPTIONS.SUN_USERNAME + helpTexts.SunReqDonation3;
+                    reply.text += '\n' + texts.SunReqDonation1 + self.OPTIONS.SUN_USERNAME + '_';
+                    reply.text += '\n' + texts.SunReqDonation2 + self.OPTIONS.SUN_USERNAME + texts.SunReqDonation3;
                     // show amount of eligible users
                     sun.getAmountOfEligibleSunUsers(
                         function (err, count) {
                             if (err) { debug(err); }
-                            reply.text += '\n' + count + helpTexts.SunAmountEligibleUsers;
+                            reply.text += '\n' + count + texts.SunAmountEligibleUsers;
                             self.slack.say(reply);
                         });
                 }
@@ -1180,12 +1192,12 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                     sun.getListOfSunEligibleUsers(
                         function (err, allTippers) {
                             if (err) {
-                                debug(helpTexts.ERRORreadingDb + err);
-                                self.privateReply.text = helpTexts.ERRORreadingDb + ': ' + err;
+                                debug(texts.ERRORreadingDb + err);
+                                self.privateReply.text = texts.ERRORreadingDb + ': ' + err;
                                 self.slack.say(privateReply);
                             }
                             // show list all tippers
-                            privateReply.text = helpTexts.SunEligibleUsersList;
+                            privateReply.text = texts.SunEligibleUsersList;
                             allTippers.forEach(function (tipper) {
                                 privateReply.text += tipper.name + '(' + tipper.id + ') has tipped ' + tipper.tipCount + ' times.\n';
                             });
@@ -1200,23 +1212,26 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                     amount = message.match(self.AMOUNT_REGEX); // only the number
                     if (amount !== null) {
                         // amount found in message, set this as the new threshold
+<<<<<<< HEAD
                         self.OPTIONS.SUN_THRESHOLD = toDuff(amount[1]);
+=======
+                        self.OPTIONS.SUN_THRESHOLD = dash.toDuff(amount[1]);
+>>>>>>> feature/quiz
                         // threshold changed => check balance now
                         self.checkForSun(reply);
                     }
                     //show threshold
                     if (self.OPTIONS.SUN_THRESHOLD !== undefined) {
-<<<<<<< Updated upstream
-                        reply.text = helpTexts.SunThreshold1 + blocktrail.toBTC(self.OPTIONS.SUN_THRESHOLD) + ' Dash \n';
-                        reply.text += helpTexts.SunThreshold2;
-=======
+<<<<<<< HEAD
                         reply.text = texts.SunThreshold1 + toDash(self.OPTIONS.SUN_THRESHOLD) + ' Dash \n';
+=======
+                        reply.text = texts.SunThreshold1 + dash.toDash(self.OPTIONS.SUN_THRESHOLD) + ' Dash \n';
+>>>>>>> feature/quiz
                         reply.text += texts.SunThreshold2;
->>>>>>> Stashed changes
                         self.slack.say(reply);
                     } else {
                         // inform admin that no threshold set yet
-                        privateReply.text = helpTexts.SunThresholdNotSet;
+                        privateReply.text = texts.SunThresholdNotSet;
                         self.slack.say(privateReply);
                     }
                 }
@@ -1224,7 +1239,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
-        //* GET SLACK ID
+        //  * GET SLACK ID
         if (message.match(/\bgetid\b/i)) {
             if (userMatches.length === 1 && user.is_admin) {
                 let mentioned = userMatches[0];
@@ -1237,20 +1252,285 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             return;
         }
 
+<<<<<<< HEAD
         //   * OOPS
-        let amountOfPossibleResponds = helpTexts.NoCommandFound.length;
+=======
+        //  * QUIZ
+        if (message.match(/\bquiz\b/i)) {
+
+            // list all approved questions
+            if (message.match(/\blist\b/i)) {
+                quiz.getApprovedQuestions(function (err, questions) {
+                    if (err) { debug('Quiz: ERROR loading questions: ' + err); return; }
+                    if (questions.length === 0) {
+                        privateReply.text = texts.QuizNoQuestionsYet;
+                        self.slack.say(privateReply);
+                    } else {
+                        let questionsSentence = texts.QuizListQuestions;
+                        // show all questions and there number so the can be selected for deletion
+                        questions.forEach(function (QandA) {
+                            questionsSentence += '*' + QandA.qaNumber + '*: ' +
+                                QandA.question + '\n' + texts.QuizListReward_1 +
+                                QandA.reward + texts.QuizListReward_2 +
+                                '\n';
+                        });
+                        // tell how to delete a question
+                        if (user.is_admin) {
+                            questionsSentence += '\n\n' + texts.QuizDeleteQuestion;
+                            questionsSentence += '\n' + texts.QuizChangeReward;
+                        }
+                        privateReply.text = questionsSentence;
+                        self.slack.say(privateReply);
+                    }
+                });
+            }
+            // show questions that needs reviewing
+            if (message.match(/\breview\b/i)) {
+                quiz.getUnreviewedQuestions(function (err, questions) {
+                    if (err) { debug('Quiz: ERROR loading questions: ' + err); return; }
+                    if (questions.length === 0) {
+                        privateReply.text = texts.QuizNoQuestionsYet;
+                        self.slack.say(privateReply);
+                    } else {
+                        let questionsSentence = texts.QuizUnreviewed;
+                        // show all questions without a reward and there number so the reward can be set
+                        questions.forEach(function (QandA) {
+                            questionsSentence += QandA.qaNumber + ' ```' +
+                                texts.QuizQ + QandA.question + '\n' +
+                                texts.QuizA + QandA.answer + ' ``` ';
+                        });
+                        // tell how set a reward for a question
+                        questionsSentence += '\n\n' + texts.QuizRewardQuestion_1 + self.slack.identity.name + texts.QuizRewardQuestion_2;
+                        privateReply.text = questionsSentence;
+                        self.slack.say(privateReply);
+                    }
+                });
+            }
+            // start adding question & answer
+            if (message.match(/\badd\b/i)) {
+                // show question and answer and ask for conformation to add it
+                let askConfirmation = function (question, answer, convo) {
+                    convo.ask(
+                        '```' + texts.QuizQ  + question + '\n' +
+                        texts.QuizA + answer + '``` \n' +
+                        texts.QuizConfirmNewQA,
+                        [
+                            {
+                                pattern: self.slack.utterances.yes,
+                                callback: function (response, convo) {
+                                    // save newQ&A to database
+                                    quiz.saveNew(question, answer, function (err) {
+                                        if (err) {
+                                            debug('ERROR saving new quiz question: ' + err);
+                                        } else {
+                                            privateReply.text = texts.QuizSavedToDb;
+                                            self.slack.say(privateReply);
+                                            debug('New Quiz question is added.');
+                                        }
+                                    });
+                                    convo.next();
+                                }
+                            },
+                            {
+                                pattern: self.slack.utterances.no,
+                                callback: function (response, convo) {
+                                    privateReply.text = texts.QuizAbortedSaving;
+                                    self.slack.say(privateReply);
+                                    convo.next();
+                                }
+                            }
+                        ]);
+                };
+                // ask for answer
+                let askAnswer = function (question, convo) {
+                    convo.ask(texts.QuizAddAnser, function (answer, convo) {
+                        askConfirmation(question, answer.text, convo);
+                        convo.next();
+                    });
+                };
+                // ask for question
+                let askQuestion = function (err, convo) {
+                    if (err) {
+                        debug('ERROR cannot start conversation to add a quiz question & answer: ' + err);
+                        return;
+                    }
+                    convo.ask(texts.QuizAddQuestion, function (question, convo) {
+                        askAnswer(question.text, convo);
+                        convo.next();
+                    });
+                };
+                let privateConversation = { user: user.id };
+                self.slack.startPrivateConversation(privateConversation, askQuestion);
+
+            }
+            // delete a question and answer
+            if (message.match(/\bdelete\b/i)) {
+                let questionNumber = message.match(/\d+/i);
+                if (questionNumber === null) {
+                    privateReply.text = texts.QuizNoQAnumber;
+                    self.slack.say(privateReply);
+                    return;
+                }
+                quiz.deleteQuestion(questionNumber, function (err) {
+                    if (err) {
+                        debug('ERROR deleting question ' + questionNumber + ': ' + err);
+                        privateReply.text = texts.QuizDeleteNOK + questionNumber;
+                        self.slack.say(privateReply);
+                        return;
+                    } else {
+                        privateReply.text = texts.QuizDeleteOk;
+                        self.slack.say(privateReply);
+                        debug('Quiz question ' + questionNumber + ' is deleted.');
+                    }
+
+                });
+            }
+            // set reward (aka approve a question)
+            if (message.match(/\breward\b/i)) {
+                let questionNumber = message.match(/\d+/i);
+                if (questionNumber === null || questionNumber.length !== 1) {
+                    privateReply.text = texts.QuizNoQAnumber;
+                    self.slack.say(privateReply);
+                    return;
+                }
+                questionNumber = parseInt(questionNumber[0]);
+                quiz.getQuestion(questionNumber, function (err, question) {
+                    if (err) {
+                        debug('ERROR getting question number: ' + questionNumber + ': ' + err);
+                        privateReply.text = texts.QuizNoQAnumber;
+                        self.slack.say(privateReply);
+                        return;
+                    }
+                    if (question === null) {
+                        privateReply.text = texts.QuizNoQAnumber;
+                        self.slack.say(privateReply);
+                        return;
+                    }
+
+                    let privateConversation = { user: user.id };
+                    self.slack.startPrivateConversation(privateConversation, function (err, convo) {
+                        let askSentence = '_' + question.question + '_\n' + texts.QuizSetReward;
+                        convo.ask(askSentence, function (response, convo) {
+                            let reward = parseFloat(response.text);
+                            if (reward === undefined) {
+                                privateReply.text = texts.QuizSetRewardNoAmountFound;
+                                self.slack.say(privateReply);
+                            } else {
+                                quiz.setReward(questionNumber, reward, function (err) {
+                                    if (err) {
+                                        debug('ERROR setting reward for quiz question number ' + questionNumber + ' to ' + reward + ': ' + err);
+                                        return;
+                                    }
+                                    privateReply.text = texts.QuizSetRewardOk;
+                                    self.slack.say(privateReply);
+                                    debug('Reward for quiz question number ' + questionNumber + ' is set to ' + reward);
+                                });
+
+                            }
+                            convo.next();
+                        });
+
+                    });
+                });
+            }
+
+            // start a quiz(pick questions and ask first one)
+            if (message.match(/\bstart\b/i)) {
+                quiz.start(function (err) {
+                    if (err) {
+                        debug('ERROR starting quiz: ' + err);
+                        reply.text = texts.QuizErrorStarting + err;
+                        self.slack.say(reply);
+                        return;
+                    }
+                    reply.text = texts.QuizStarted1;
+                    //TODO decide of a dedicated quiz channel is needed (private & payed enterance ?)
+                    //reply.text += QuizStarted2 + self.OPTIONS.QuizChannel.name + QuizStarted3;
+                    self.slack.say(reply);
+
+                    // ask first question
+                    self.askQuizQuestion(quiz, reply);
+                });
+            }
+
+            // abort a quiz (normaly not used)
+            if (message.match(/\abort\b/i)) {
+                quiz.abort();
+                reply.text = texts.QuizAborted;
+                self.slack.say(reply);
+            }
+
+            //ask for a question in a running quiz
+            if (message.match(/\banswer\b/i)) {
+                let answer = message.replace('answer', '').replace('quiz', '').trim();
+             //   reply.text = 'A:' + answer + ':A';
+                quiz.checkAnswer(answer, user.name,
+                    function (err, done, correct) {
+                        if (err) { debug(err); return; }
+                        if (correct) {
+                            // TODO refactor in own function?
+                            // correct answer
+                            reply.text = texts.QuizAnswerCorrect;
+                            if (done) {
+                                reply.text = texts.QuizEnded;
+                                // get scores
+                                quiz.end(function (scores) {
+                                    // TODO sort scores
+                                    let quizScoreText = '';
+                                    _.forEach(scores, (score, username) => {
+                                        let scoreText = username + texts.QuizScored + score + '\n';
+                                        debug(scoreText);
+                                        quizScoreText += scoreText;
+                                    });
+                                    // show complete scores
+                                    reply.text += quizScoreText;
+
+                                });
+                                reply.text += texts.QuizThanks;
+                                return;
+                            } else {
+                                // show next question
+                                self.askQuizQuestion(quiz, reply);
+                            }
+                        } else {
+                            // not correct answer
+                            reply.text = texts.QuizAnswerWrong + '\n' +
+                                texts.QuizAskQuestion1 + self.slack.identity.name + texts.QuizAskQuestion2;
+                        }
+                    });
+                self.slack.say(reply);
+
+            }
+            return;
+        }
+        //  * OOPS
+>>>>>>> feature/quiz
+        let amountOfPossibleResponds = texts.NoCommandFound.length;
         let randomRespons = Math.floor((Math.random() * amountOfPossibleResponds) + 1);
-        if (helpTexts.NoCommandFound[randomRespons] === undefined) {
+        if (texts.NoCommandFound[randomRespons] === undefined) {
             randomRespons = 'Unknow helptext (Nr: ' + randomRespons / amountOfPossibleResponds + ')';
         } else {
-            reply.text = '>>>' + helpTexts.NoCommandFound[randomRespons];
-            reply.text += '\n' + helpTexts.Oops;
+            reply.text = '>>>' + texts.NoCommandFound[randomRespons];
+            reply.text += '\n' + texts.Oops;
         }
         self.slack.say(reply);
         return;
     });
 
     return;
+};
+
+TipBot.prototype.askQuizQuestion = function (quiz, reply) {
+    let self = this;
+    quiz.askQuestion(function (err, questionSentence) {
+        if (err) {
+            debug('ERROR cannot tell a quiz question: ' + err);
+            return;
+        }
+        reply.text = questionSentence + '\n' +
+            texts.QuizAskQuestion1 + self.slack.identity.name + texts.QuizAskQuestion2;
+        self.slack.say(reply);
+    });
 };
 
 module.exports = TipBot;

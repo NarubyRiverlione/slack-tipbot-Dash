@@ -1,6 +1,11 @@
 'use strict';
 
 let debug = require('debug')('tipbot:user');
+<<<<<<< HEAD
+//let blocktrail = require('blocktrail-sdk');
+let helpText = require('../text/dash.js').userTxt;
+=======
+>>>>>>> feature/quiz
 
 let helpText = require('../text/txt_dash.js').userTxt;
 let dash = require('./dash');
@@ -37,7 +42,11 @@ function toDash(duff) {
 // send via Blockchain
 function sendAmount(self, toAddress, value, cb) {
     // send  users Account to Address
+<<<<<<< HEAD
+    self.wallet.sendFrom(self.id, toAddress, parseFloat(toDash(value)),
+=======
     self.wallet.sendFrom(self.id, toAddress, parseFloat(dash.toDash(value)),
+>>>>>>> feature/quiz
         function (err, tx_id) {
             if (err) {
                 debug('ERROR sending via blockchain : ' + err);
@@ -46,7 +55,11 @@ function sendAmount(self, toAddress, value, cb) {
                 return;
             }
             let url = self.blockchainUrl + tx_id;
+<<<<<<< HEAD
+            let line = helpText.Withdrawal1 + toDash(value) + ' ' +
+=======
             let line = helpText.Withdrawal1 + dash.toDash(value) + ' ' +
+>>>>>>> feature/quiz
                 helpText.BaseCurrency + ' to ' +
                 toAddress +
                 helpText.WithdrawalTransaction +
@@ -57,7 +70,10 @@ function sendAmount(self, toAddress, value, cb) {
 }
 
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> feature/quiz
 User.prototype.updateFromMember = function (member) {
     let self = this;
     self.name = member.name;
@@ -74,7 +90,11 @@ User.prototype.getBalanceLine = function (cb) {
         if (err) { return; }
         balanceText = self.handle + helpText.BalanceIs + balance + ' ' + helpText.BaseCurrency;
         // check for High Balance
+<<<<<<< HEAD
+        if (toDuff(balance) >= self.tipbot.HighBalanceWarningMark) {
+=======
         if (dash.toDuff(balance) >= self.tipbot.HighBalanceWarningMark) {
+>>>>>>> feature/quiz
             // warn user
             balanceText += '\n *' + helpText.BalanceWarningHigh + '*';
         }
@@ -151,7 +171,11 @@ User.prototype.withdraw = function (value, toAddress, walletPass, cb) {
             cb(err, null);
             return;
         }
+<<<<<<< HEAD
+        balance = toDuff(balance);
+=======
         balance = dash.toDuff(balance);
+>>>>>>> feature/quiz
 
         // check if with all (value = balance)
         if (value === balance) {
@@ -214,7 +238,11 @@ User.prototype.send = function (sendToUser, value, cb) {
 
     // check balance before sending amount to prevent negative saldo
     self.wallet.getBalance(self.id, self.REQUIRED_CONFIRMATIONS, function (err, balance) {
+<<<<<<< HEAD
+        balance = toDuff(balance);
+=======
         balance = dash.toDuff(balance);
+>>>>>>> feature/quiz
         if (err) {
             debug('ERROR checking balance before sending tip: ' + err);
             let error = 'ERROR checking balance before sending tip.';
@@ -230,10 +258,17 @@ User.prototype.send = function (sendToUser, value, cb) {
         }
 
         // use a in wallet transfer
+<<<<<<< HEAD
+        self.wallet.move(self.id, sendToUser.id, parseFloat(toDash(value)), function (err, result) {
+            if (err) {
+                debug('ERROR: moving between account (' + self.id + ') to acount (' + sendToUser.id + ')' + err);
+                error = helpText.SendOops1 + toDash(value) + ' ' + helpText.BaseCurrency + helpText.SendOops2 + sendToUser.name + '';
+=======
         self.wallet.move(self.id, sendToUser.id, parseFloat(dash.toDash(value)), function (err, result) {
             if (err) {
                 debug('ERROR: moving between account (' + self.id + ') to acount (' + sendToUser.id + ')' + err);
                 error = helpText.SendOops1 + dash.toDash(value) + ' ' + helpText.BaseCurrency + helpText.SendOops2 + sendToUser.name + '';
+>>>>>>> feature/quiz
                 self.locked = false; //  this transaction is done, clear lock to allow new transactions
                 cb(error, null);
 
@@ -242,14 +277,22 @@ User.prototype.send = function (sendToUser, value, cb) {
 
             if (result === true) {
 
+<<<<<<< HEAD
+                debug('Sending Tip: Moved ' + toDash(value) + ' Dash from ' + self.handle + ' to ' + sendToUser.name + '(' + sendToUser.id + ')');
+=======
                 debug('Sending Tip: Moved ' + dash.toDash(value) + ' Dash from ' + self.handle + ' to ' + sendToUser.name + '(' + sendToUser.id + ')');
+>>>>>>> feature/quiz
                 // prepare message in channel where Tip command was issued
                 let responses = {
                     public: helpText.SendPublicMessage1 + self.handle + helpText.SendPublicMessage2 + sendToUser.handle
                 };
                 //  prepare message to recieving user to inform of tip
                 responses.privateToReciever = helpText.SendPrivateMssRecievingUser1 + sendToUser.handle +
+<<<<<<< HEAD
+                    helpText.SendPrivateMssRecievingUser2 + toDash(value) + ' ' +
+=======
                     helpText.SendPrivateMssRecievingUser2 + dash.toDash(value) + ' ' +
+>>>>>>> feature/quiz
                     helpText.BaseCurrency + helpText.SendPrivateMssRecievingUser3 + self.handle + ' !';
                 // prepare message to sending user to inform of new balance
                 self.getBalanceLine(function (err, balanceLine) {
@@ -260,7 +303,11 @@ User.prototype.send = function (sendToUser, value, cb) {
                 });
             } else {
                 // result == false
+<<<<<<< HEAD
+                error = helpText.SendOops1 + toDash(value) + ' ' + helpText.BaseCurrency + helpText.SendOops2 + sendToUser.name + '';
+=======
                 error = helpText.SendOops1 + dash.toDash(value) + ' ' + helpText.BaseCurrency + helpText.SendOops2 + sendToUser.name + '';
+>>>>>>> feature/quiz
                 self.locked = false;  //  this transaction is done, clear lock to allow new transactions
                 cb(error, null);
             }
