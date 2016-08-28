@@ -30,7 +30,8 @@ const TIPBOT_OPTIONS = {
 
 let OPTIONS = {
     PRICE_CHANNEL_NAME: debugMode ? 'bot_testing' : 'price_speculation',
-    MODERATOR_CHANNEL_NAME: 'moderators',
+    WARN_MODS_USER_LEFT_CHANNELNAME: debugMode ? 'bot_testing' : 'moderators',
+    WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot_testing' : 'dash_chat',
     MAIN_CHANNEL_NAME: debugMode ? 'bot_testing' : 'dash_chat',
 
     SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
@@ -163,15 +164,27 @@ controller.on('hello', function (bot) {
             }
         });
     }
-    // find channelID of MODERATOR_CHANNEL_NAME to post warning messages
-    if (OPTIONS.MODERATOR_CHANNEL_NAME !== undefined) {
-        tipbot.getChannel(OPTIONS.MODERATOR_CHANNEL_NAME, function (err, moderatorChannel) {
+    // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
+    if (OPTIONS.WARN_NEW_USER_CHANNELNAME !== undefined) {
+        tipbot.getChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, function (err, warnNewUserChannel) {
             if (err) {
-                debug('tipbot:bot')('ERROR: No Moderator channel found to send admin messages to.');
+                debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' channel not found!');
             } else {
-                debug('tipbot:bot')('Init: Moderator channel ' + OPTIONS.MODERATOR_CHANNEL_NAME + ' = ' + moderatorChannel.id);
-                // set moderator channel for tipbot
-                tipbot.OPTIONS.MODERATOR_CHANNEL = moderatorChannel;
+                debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' = ' + warnNewUserChannel.id);
+                // set new user warning channel for tipbot
+                tipbot.OPTIONS.WARN_NEW_USER_CHANNEL = warnNewUserChannel;
+            }
+        });
+    }
+    // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
+    if (OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME !== undefined) {
+        tipbot.getChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, function (err, warnUserLeftChannel) {
+            if (err) {
+                debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' channel not found!');
+            } else {
+                debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' = ' + warnUserLeftChannel.id);
+                // set new user warning channel for tipbot
+                tipbot.OPTIONS.WARN_MODS_USER_LEFT = warnUserLeftChannel;
             }
         });
     }

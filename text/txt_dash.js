@@ -80,7 +80,8 @@ const tipbotTxt = {
     '*quiz delete _question number_*\tDelete a question.\n' +
     '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
     '*quiz start*\t\tStart a quiz.\n' +
-    '*quiz abort*\t\tStop a quiz without showing results.\n',
+    '*quiz abort*\t\tStop a quiz without showing results.\n'+
+    '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
 
     'tx_fee': 'The transaction fee is set to ',
     'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
@@ -253,7 +254,8 @@ const quizTxt = {
     'alreadyRunning' : 'Already in a quiz',
     'notStarted_noApprovedQ' :'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
     'done': 'All questions in this quiz are answered.',
-    'notRunning':'Quiz isn\'t running at the moment'
+    'notRunning':'Quiz isn\'t running at the moment',
+    'alreadyAnswered' : ' ,you already tried to answer this question, let the others have a try.'
 };
 
 const userTxt = {
