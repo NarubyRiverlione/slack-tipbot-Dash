@@ -26,7 +26,7 @@ const TIPBOT_OPTIONS = {
     WARN_MODS_NEW_USER: !debugMode,
     WARN_MODS_USER_LEFT: !debugMode,
     SUN_USERNAME: 'dashsun',
-    SUN_TIMER: debugMode ? 15 : 30  // debug = check sun every minute, production check every 30 minutes
+    SUN_TIMER: debugMode ? 30 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
@@ -256,8 +256,7 @@ controller.on('tick', function () {
         // only when TipBot is finished initializing
 
         // check sun balance every X minutes
-        if (tipbot.OPTIONS.SUN_THRESHOLD !== undefined &&
-            tipbot.OPTIONS.SUN_TIMER !== undefined &&
+        if (tipbot.OPTIONS.SUN_TIMER !== undefined &&
             tipbot.sunUser !== undefined) {
             // only check sun balance every SUN_TIMER min
             if (sunTicker === 0) {
