@@ -7,6 +7,7 @@ let assert = require('assert');
 let parseArgs = require('minimist');
 let mongoose = require('mongoose');
 let autoIncrement = require('mongoose-auto-increment');
+let async = require('async');
 
 let argv = parseArgs(process.argv.slice(2));
 
@@ -151,60 +152,103 @@ controller.on('hello', function (bot) {
         var TipBot = require('./lib/tipbot');
         tipbot = new TipBot(bot, RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS);
     }
-
+    let setChannelTasks = [];
     // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
-    if (OPTIONS.PRICE_CHANNEL_NAME !== undefined) {
-        tipbot.getChannel(OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
-            if (err) {
-                debug('tipbot:bot')('Init: No price channel to broadcast.');
-            } else {
-                debug('tipbot:bot')('Init: Price channel ' + OPTIONS.PRICE_CHANNEL_NAME + ' = ' + priceChannel.id);
-                // tell all prices on the price list
-                tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
-            }
+    setChannelTasks.push(
+        function (asyncCB) {
+            setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast', asyncCB);
         });
-    }
+    // if (OPTIONS.PRICE_CHANNEL_NAME !== undefined) {
+    //     tipbot.getChannel(OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
+    //         if (err) {
+    //             debug('tipbot:bot')('Init: No price channel to broadcast.');
+    //         } else {
+    //             debug('tipbot:bot')('Init: Price channel ' + OPTIONS.PRICE_CHANNEL_NAME + ' = ' + priceChannel.id);
+    //             // tell all prices on the price list
+    //             tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
+    //         }
+    //     });
+    // }
     // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
-    if (OPTIONS.WARN_NEW_USER_CHANNELNAME !== undefined) {
-        tipbot.getChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, function (err, warnNewUserChannel) {
-            if (err) {
-                debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' channel not found!');
-            } else {
-                debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' = ' + warnNewUserChannel.id);
-                // set new user warning channel for tipbot
-                tipbot.OPTIONS.WARN_NEW_USER_CHANNEL = warnNewUserChannel;
-            }
+    setChannelTasks.push(
+        function (asyncCB) {
+            setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel', asyncCB);
         });
-    }
+    // if (OPTIONS.WARN_NEW_USER_CHANNELNAME !== undefined) {
+    //     tipbot.getChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, function (err, warnNewUserChannel) {
+    //         if (err) {
+    //             debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' channel not found!');
+    //         } else {
+    //             debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' = ' + warnNewUserChannel.id);
+    //             // set new user warning channel for tipbot
+    //             tipbot.OPTIONS.WARN_NEW_USER_CHANNEL = warnNewUserChannel;
+    //         }
+    //     });
+    // }
     // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
-    if (OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME !== undefined) {
-        tipbot.getChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, function (err, warnUserLeftChannel) {
-            if (err) {
-                debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' channel not found!');
-            } else {
-                debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' = ' + warnUserLeftChannel.id);
-                // set new user warning channel for tipbot
-                tipbot.OPTIONS.WARN_MODS_USER_LEFT = warnUserLeftChannel;
-            }
+    setChannelTasks.push(
+        function (asyncCB) {
+            setChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, 'WARN_MODS_USER_LEFT', ' Warn channel not set', asyncCB);
         });
-    }
+    // if (OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME !== undefined) {
+    //     tipbot.getChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, function (err, warnUserLeftChannel) {
+    //         if (err) {
+    //             debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' channel not found!');
+    //         } else {
+    //             debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' = ' + warnUserLeftChannel.id);
+    //             // set new user warning channel for tipbot
+    //             tipbot.OPTIONS.WARN_MODS_USER_LEFT = warnUserLeftChannel;
+    //         }
+    //     });
+    // }
     // find channelID of MAIN_CHANNEL to post general messages
-    if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
-        tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, mainChannel) {
-            if (err) {
-                debug('tipbot:bot')('ERROR: No Main channel found to send general messages to.');
-            } else {
-                debug('tipbot:bot')('Init: Main channel ' + OPTIONS.MAIN_CHANNEL_NAME + ' = ' + mainChannel.id);
-                // set moderator channel for tipbot
-                tipbot.OPTIONS.MAIN_CHANNEL = mainChannel;
-            }
+    setChannelTasks.push(
+        function (asyncCB) {
+            setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to', asyncCB);
         });
-    }
+    // if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
+    //     tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, channel) {
+    //         if (err) {
+    //             debug('tipbot:bot')('ERROR: No Main channel found to send general messages to.');
+    //         } else {
+    //             debug('tipbot:bot')('Init: Main channel ' + OPTIONS.MAIN_CHANNEL_NAME + ' = ' + channel.id);
+    //             // set moderator channel for tipbot
+    //             tipbot.OPTIONS.MAIN_CHANNEL = channel;
+    //         }
+    //     });
+    // }
 
+    //execute all setChannel tasks
+    async.parallel(setChannelTasks,
+        function () {
+            debug('tipbot:init')('All channels are set.');
+        }
+    );
     // connection is ready = clear initializing flag
     initializing--;
     // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 });
+
+
+function setChannel(channelName, tipBotChannel, errMsg, cb) {
+    // find channelID of MAIN_CHANNEL to post general messages
+    if (channelName !== undefined) {
+        tipbot.getChannel(channelName, function (err, channel) {
+            if (err) {
+                debug('tipbot:init')('ERROR: No ' + channelName + ' channel found. ' + errMsg);
+                cb();
+            } else {
+                tipbot.OPTIONS[tipBotChannel] = channel;
+                debug('tipbot:init')('Init: Channel ' + channelName + ' = ' + channel.id);
+                cb();
+            }
+        });
+    } else {
+        debug('tipbot:init')('ERROR: can get channel because channelname is not set');
+        cb();
+    }
+}
+
 
 // response to ticks
 controller.on('tick', function () {
