@@ -28,8 +28,8 @@
         "Hyphen Required": "Error"
     },
     "languageIDs": [
-       // "markdown",
-       // "text"
+        "markdown",
+        "text"
     ],
     "ignoreRegExp": []
 }
