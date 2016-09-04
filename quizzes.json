@@ -1,0 +1,8 @@
+{"_id":{"$oid":"57af4024070a78092e2c0f0d"},"question":"What exact date (DD.MM.YYYY) was the Dash (then Darkcoin) blockchain launched?","answer":"19.01.2014","__v":0,"reward":5,"qaNumber":4.0}
+{"_id":{"$oid":"57af414f070a78092e2c0f0e"},"question":"How old is the Dash budget system?","answer":"10 months","__v":0,"reward":1,"qaNumber":3.0}
+{"_id":{"$oid":"57b7620fbe2e58b44dae78c5"},"question":"What is busters podcast stage name?","answer":"Bill cassidy","reward":3,"__v":0,"qaNumber":2.0}
+{"_id":{"$oid":"57b76288be2e58b44dae78c6"},"question":"What coin codebase is Dash based on?","answer":"Bitcoin","reward":1,"__v":0,"qaNumber":5.0}
+{"_id":{"$oid":"57b762dabe2e58b44dae78c7"},"question":"How many minutes pass between Dash blocks (on average)?","answer":"2.5","reward":0.01,"__v":0,"qaNumber":6.0}
+{"_id":{"$oid":"57c1a124290bbdb308828913"},"qaNumber":11,"question":"Who started the dash slack?","answer":"Buster","reward":2,"__v":0}
+{"_id":{"$oid":"57c1a176290bbdb308828914"},"qaNumber":12,"question":"What are dash denominated in?","answer":"Duffs","reward":0,"__v":0}
+{"_id":{"$oid":"57c253e6290bbdb308828915"},"qaNumber":13,"question":"What was the original name of Dash?","answer":"Xcoin","reward":0.02,"__v":0}
