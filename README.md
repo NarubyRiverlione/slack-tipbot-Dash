@@ -74,15 +74,45 @@ eg; `_@tipbot price in USD!`
 ##### `convert`    - ask the bot to convert between a particular currency and Dash (or visa versa)
 eg; `@tipbot 1 USD to EUR!_​  or; ​_@tipbot 0.03 DASH to GBP`
 
+##### `sun`       - check the available sunshine. 
+Each user that has tipped another user will receive a _sunray_ (read: free Dash) from the sun fund.
 
-### Channels
-By default the tipbot joins the default `#general` channel, you can invite him into other channels just like you invite normal users into channels.
+##### `quiz add`   - The bot will ask to input a new quiz question and answer.
+Each question needs to be reviewed by a moderator.
+
+##### `quiz answer` - Post an answer to a quiz question.
 
 
-When enabled by an admin you can ask dash:
-- ​*receive* <value + unit> @someone​  tell the bot to request coins from someone.  `@tipbot I want to receive 0.1 Dash from @bob` will request 0.1 Dash from @bob. After you've requested coins from someone that person will be asked if that is OK, replying with `yes`, `ok` or `sure` will make the transaction happen. The `<value + unit>` can be `0.1 Dash` or `10000000 Satoshi`  This command has a few aliases which you can use; `ask`, `demand`, `deserve`, `send me`, `give me`, `gimme` and `owes me` eg; `@tipbot I demand 0.1 Dash from @bob for making such a cool bot` or `@tipbot @bob please gimme 0.1 Dash for lunch`
+#### ADMIN ONLY COMMANDS
+##### `emergency restart` Restart the Slack connection of tipbot. 
+
+##### `balance all`      show all the tip jars (must be enabled in code)
+
+##### `balance check`    show the balance of a specific user (must be enabled in code) 
+eg;        `dashbot balance check @user` 
 
 
-## Security / Privacy
-The (admin of the) tipbot is in full control of the coins.
-When you invite the tipbot into a channel it can see all the messages in the channel.
+##### `whisper`         Send a message in a private channel to a user as dashbot.
+Use case :moderator warning.
+
+
+##### `sun threshold`  Set the threshold on where the balance of the sun account will be distributed between all the users that tipped. Defaults to 5 Dash.
+
+##### `sun eligible`  See which users are eligible for a sunray.
+
+##### `sun reset`     Reset all tip counts, not needed normally as tip counters are reset when sun is shining.'
+
+
+##### `quiz list`    Show all approved questions.
+
+##### `quiz review`  List all questions that need to be reviewed (reward = 0).
+
+##### `quiz delete _question number_`   Delete a question.
+
+##### `quiz reward _question number_`   Set/change reward for a question (also approves the question). @dashbot will ask amount.
+
+##### `quiz star`    Start a quiz.
+
+##### `quiz abort`   Stop a quiz without showing results.
+
+##### `quiz next`    Skip the current question (if no one finds the answer).
