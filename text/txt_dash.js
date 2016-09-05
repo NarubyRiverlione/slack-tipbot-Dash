@@ -79,7 +79,7 @@ const tipbotTxt = {
 '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n' +
 '*quiz delete _question number_*\tDelete a question.\n' +
 '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
-'*quiz start*\t\tStart a quiz.\n' +
+'*quiz start amount*\t\tStart a quiz by setting the amount of questions.\n' +
 '*quiz abort*\t\tStop a quiz without showing results.\n'+
 '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
 
@@ -218,7 +218,7 @@ const tipbotTxt = {
     'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
 
     'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
-
+    'QuizStartNoAmount' : 'You need to provided the amount of questions in this quiz. \n_quiz start amount_',
     'QuizStarted1': 'A quiz has started !',
     'QuizStarted2': 'Go to the ',
     'QuizStarted3': ' channel to participate.',
