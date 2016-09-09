@@ -193,7 +193,7 @@ const tipbotTxt = {
     'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
     'QuizAbortedSaving': 'Ok, I will ignore that question.',
     'QuizListQuestions': '*I know about this questions:* \n',
-    'QuizListReward_1' : '\tReward',
+    'QuizListReward_1' : '\tReward: ',
     'QuizListReward_2' : ' points.',
     'QuizQ' : 'Q: ',
     'QuizA' : 'A: ',
