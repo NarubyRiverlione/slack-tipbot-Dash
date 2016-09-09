@@ -1,21 +1,31 @@
 #Dash TipBot For Slack
 Easily transfer money between team members on your Slack channel.
 
-## Features
+## Basic features
  - With a single message, send and receive Dash
  - A tip has no transaction fee. There are no extra cost added to your tip.
+ - Get the fiat prices.
 
+## Advanced features (can be disabled)
+- Sun: every user that tips another user is eligble of recieving form the sun fund.
+- Quiz:
+-
 
 ## How to Run a TipBot
-### Setup
+### Setup Slack Bot
  - Add a bot integration to Slack [here](https://my.slack.com/services/new/bot)
     - Make sure you copy the Slack API token
 
-### Install
+
+### Install TipBot
  - `git clone https://github.com/narubyriverlione/slack-tipbot`
  - `cd slack-tipbot`
  - `npm install`
- - create cache directory for the price rates: `mkdir tmp/rates`
+
+
+### Optional depending on enabled advanced features
+- Install MongoDB (depending on your OS follow: https://docs.mongodb.com/manual/administration/install-community/ )
+
 
 ### Run
 Change the `YOUR_SLACK_TOKEN`, `YOUR_RPC_USER` and `YOUR_RPC_PASSWORD` in the below snippet to the API key.
@@ -32,19 +42,21 @@ You can also set the *RPC port* if you need to, it defaults to 9998
 
 If your wallet is locked (and it should !) provided the *passphrase* via the `--wallet-password`argument or the `TIPBOT_WALLET_PASSWORD` enviroment variable.
 
+Optional you can set `DEBUG = "tipbot:*"` to see debug messages.
+
 
 You should use [forever](https://www.npmjs.com/package/forever) to run the bot persistend.
 Create a json file with all the needed arguments.
 
 
-### Usage
+## Usage
 You can control / communicate with the tipbot by sending the bot a **direct message** or **mentioning** its name in a channel.
 The tipbot responds to certain 'trigger words' in a sentence, so you can wrap the trigger word in a nice looking sentence and it will work.
 
 For example, to trigger the `help` command you can could say `hey @tipbot can you help me figure out how tipping works`
 and the `help` in that sentence will trigger displaying the help information.
 
-#### Commands / Trigger words
+## Commands / Trigger words
 ##### `help`        - *ask the bot for help*
 eg; `hey @tipbot can you show me the help info!`
 
@@ -83,7 +95,7 @@ Each question needs to be reviewed by a moderator.
 ##### `quiz answer` - Post an answer to a quiz question.
 
 
-#### ADMIN ONLY COMMANDS
+### ADMIN ONLY COMMANDS
 ##### `emergency restart` Restart the Slack connection of tipbot. 
 
 ##### `balance all`      show all the tip jars (must be enabled in code)
