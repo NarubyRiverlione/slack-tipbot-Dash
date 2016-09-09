@@ -23,6 +23,8 @@ const TIPBOT_OPTIONS = {
     WALLET_PASSW: WALLET_PASSW,
     ALL_BALANCES: true,
     OTHER_BALANCES: true,
+    ENABLE_SUN_FEATURE: false,
+    ENABLE_QUIZ_FEATURE: false,
     WARN_MODS_NEW_USER: !debugMode,
     WARN_MODS_USER_LEFT: !debugMode,
     SUN_USERNAME: 'dashsun',
@@ -68,15 +70,6 @@ let controller = Botkit.slackbot({
     //or a 'logLevel' integer from 0 to 7 to adjust logging verbosity
 });
 
-// open mongoose connection
-mongoose.connect(OPTIONS.DB,
-    { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
-
-let db = mongoose.connection;
-db.on('error', function (err) {
-    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
-});
-
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
     // spawns the slackbot
@@ -111,16 +104,30 @@ function connect(controller) {
     });
 }
 
-// database connection open =  conncect to slack
-db.once('open', function () {
-    autoIncrement.initialize(db);
-    require('./model/tipper');  // load mongoose Tipper model
-    require('./model/quiz');// load mongoose Quiz model
-    debug('tipbot:db')('********* Database connected ********');
-    // make connnection to Slack
-    connect(controller);
+// open mongoDB connection if needed for a feature
+const needMongoDb = TIPBOT_OPTIONS.ENABLE_SUN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE;
+if (needMongoDb) {
+    mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
+    let db = mongoose.connection;
+    db.on('error', function (err) {
+        debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
+    });
 
-});
+    // database connection open =  conncect to slack
+    db.once('open', function () {
+        autoIncrement.initialize(db);
+        require('./model/tipper');  // load mongoose Tipper model
+        require('./model/quiz');// load mongoose Quiz model
+        debug('tipbot:db')('********* Database connected ********');
+        // make connnection to Slack
+        connect(controller);
+
+    });
+} else {
+    debug('tipbot:init')('No features enabled that need mongoDb.');
+    // no mongoDB needed, connect now to slack
+    connect(controller);
+}
 
 // connection to Slack has ended
 controller.on('rtm_close', function () {
@@ -158,65 +165,25 @@ controller.on('hello', function (bot) {
         function (asyncCB) {
             setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast', asyncCB);
         });
-    // if (OPTIONS.PRICE_CHANNEL_NAME !== undefined) {
-    //     tipbot.getChannel(OPTIONS.PRICE_CHANNEL_NAME, function (err, priceChannel) {
-    //         if (err) {
-    //             debug('tipbot:bot')('Init: No price channel to broadcast.');
-    //         } else {
-    //             debug('tipbot:bot')('Init: Price channel ' + OPTIONS.PRICE_CHANNEL_NAME + ' = ' + priceChannel.id);
-    //             // tell all prices on the price list
-    //             tipbot.OPTIONS.PRICETICKER_CHANNEL = priceChannel;
-    //         }
-    //     });
-    // }
+
     // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
     setChannelTasks.push(
         function (asyncCB) {
             setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel', asyncCB);
         });
-    // if (OPTIONS.WARN_NEW_USER_CHANNELNAME !== undefined) {
-    //     tipbot.getChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, function (err, warnNewUserChannel) {
-    //         if (err) {
-    //             debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' channel not found!');
-    //         } else {
-    //             debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_NEW_USER_CHANNELNAME + ' = ' + warnNewUserChannel.id);
-    //             // set new user warning channel for tipbot
-    //             tipbot.OPTIONS.WARN_NEW_USER_CHANNEL = warnNewUserChannel;
-    //         }
-    //     });
-    // }
+
     // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
     setChannelTasks.push(
         function (asyncCB) {
             setChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, 'WARN_MODS_USER_LEFT', ' Warn channel not set', asyncCB);
         });
-    // if (OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME !== undefined) {
-    //     tipbot.getChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, function (err, warnUserLeftChannel) {
-    //         if (err) {
-    //             debug('tipbot:bot')('ERROR: ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' channel not found!');
-    //         } else {
-    //             debug('tipbot:bot')('Init: channel ' + OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME + ' = ' + warnUserLeftChannel.id);
-    //             // set new user warning channel for tipbot
-    //             tipbot.OPTIONS.WARN_MODS_USER_LEFT = warnUserLeftChannel;
-    //         }
-    //     });
-    // }
+
     // find channelID of MAIN_CHANNEL to post general messages
     setChannelTasks.push(
         function (asyncCB) {
             setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to', asyncCB);
         });
-    // if (OPTIONS.MAIN_CHANNEL_NAME !== undefined) {
-    //     tipbot.getChannel(OPTIONS.MAIN_CHANNEL_NAME, function (err, channel) {
-    //         if (err) {
-    //             debug('tipbot:bot')('ERROR: No Main channel found to send general messages to.');
-    //         } else {
-    //             debug('tipbot:bot')('Init: Main channel ' + OPTIONS.MAIN_CHANNEL_NAME + ' = ' + channel.id);
-    //             // set moderator channel for tipbot
-    //             tipbot.OPTIONS.MAIN_CHANNEL = channel;
-    //         }
-    //     });
-    // }
+
 
     //execute all setChannel tasks
     async.parallel(setChannelTasks,
@@ -256,7 +223,8 @@ controller.on('tick', function () {
         // only when TipBot is finished initializing
 
         // check sun balance every X minutes
-        if (tipbot.OPTIONS.SUN_TIMER !== undefined &&
+        if (tipbot.ENABLE_SUN_FEATURE &&
+            tipbot.OPTIONS.SUN_TIMER !== undefined &&
             tipbot.sunUser !== undefined) {
             // only check sun balance every SUN_TIMER min
             if (sunTicker === 0) {

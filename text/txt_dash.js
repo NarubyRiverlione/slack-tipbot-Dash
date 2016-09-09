@@ -43,16 +43,15 @@ const tipbotTxt = {
 // 'help_rain':
 // '*rain*\t\tcheck the available rain and threshold. \n ' +
 // '\t\tAdmins can also release the rain with the *rain now* command.\n',
-
-// 'help_sun':
+    ],
+    'help_sun':
         '*sun*\t\t\tcheck the available sunshine. \n' +
 '\t\t\tEach user that has tipped another user will receive a _sunray_ (read: free Dash) from the sun fund.',
 
-// 'help_quiz'
-        '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n',
+    'help_quiz' :
+        '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n'+
 // + '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n' +
-        '*quiz answer*\t\tPost an answer to a quiz question.\n'
-    ],
+        '*quiz answer*\t\tPost an answer to a quiz question.\n',
 
     'helpAdminOnly':
 '===== *ADMIN ONLY COMMANDS* =====\n' +
