@@ -32,8 +32,8 @@ const TIPBOT_OPTIONS = {
 };
 
 let OPTIONS = {
-    PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'price_speculation',
-    WARN_MODS_USER_LEFT_CHANNELNAME: debugMode ? 'bot-testing' : 'moderators',
+    PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
+    WARN_MODS_USER_LEFT_CHANNELNAME: debugMode ? 'bot-testing' : 'dnt_moderation',
     WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
     MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
 
@@ -61,7 +61,7 @@ assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required');
 4) 'hello' = connected => setup tipbot
 */
 
-
+debug('tipbot:bot')('Debug mode is: ' + debugMode);
 // setup Slack Controller
 let controller = Botkit.slackbot({
     logLevel: 4,
