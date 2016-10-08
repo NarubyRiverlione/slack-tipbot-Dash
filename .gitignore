@@ -10,7 +10,6 @@ lib-cov
 *.swp
 tags
 pids
-logs
 results
 build
 

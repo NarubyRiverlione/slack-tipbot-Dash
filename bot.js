@@ -34,8 +34,8 @@ const TIPBOT_OPTIONS = {
 let OPTIONS = {
     PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'price_speculation',
     WARN_MODS_USER_LEFT_CHANNELNAME: debugMode ? 'bot-testing' : 'moderators',
-    WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_chat',
-    MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_chat',
+    WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
+    MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
 
     SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
