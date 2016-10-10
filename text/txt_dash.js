@@ -86,8 +86,8 @@ const tipbotTxt = {
     'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
 // 'HelpRandom2': 'You can get information about all my other cool tricks via the *help* command. \n Have a nice day !',
 // NEW USER
-    'WarningNewUser1': 'The new user ',
-    'WarningNewUser2': ' has joined Dash Nation! Let\'s give him a warm welcome.',
+    'WarningNewUser1': 'A new user joins Dash Nation! Let\'s give ',
+    'WarningNewUser2': ' a warm welcome.',
 // USER LEFT
     'WarnUserLeft1': 'The user ',
     'WarnUserLeft2': ' has left the slack team. Think about his/her tip jar.',
