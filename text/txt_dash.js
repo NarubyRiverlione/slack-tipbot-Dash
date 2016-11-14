@@ -87,7 +87,7 @@ const tipbotTxt = {
     // 'HelpRandom2': 'You can get information about all my other cool tricks via the *help* command. \n Have a nice day !',
     // NEW USER
     'WarningNewUser1': 'A new user joins Dash Nation! A warm welcome to our Slack, ',
-    'WarningNewUser2': ' ',
+    'WarningNewUser2': '.',
     // USER LEFT
     'WarnUserLeft1': 'The user ',
     'WarnUserLeft2': ' has left the slack team. Think about his/her tip jar.',
