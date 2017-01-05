@@ -4,21 +4,21 @@
   "description": "Dash Slack TipBot - Using local wallet",
   "main": "bot.js",
   "dependencies": {
-    "async": "^2.0.0",
+    "async": "^2.1.0",
     "bitcoin": "^3.0.1",
-    "bitcoinjs-lib": "~1.4.3",
-    "botkit": "^0.2.2",
-    "debug": "^2.2.0",
-    "lodash": "^3.1.0",
+    "bitcoinjs-lib": "^1.4.3",
+    "botkit": "^0.4.7",
+    "debug": "^2.6.0",
+    "lodash": "^4.17.0",
     "minimist": "^1.1.0",
-    "mongoose": "^4.5.7",
+    "mongoose": "^4.7.0",
     "mongoose-auto-increment": "^5.0.1",
     "request": "^2.68.0",
-    "snyk": "^1.18.0",
     "waitjs": "^0.2.0"
   },
   "devDependencies": {
-    "eslint": "^3.4.0"
+    "eslint": "^3.12.0",
+    "snyk": "^1.23.0"
   },
   "scripts": {
     "test": "snyk test",
