@@ -267,7 +267,7 @@ const userTxt = {
   'UnconfirmedBalance1': 'you have an unconfirmed balance (less than ',
   'UnconfirmedBalance2': ' confirmations) of ',
   'BalanceWarningHigh': 'This tip jar is filling up. Please consider withdrawing some Dash.',
-  'NoBalance': 'You don\'t have a balance (yet). Use the _deposite_ command to fill your ip jar.',
+  'NoBalance': 'You don\'t have a balance (yet). Use the _deposit_ command to fill your tip jar.',
   // WITHDRAW
   'Withdrawal1': 'Withdrawal of ',
   'WithdrawalTransaction': ' transaction: ',
