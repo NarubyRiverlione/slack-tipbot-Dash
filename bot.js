@@ -20,26 +20,26 @@ const WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWO
 const debugMode = process.env.NODE_ENV === 'development' ? true : false;
 
 const TIPBOT_OPTIONS = {
-    WALLET_PASSW: WALLET_PASSW,
-    ALL_BALANCES: true,
-    OTHER_BALANCES: true,
-    ENABLE_SUN_FEATURE: false,
-    ENABLE_QUIZ_FEATURE: false,
-    WARN_MODS_NEW_USER: !debugMode,
-    WARN_MODS_USER_LEFT: !debugMode,
-    SUN_USERNAME: 'dashsun',
-    SUN_TIMER: debugMode ? 30 : 30  // debug = check sun every minute, production check every 30 minutes
+  WALLET_PASSW: WALLET_PASSW,
+  ALL_BALANCES: true,
+  OTHER_BALANCES: true,
+  ENABLE_SUN_FEATURE: false,
+  ENABLE_QUIZ_FEATURE: false,
+  WARN_MODS_NEW_USER: !debugMode,
+  WARN_MODS_USER_LEFT: !debugMode,
+  SUN_USERNAME: 'dashsun',
+  SUN_TIMER: debugMode ? 30 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
-    PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
-    WARN_MODS_USER_LEFT_CHANNELNAME: debugMode ? 'bot-testing' : 'dnt_moderation',
-    WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
-    MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
+  PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
+  WARN_MODS_CHANNELNAME: debugMode ? 'bot-testing' : 'moderation_channel',
+  WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
+  MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
 
-    SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
+  SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
-    DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
+  DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
 };
 
 let initializing = 0;
@@ -64,268 +64,268 @@ assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required');
 debug('tipbot:bot')('Debug mode is: ' + debugMode);
 // setup Slack Controller
 let controller = Botkit.slackbot({
-    logLevel: 4,
-    debug: true
-    //include 'log: false' to disable logging
-    //or a 'logLevel' integer from 0 to 7 to adjust logging verbosity
+  logLevel: 4,
+  debug: true
+  //include 'log: false' to disable logging
+  //or a 'logLevel' integer from 0 to 7 to adjust logging verbosity
 });
 
 // connection to slack (function so it can be used to reconnect)
 function connect(controller) {
-    // spawns the slackbot
-    controller.spawn({
-        token: SLACK_TOKEN,
-        retry: 10
-    }).startRTM(function (err, bot, payload) {
-        if (err) {
-            throw new Error(err);
-        }
-        // get info where bot is active
-        let channels = [],
-            groups = [];
+  // spawns the slackbot
+  controller.spawn({
+    token: SLACK_TOKEN,
+    retry: 10
+  }).startRTM(function (err, bot, payload) {
+    if (err) {
+      throw new Error(err);
+    }
+    // get info where bot is active
+    let channels = [],
+      groups = [];
 
-        _.each(payload.channels, function (channel) {
-            if (channel.is_member) {
-                channels.push('#' + channel.name);
-            }
-        });
-
-        _.each(payload.groups, function (group) {
-            if (group.is_open && !group.is_archived) {
-                groups.push(group.name);
-            }
-        });
-
-        debug('tipbot:bot')('******** Connected to Slack ********');
-        debug('tipbot:bot')('You are <@%s:%s> of %s', payload.self.id, payload.self.name, payload.team.name);
-        debug('tipbot:bot')('You are in (channels): %s', channels.join(', '));
-        debug('tipbot:bot')('As well as (groups): %s', groups.join(', '));
-
+    _.each(payload.channels, function (channel) {
+      if (channel.is_member) {
+        channels.push('#' + channel.name);
+      }
     });
+
+    _.each(payload.groups, function (group) {
+      if (group.is_open && !group.is_archived) {
+        groups.push(group.name);
+      }
+    });
+
+    debug('tipbot:bot')('******** Connected to Slack ********');
+    debug('tipbot:bot')('You are <@%s:%s> of %s', payload.self.id, payload.self.name, payload.team.name);
+    debug('tipbot:bot')('You are in (channels): %s', channels.join(', '));
+    debug('tipbot:bot')('As well as (groups): %s', groups.join(', '));
+
+  });
 }
 
 // open mongoDB connection if needed for a feature
 const needMongoDb = TIPBOT_OPTIONS.ENABLE_SUN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE;
 if (needMongoDb) {
-    mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
-    let db = mongoose.connection;
-    db.on('error', function (err) {
-        debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
-    });
+  mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
+  let db = mongoose.connection;
+  db.on('error', function (err) {
+    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err);
+  });
 
-    // database connection open =  conncect to slack
-    db.once('open', function () {
-        autoIncrement.initialize(db);
-        require('./model/tipper');  // load mongoose Tipper model
-        require('./model/quiz');// load mongoose Quiz model
-        debug('tipbot:db')('********* Database connected ********');
-        // make connnection to Slack
-        connect(controller);
-
-    });
-} else {
-    debug('tipbot:init')('No features enabled that need mongoDb.');
-    // no mongoDB needed, connect now to slack
+  // database connection open =  conncect to slack
+  db.once('open', function () {
+    autoIncrement.initialize(db);
+    require('./model/tipper');  // load mongoose Tipper model
+    require('./model/quiz');// load mongoose Quiz model
+    debug('tipbot:db')('********* Database connected ********');
+    // make connnection to Slack
     connect(controller);
+
+  });
+} else {
+  debug('tipbot:init')('No features enabled that need mongoDb.');
+  // no mongoDB needed, connect now to slack
+  connect(controller);
 }
 
 // connection to Slack has ended
 controller.on('rtm_close', function () {
-    debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
-    //don't restart connection on error here because these an auto reconnect
+  debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!');
+  //don't restart connection on error here because these an auto reconnect
 });
 
 // botkit had an oopsie
 controller.on('error', function (bot, msg) {
-    debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
-    debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
-    // don't restart connection on error here because it will be restarted on the rtm_close event
+  debug('tipbot:bot')('+++++++++++++++ Slack Error!! +++++++++++++++');
+  debug('tipbot:bot')('ERROR code:' + msg.error.code + ' = ' + msg.error.msg);
+  // don't restart connection on error here because it will be restarted on the rtm_close event
 });
 
 // when bot is connected, get all needed channels
 controller.on('hello', function (bot) {
-    // prevent multiple connections
-    // debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
-    if (initializing > 0) {
-        debug('tipbot:bot')('Already initializing... (count ' + initializing + ')');
-        return;
+  // prevent multiple connections
+  // debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
+  if (initializing > 0) {
+    debug('tipbot:bot')('Already initializing... (count ' + initializing + ')');
+    return;
+  }
+  initializing++;
+
+  // setup tipbot
+  if (tipbot === null) {
+    debug('tipbot:bot')('******** Setup TipBot ********');
+    // load TipBot after mongoose model is loaded
+    var TipBot = require('./lib/tipbot');
+    tipbot = new TipBot(bot, RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS);
+  }
+  let setChannelTasks = [];
+  // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
+  setChannelTasks.push(
+    function (asyncCB) {
+      setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast', asyncCB);
+    });
+
+  // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
+  setChannelTasks.push(
+    function (asyncCB) {
+      setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel', asyncCB);
+    });
+
+  // find channelID of WARN_MODS_CHANNELNAME to post warning messages to admins
+  setChannelTasks.push(
+    function (asyncCB) {
+      setChannel(OPTIONS.WARN_MODS_CHANNELNAME, 'WARN_MODS_CHANNEL', ' Warn channel not set', asyncCB);
+    });
+
+  // find channelID of MAIN_CHANNEL to post general messages
+  setChannelTasks.push(
+    function (asyncCB) {
+      setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to', asyncCB);
+    });
+
+
+  //execute all setChannel tasks
+  async.parallel(setChannelTasks,
+    function () {
+      debug('tipbot:init')('All channels are set.');
     }
-    initializing++;
-
-    // setup tipbot
-    if (tipbot === null) {
-        debug('tipbot:bot')('******** Setup TipBot ********');
-        // load TipBot after mongoose model is loaded
-        var TipBot = require('./lib/tipbot');
-        tipbot = new TipBot(bot, RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS);
-    }
-    let setChannelTasks = [];
-    // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
-    setChannelTasks.push(
-        function (asyncCB) {
-            setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast', asyncCB);
-        });
-
-    // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
-    setChannelTasks.push(
-        function (asyncCB) {
-            setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel', asyncCB);
-        });
-
-    // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
-    setChannelTasks.push(
-        function (asyncCB) {
-            setChannel(OPTIONS.WARN_MODS_USER_LEFT_CHANNELNAME, 'WARN_MODS_USER_LEFT', ' Warn channel not set', asyncCB);
-        });
-
-    // find channelID of MAIN_CHANNEL to post general messages
-    setChannelTasks.push(
-        function (asyncCB) {
-            setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to', asyncCB);
-        });
-
-
-    //execute all setChannel tasks
-    async.parallel(setChannelTasks,
-        function () {
-            debug('tipbot:init')('All channels are set.');
-        }
-    );
-    // connection is ready = clear initializing flag
-    initializing--;
-    // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
+  );
+  // connection is ready = clear initializing flag
+  initializing--;
+  // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 });
 
 
 function setChannel(channelName, tipBotChannel, errMsg, cb) {
-    // find channelID of MAIN_CHANNEL to post general messages
-    if (channelName !== undefined) {
-        tipbot.getChannel(channelName, function (err, channel) {
-            if (err) {
-                debug('tipbot:init')('ERROR: No ' + channelName + ' channel found. ' + errMsg);
-                cb();
-            } else {
-                tipbot.OPTIONS[tipBotChannel] = channel;
-                debug('tipbot:init')('Init: Channel ' + channelName + ' = ' + channel.id);
-                cb();
-            }
-        });
-    } else {
-        debug('tipbot:init')('ERROR: can get channel because channelname is not set');
+  // find channelID of MAIN_CHANNEL to post general messages
+  if (channelName !== undefined) {
+    tipbot.getChannel(channelName, function (err, channel) {
+      if (err) {
+        debug('tipbot:init')('ERROR: No ' + channelName + ' channel found. ' + errMsg);
         cb();
-    }
+      } else {
+        tipbot.OPTIONS[tipBotChannel] = channel;
+        debug('tipbot:init')('Init: Channel ' + tipBotChannel + ' set to "' + channelName + '" (' + channel.id + ')');
+        cb();
+      }
+    });
+  } else {
+    debug('tipbot:init')('ERROR: can get channel because channelname is not set');
+    cb();
+  }
 }
 
 
 // response to ticks
 controller.on('tick', function () {
-    if (initializing === 0 && tipbot !== null && !tipbot.initializing) {
-        // only when TipBot is finished initializing
+  if (initializing === 0 && tipbot !== null && !tipbot.initializing) {
+    // only when TipBot is finished initializing
 
-        // check sun balance every X minutes
-        if (tipbot.ENABLE_SUN_FEATURE &&
-            tipbot.OPTIONS.SUN_TIMER !== undefined &&
-            tipbot.sunUser !== undefined) {
-            // only check sun balance every SUN_TIMER min
-            if (sunTicker === 0) {
-                debug('tipbot:sun')('SUN: check balance > threshold now');
-                tipbot.checkForSun();
+    // check sun balance every X minutes
+    if (tipbot.ENABLE_SUN_FEATURE &&
+      tipbot.OPTIONS.SUN_TIMER !== undefined &&
+      tipbot.sunUser !== undefined) {
+      // only check sun balance every SUN_TIMER min
+      if (sunTicker === 0) {
+        debug('tipbot:sun')('SUN: check balance > threshold now');
+        tipbot.checkForSun();
 
-                // reset ticker
-                sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
-            } else {
-                // decrease sunTicker until 0
-                sunTicker--;
-            }
-        }
+        // reset ticker
+        sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
+      } else {
+        // decrease sunTicker until 0
+        sunTicker--;
+      }
+    }
 
-        // show random help command text every X minutes
-        if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
-            // only check sun balance every SUN_TIMER min
-            if (helpTicker === 0) {
-                debug('tipbot:help')('Help ticker reached 0 : show random help text');
-                tipbot.showRandomHelp();
-                // reset ticker
-                helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
-            } else {
-                // decrease sunTicker until 0
-                helpTicker--;
-            }
-        }
-    } else if (initializing > 0) { debug('tipbot:init')('init counter ' + initializing); }
+    // show random help command text every X minutes
+    if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
+      // only check sun balance every SUN_TIMER min
+      if (helpTicker === 0) {
+        debug('tipbot:help')('Help ticker reached 0 : show random help text');
+        tipbot.showRandomHelp();
+        // reset ticker
+        helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
+      } else {
+        // decrease sunTicker until 0
+        helpTicker--;
+      }
+    }
+  } else if (initializing > 0) { debug('tipbot:init')('init counter ' + initializing); }
 });
 
 // emergency commands
 controller.hears('emergency', ['direct_message'], function (bot, message) {
-    debug('tipbot:EMERGENCY')('**** Got this EMERGENCY message: ' + message.text);
-    bot.api.users.info({ 'user': message.user }, function (err, response) {
-        if (err) { throw new Error(err); }
-        let sender = response.user;
+  debug('tipbot:EMERGENCY')('**** Got this EMERGENCY message: ' + message.text);
+  bot.api.users.info({ 'user': message.user }, function (err, response) {
+    if (err) { throw new Error(err); }
+    let sender = response.user;
 
-        if (sender.is_admin === false) {
-            debug('tipbot:EMERGENCY')('Emergency used by non admin !');
-        } else {
-            debug('tipbot:EMERGENCY')('**** Emergency is authorised by: ' + sender.name);
+    if (sender.is_admin === false) {
+      debug('tipbot:EMERGENCY')('Emergency used by non admin !');
+    } else {
+      debug('tipbot:EMERGENCY')('**** Emergency is authorised by: ' + sender.name);
 
-            if (message.text.match(/\brestart\b/i)) {
-                debug('tipbot:EMERGENCY')('**** Emergency connection restart ****');
-                if (initializing) {
-                    debug('tipbot:EMERGENCY')('++++ Tried a restart while still initializing, restart aborted.');
-                } else { bot.closeRTM(); }
-            }
+      if (message.text.match(/\brestart\b/i)) {
+        debug('tipbot:EMERGENCY')('**** Emergency connection restart ****');
+        if (initializing) {
+          debug('tipbot:EMERGENCY')('++++ Tried a restart while still initializing, restart aborted.');
+        } else { bot.closeRTM(); }
+      }
 
-            if (message.text.match(/\bstop\b/i)) {
-                debug('tipbot:EMERGENCY')('**** Emergency stop ****');
-            }
-        }
-    });
+      if (message.text.match(/\bstop\b/i)) {
+        debug('tipbot:EMERGENCY')('**** Emergency stop ****');
+      }
+    }
+  });
 
 });
 
 // listen to direct messages to the bot, or when the bot is mentioned in a message
 controller.hears('.*', ['direct_message', 'direct_mention', 'mention'], function (bot, message) {
-    const member = message.user;
-    let channel;
-    if (tipbot === null) {
-        debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
-        return;
-    }
+  const member = message.user;
+  let channel;
+  if (tipbot === null) {
+    debug('tipbot:bot')('Problem: slack connection is up but tipbot isn\'t');
+    return;
+  }
 
-    // find the place where the message was posted
-    let firstCharOfChannelID = message.channel.substring(0, 1);
-    if (firstCharOfChannelID === 'C') {
-        // in Public channel
-        bot.api.channels.info({ 'channel': message.channel }, function (err, response) {
-            if (err) { throw new Error(err); }
-            channel = response.channel;
-            // let tipbot handle the message
-            tipbot.onMessage(channel, member, message.text);
-        });
-    } else if (firstCharOfChannelID === 'G') {
-        // in Private channel = Group
-        bot.api.groups.info({ 'channel': message.channel }, function (err, response) {
-            if (err) { throw new Error(err); }
-            channel = response.group;
-            // let tipbot handle the message
-            tipbot.onMessage(channel, member, message.text);
-        });
-    } else if (firstCharOfChannelID === 'D') {
-        // in Direct Message channel =  id -> create channel object
-        // let tipbot handle the message
-        let DMchannelID = { 'id': message.channel };
-        tipbot.onMessage(DMchannelID, member, message.text);
-    }
-    // });
+  // find the place where the message was posted
+  let firstCharOfChannelID = message.channel.substring(0, 1);
+  if (firstCharOfChannelID === 'C') {
+    // in Public channel
+    bot.api.channels.info({ 'channel': message.channel }, function (err, response) {
+      if (err) { throw new Error(err); }
+      channel = response.channel;
+      // let tipbot handle the message
+      tipbot.onMessage(channel, member, message.text);
+    });
+  } else if (firstCharOfChannelID === 'G') {
+    // in Private channel = Group
+    bot.api.groups.info({ 'channel': message.channel }, function (err, response) {
+      if (err) { throw new Error(err); }
+      channel = response.group;
+      // let tipbot handle the message
+      tipbot.onMessage(channel, member, message.text);
+    });
+  } else if (firstCharOfChannelID === 'D') {
+    // in Direct Message channel =  id -> create channel object
+    // let tipbot handle the message
+    let DMchannelID = { 'id': message.channel };
+    tipbot.onMessage(DMchannelID, member, message.text);
+  }
+  // });
 });
 
 // when a user change his profile (other username,...)
 controller.on('user_change', function (bot, resp) {
-    debug('tipbot:bot')('User ' + resp.user.name + ' has changed his/her profile.');
-    tipbot.onUserChange(bot, resp.user);
+  debug('tipbot:bot')('User ' + resp.user.name + ' has changed his/her profile.');
+  tipbot.onUserChange(bot, resp.user);
 });
 
 // when a new user joins the Slack Team to the user.id can be added
 controller.on('team_join', function (bot, resp) {
-    debug('tipbot:bot')('User ' + resp.user.name + ' has joined !');
-    tipbot.onUserChange(bot, resp.user);
+  debug('tipbot:bot')('User ' + resp.user.name + ' has joined !');
+  tipbot.onUserChange(bot, resp.user);
 });

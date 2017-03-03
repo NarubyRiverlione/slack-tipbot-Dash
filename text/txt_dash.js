@@ -91,6 +91,9 @@ const tipbotTxt = {
   // USER LEFT
   'WarnUserLeft1': 'The user ',
   'WarnUserLeft2': ' has left the slack team. Think about his/her tip jar.',
+  // DUMMY USER CHECK
+  'FoundDummyUser1': 'Be aware that the user ',
+  'FoundDummyUser2': ' will not be able to use Tipbot due to the suspicious username.',
   // ALL BALANCES
   'RetrievingAllBalancesDisabled': 'Retrieving all balances is disabled!',
   'RetrievingAllBalancesAdminOnly': 'Only admins can list all balances!',
