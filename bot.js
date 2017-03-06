@@ -14,7 +14,7 @@ let argv = parseArgs(process.argv.slice(2));
 const SLACK_TOKEN = argv['slack-token'] || process.env.TIPBOT_SLACK_TOKEN;
 const RPC_USER = argv['rpc-user'] || process.env.TIPBOT_RPC_USER;
 const RPC_PASSWORD = argv['rpc-password'] || process.env.TIPBOT_RPC_PASSWORD;
-const RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9998;
+const RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9336;
 const WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWORD;
 
 const debugMode = process.env.NODE_ENV === 'development' ? true : false;
@@ -27,15 +27,15 @@ const TIPBOT_OPTIONS = {
   ENABLE_QUIZ_FEATURE: false,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
-  SUN_USERNAME: 'dashsun',
+  SUN_USERNAME: 'nexussun',
   SUN_TIMER: debugMode ? 30 : 30  // debug = check sun every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
-  PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
-  WARN_MODS_CHANNELNAME: debugMode ? 'bot-testing' : 'moderation_channel',
-  WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
-  MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
+  PRICE_CHANNEL_NAME: debugMode ? 'tipbot' : 'trading',
+  WARN_MODS_CHANNELNAME: debugMode ? 'tipbot' : 'moderation_channel',
+  WARN_NEW_USER_CHANNELNAME: debugMode ? 'tipbot' : 'general',
+  MAIN_CHANNEL_NAME: debugMode ? 'tipbot' : 'general',
 
   SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
