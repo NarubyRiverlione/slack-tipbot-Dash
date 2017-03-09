@@ -33,7 +33,7 @@ const TIPBOT_OPTIONS = {
 
 let OPTIONS = {
   PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
-  WARN_MODS_CHANNELNAME: debugMode ? 'bot-testing' : 'moderation_channel',
+  WARN_MODS_CHANNELNAME: debugMode ? 'bot-testing' : 'naruby',
   WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
   MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
 

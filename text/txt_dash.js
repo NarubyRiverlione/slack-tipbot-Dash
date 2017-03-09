@@ -34,7 +34,8 @@ const tipbotTxt = {
     '\t\t_@DashBot price in USD!_ ',
 
     // 'help_pricelist':
-    '*priceticker*\t\tshows all the known prices. Use * priceticker short* for a limited list.',
+    '*priceticker*\t\tshows all the known prices. Use * priceticker short* for a limited list.\n' +
+    '\t\t_aliases: pricelist, prices_ \n' +
 
     // 'help_convert':
     '*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa).\n' +
