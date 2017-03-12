@@ -23,12 +23,12 @@ const TIPBOT_OPTIONS = {
   WALLET_PASSW: WALLET_PASSW,
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
-  ENABLE_SUN_FEATURE: false,
+  ENABLE_RAIN_FEATURE: true,
   ENABLE_QUIZ_FEATURE: false,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
-  SUN_USERNAME: 'dashsun',
-  SUN_TIMER: debugMode ? 30 : 30  // debug = check sun every minute, production check every 30 minutes
+  RAIN_USERNAME: 'dashrain',
+  RAIN_TIMER: debugMode ? 3 : 30  // debug = check rain every minute, production check every 30 minutes
 };
 
 let OPTIONS = {
@@ -45,8 +45,8 @@ let OPTIONS = {
 let initializing = 0;
 
 let tipbot = null;
-// decrease ticker until 0 => check sun balance > thershold
-let sunTicker = 0;
+// decrease ticker until 0 => check rain balance > thershold
+let rainTicker = 0;
 // decrease ticker until 0 => show random help command text
 let helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER === undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
 
@@ -105,7 +105,7 @@ function connect(controller) {
 }
 
 // open mongoDB connection if needed for a feature
-const needMongoDb = TIPBOT_OPTIONS.ENABLE_SUN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE;
+const needMongoDb = TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE;
 if (needMongoDb) {
   mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } });  // no autoIndex in production for preformance impact
   let db = mongoose.connection;
@@ -222,33 +222,33 @@ controller.on('tick', function () {
   if (initializing === 0 && tipbot !== null && !tipbot.initializing) {
     // only when TipBot is finished initializing
 
-    // check sun balance every X minutes
-    if (tipbot.ENABLE_SUN_FEATURE &&
-      tipbot.OPTIONS.SUN_TIMER !== undefined &&
-      tipbot.sunUser !== undefined) {
-      // only check sun balance every SUN_TIMER min
-      if (sunTicker === 0) {
-        debug('tipbot:sun')('SUN: check balance > threshold now');
-        tipbot.checkForSun();
+    // check rain balance every X minutes
+    if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE &&
+      tipbot.OPTIONS.RAIN_TIMER !== undefined &&
+      tipbot.rainUser !== undefined) {
+      // only check rain balance every RAIN_TIMER min
+      if (rainTicker === 0) {
+        debug('tipbot:rain')('RAIN: check balance > threshold now');
+        tipbot.checkForRain();
 
         // reset ticker
-        sunTicker = tipbot.OPTIONS.SUN_TIMER * 60;
+        rainTicker = tipbot.OPTIONS.RAIN_TIMER * 60;
       } else {
-        // decrease sunTicker until 0
-        sunTicker--;
+        // decrease rainTicker until 0
+        rainTicker--;
       }
     }
 
-    // show random help command text every X minutes
+    // show random help command text every X minutesm
     if (OPTIONS.SHOW_RANDOM_HELP_TIMER !== undefined) {
-      // only check sun balance every SUN_TIMER min
+      // only check rain balance every RAIN_TIMER min
       if (helpTicker === 0) {
         debug('tipbot:help')('Help ticker reached 0 : show random help text');
         tipbot.showRandomHelp();
         // reset ticker
         helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER * 60;
       } else {
-        // decrease sunTicker until 0
+        // decrease rainTicker until 0
         helpTicker--;
       }
     }

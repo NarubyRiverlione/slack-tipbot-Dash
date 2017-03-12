@@ -40,14 +40,11 @@ const tipbotTxt = {
     // 'help_convert':
     '*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa).\n' +
     '\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n',
-
-    // 'help_rain':
-    // '*rain*\t\tcheck the available rain and threshold. \n ' +
-    // '\t\tAdmins can also release the rain with the *rain now* command.\n',
   ],
-  'help_sun':
-  '*sun*\t\t\tcheck the available sunshine. \n' +
-  '\t\t\tEach user that has tipped another user will receive a _sunray_ (read: free Dash) from the sun fund.',
+
+  'help_rain':
+  '*rain*\t\t\tcheck the available raindrops. \n' +
+  '\t\t\tEach user that has tipped another user will receive a _raindrop_ (read: free Dash) from the rain fund.',
 
   'help_quiz':
   '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n' +
@@ -67,21 +64,21 @@ const tipbotTxt = {
   '\t\t\t\t\tUse case :moderator warning.\n' +
   '\t\t_@Dashbot whisper @narbuy stop being silly man._\n' +
   '\n\n' +
-  '*sun threshold*\t set the threshold on where the balance of the sun account will be distributed\n' +
-  '\t\t\t\tbetween all the users that tipped. Defaults to 5 Dash.\n' +
-  '\t\t_@dashbot sun threshold 2.5 dash_\n' +
+  '*rain threshold*\t set the threshold on where the balance of the rain account will be distributed\n' +
+  '\t\t\t\tbetween all the users that tipped. Defaults to 0.5 Dash.\n' +
+  '\t\t_@dashbot rain threshold 1 dash_\n' +
   '\n' +
-  '*sun eligible*\tSee which users are eligible for a sunray.\n' +
+  '*rain eligible*\tSee which users are eligible for a raindrop.\n' +
   '\n' +
-  '*sun reset*\t\tReset all tip counts, not needed normally as tip counters are reset when sun is shining.' +
-  '\n' +
-  '*quiz list*\t\tShow all approved questions.\n' +
-  '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n' +
-  '*quiz delete _question number_*\tDelete a question.\n' +
-  '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
-  '*quiz start amount*\t\tStart a quiz by setting the amount of questions.\n' +
-  '*quiz abort*\t\tStop a quiz without showing results.\n' +
-  '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
+  '*rain reset*\t\tReset all tip counts, not needed normally as tip counters are reset when rain is shining.' +
+  '\n',
+  // '*quiz list*\t\tShow all approved questions.\n' +
+  // '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n' +
+  // '*quiz delete _question number_*\tDelete a question.\n' +
+  // '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
+  // '*quiz start amount*\t\tStart a quiz by setting the amount of questions.\n' +
+  // '*quiz abort*\t\tStop a quiz without showing results.\n' +
+  // '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
 
   'tx_fee': 'The transaction fee is set to ',
   'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
@@ -138,8 +135,8 @@ const tipbotTxt = {
   'SupportedBase': 'And does it need saying: *DASH* is supported !',
 
   // // RAIN
-  'RainReplacedBySun': 'Really you want rain? It\'s summertime ! _sorry southern hemisphere_ \n ' +
-  'You want *sun* my dear human friend.',
+  // 'RainReplacedByRain': 'Really you want rain? It\'s summertime ! _sorry southern hemisphere_ \n ' +
+  // 'You want *rain* my dear human friend.',
 
   //'RainThreshold': 'Rain threshold is: ',
   // 'RainThresholdNotSet': 'Dear Rain God, the rain threshold isn\'t set yet. \n You can do that with the *rain threshold _amount_* command.',
@@ -163,30 +160,30 @@ const tipbotTxt = {
   // 'RainEmpty': 'Not a cloud in the sky, not rain available to fall down.',
   // 'RainRecieved': ':droplet: \n You got splashed with a Dash raindrop of ',
 
-  // SUN
-  'SunThreshold1': 'Sun threshold is: ',
-  'SunThreshold2': 'Sun will shine and distribute sunrays when sun balance is more then the set threshold.',
-  'SunThresholdNotSet': 'Dear Dash God, the Sun threshold isn\'t set yet. \n' +
-  ' You can do that with the *sun threshold _amount_* command.',
-  // 'SunTimer': 'Sunshine will be checked every *',
-  // 'SunTimerUnit': ' minute(s)*',
-  // 'SunTimerNotSet': 'Dear Dash God, the sun timer is not set yet.\n' +
-  // ' You can do that with the *sun timer _minutes_* command.',
-  'SunAvailibleAmount': 'Available sunrays: ',
-  'SunExplain': 'Each user that has tipped an other user will receive a _sunray_ from the sun fund.',
-  'SunAmountEligibleUsers': ' users are at the moment eligible for a sunray.',
-  'SunRay': ':sunny: :sunny: :sunny:',
-  'SunCannotFindSunAccount1': 'Could not find the Sun user : \'*',
-  'SunCannotFindSunAccount2': '*\' \n Ask the Slack Admin(s) if the Sun feature is correctly setup.',
-  'SunCannotFindSunBalance': 'Could not find the Sun balance for ',
-  'SunReqDonation1': 'If you feel generous tip_@',
-  'SunReqDonation2': 'The complete balance of _@',
-  'SunReqDonation3': '_ will be redistributed as _sunrays_ (aka free dash).',
-  'SunEmpty': ':sun_behind_cloud:no sunrays available to cast. :disappointed:',
-  'SunRecieved': 'As reward of tipping your fellow Dash user(s) you received a sunray of ',
-  'SunEligibleUsersList': '*These users have tipped* \n',
-  'SunErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
-  'SunCountIsReset': 'All tip count records are removed.',
+  // RAIN
+  'RainThreshold1': 'Rain threshold is: ',
+  'RainThreshold2': 'Raindrops (aka free dash) will fall when rain balance is more then the set threshold.',
+  'RainThresholdNotSet': 'Dear Dash God, the Rain threshold isn\'t set yet. \n' +
+  ' You can do that with the *rain threshold _amount_* command.',
+  // 'RainTimer': 'Rainshine will be checked every *',
+  // 'RainTimerUnit': ' minute(s)*',
+  // 'RainTimerNotSet': 'Dear Dash God, the rain timer is not set yet.\n' +
+  // ' You can do that with the *rain timer _minutes_* command.',
+  'RainAvailibleAmount': 'Available raindrops: ',
+  'RainExplain': 'Each user that has tipped an other user will receive a _raindrop_ from the rain fund.',
+  'RainAmountEligibleUsers': ' users are at the moment eligible for a raindrop.',
+  'RainRay': ':rain_cloud: :rain_cloud: :rain_cloud:',
+  'RainCannotFindRainAccount1': 'Could not find the Rain user : \'*',
+  'RainCannotFindRainAccount2': '*\' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.',
+  'RainCannotFindRainBalance': 'Could not find the Rain balance for ',
+  'RainReqDonation1': 'If you feel generous: tip _@',
+  'RainReqDonation2': 'The complete balance of _@',
+  'RainReqDonation3': '_ will be redistributed as _raindrops_ (aka free dash).',
+  'RainEmpty': ':sun_behind_cloud:no raindrops available to cast. :disappointed:',
+  'RainRecieved': 'As reward of tipping your fellow Dash user(s) you received a raindrop of ',
+  'RainEligibleUsersList': '*These users have tipped* \n',
+  'RainErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
+  'RainCountIsReset': 'All tip count records are removed.',
 
   //QUIZ
   'QuizAddQuestion': 'Enter your new question.',
