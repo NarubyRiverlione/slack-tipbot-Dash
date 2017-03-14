@@ -24,7 +24,6 @@ const TIPBOT_OPTIONS = {
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
   ENABLE_RAIN_FEATURE: true,
-  ENABLE_QUIZ_FEATURE: false,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
   RAIN_USERNAME: 'dashrain',
