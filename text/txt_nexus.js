@@ -44,14 +44,11 @@ const tipbotTxt = {
     // '*rain*\t\tcheck the available rain and threshold. \n ' +
     // '\t\tAdmins can also release the rain with the *rain now* command.\n',
   ],
+
   'help_sun':
   '*sun*\t\t\tcheck the available sunshine. \n' +
   '\t\t\tEach user that has tipped another user will receive a _sunray_ (read: free Nexus) from the sun fund.',
 
-  'help_quiz':
-  '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n' +
-  // + '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n' +
-  '*quiz answer*\t\tPost an answer to a quiz question.\n',
 
   'helpAdminOnly':
   '===== *ADMIN ONLY COMMANDS* =====\n' +
@@ -73,14 +70,7 @@ const tipbotTxt = {
   '*sun eligible*\tSee which users are eligible for a sunray.\n' +
   '\n' +
   '*sun reset*\t\tReset all tip counts, not needed normally as tip counters are reset when sun is shining.' +
-  '\n' +
-  '*quiz list*\t\tShow all approved questions.\n' +
-  '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n' +
-  '*quiz delete _question number_*\tDelete a question.\n' +
-  '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @NexusBot will ask amount.\n' +
-  '*quiz start amount*\t\tStart a quiz by setting the amount of questions.\n' +
-  '*quiz abort*\t\tStop a quiz without showing results.\n' +
-  '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
+  '\n',
 
   'tx_fee': 'The transaction fee is set to ',
   'HelpRandom1': 'Here is an example of one of my commands, type "@NexusBot help" for my full list. ',
@@ -187,51 +177,6 @@ const tipbotTxt = {
   'SunErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
   'SunCountIsReset': 'All tip count records are removed.',
 
-  //QUIZ
-  'QuizAddQuestion': 'Enter your new question.',
-  'QuizAddAnOtherQuestion': 'Will you add an other question (yes/no) ?',
-  'QuizAddAnser': 'Enter the answer to your question.',
-  'QuizConfirmNewQA': 'Is this the correct question and answer (yes/no) ?',
-  'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
-  'QuizAbortedSaving': 'Ok, I will ignore that question.',
-  'QuizListQuestions': '*I know about this questions:* \n',
-  'QuizListReward_1': '\tReward: ',
-  'QuizListReward_2': ' points.',
-  'QuizQ': 'Q: ',
-  'QuizA': 'A: ',
-  'QuizDeleteQuestion': 'To delete a question: *quiz delete _question number_*',
-  'QuizChangeReward': 'To change the reward of a question: *quiz reward _question number_*',
-  'QuizNoQAnumber': 'I didn\'t find the question number',
-  'QuizDeleteNOK': 'I couldn\'t delete question ',
-  'QuizDeleteOk': 'Question is removed',
-
-  'QuizAnswerCorrect': 'Super ! You got that correct.',
-  'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
-
-  'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
-
-  'QuizReview_1': 'This question don\'t have a reward set:\n',
-  'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
-  'QuizRewardQuestion_1': 'To approve a question set a reward with * @',
-  'QuizRewardQuestion_2': ' quiz reward _question number_ *',
-  'QuizUnreviewed': '*This are the question that need to be reviewed*:\n',
-  'QuizSetReward': 'What should the reward be for this question ?',
-  'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
-  'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
-
-  'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
-  'QuizStartNoAmount': 'You need to provided the amount of questions in this quiz. \n_quiz start amount_',
-  'QuizStarted1': 'A quiz has started !',
-  'QuizStarted2': 'Go to the ',
-  'QuizStarted3': ' channel to participate.',
-
-  'QuizEnded': 'The quiz has ended. \nScoreboard :\n',
-  // 'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
-  'QuizAborted': 'The quiz has been aborted.',
-  'QuizAskQuestion1': '*To answer say: @',
-  'QuizAskQuestion2': ' quiz answer _your answer_*',
-  'QuizScored': ' scored ',
-  'QuizThanks': 'Thanks for participating !',
 
   // OOPS
   'Oops': 'Use the *help* command to see the valid options.',
@@ -250,14 +195,6 @@ const tipbotTxt = {
   ],
 
   'ERRORreadingDb': 'ERROR reading db:'
-};
-
-const quizTxt = {
-  'alreadyRunning': 'Already in a quiz',
-  'notStarted_noApprovedQ': 'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
-  'done': 'All questions in this quiz are answered.',
-  'notRunning': 'Quiz isn\'t running at the moment',
-  'alreadyAnswered': ' ,you already tried to answer this question, let the others have a try.'
 };
 
 const userTxt = {
@@ -288,4 +225,4 @@ const userTxt = {
 
 };
 
-module.exports = { tipbotTxt, userTxt, quizTxt };
+module.exports = { tipbotTxt, userTxt };
