@@ -40,14 +40,11 @@ const tipbotTxt = {
     // 'help_convert':
     '*convert*\t\task the bot to convert between a particular currency and Dash (or visa versa).\n' +
     '\t\t_@DashBot 0.03 DASH to GBP_ \t or \t _@DashBot 15 EURO to DASH_\n',
-
-    // 'help_rain':
-    // '*rain*\t\tcheck the available rain and threshold. \n ' +
-    // '\t\tAdmins can also release the rain with the *rain now* command.\n',
   ],
-  'help_sun':
-  '*sun*\t\t\tcheck the available sunshine. \n' +
-  '\t\t\tEach user that has tipped another user will receive a _sunray_ (read: free Dash) from the sun fund.',
+
+  'help_rain':
+  '*rain*\t\t\tcheck the available raindrops. \n' +
+  '\t\t\tEach user that has tipped another user will receive a _raindrop_ (read: free Dash) from the rain fund when the donation threshold is reached.',
 
   'help_quiz':
   '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n' +
@@ -67,42 +64,42 @@ const tipbotTxt = {
   '\t\t\t\t\tUse case :moderator warning.\n' +
   '\t\t_@Dashbot whisper @narbuy stop being silly man._\n' +
   '\n\n' +
-  '*sun threshold*\t set the threshold on where the balance of the sun account will be distributed\n' +
-  '\t\t\t\tbetween all the users that tipped. Defaults to 5 Dash.\n' +
-  '\t\t_@dashbot sun threshold 2.5 dash_\n' +
+  '*rain threshold*\t set the threshold on where the balance of the rain account will be distributed\n' +
+  '\t\t\t\tbetween all the users that tipped. Defaults to 0.5 Dash.\n' +
+  '\t\t_@dashbot rain threshold 1 dash_\n' +
   '\n' +
-  '*sun eligible*\tSee which users are eligible for a sunray.\n' +
-  '\n' +
-  '*sun reset*\t\tReset all tip counts, not needed normally as tip counters are reset when sun is shining.' +
-  '\n' +
-  '*quiz list*\t\tShow all approved questions.\n' +
-  '*quiz review*\tList all questions that need to be reviewed (reward = 0).\n' +
-  '*quiz delete _question number_*\tDelete a question.\n' +
-  '*quiz reward _question number_*\tSet/change reward for a question (also approves the question). @dashbot will ask amount.\n' +
-  '*quiz start amount*\t\tStart a quiz by setting the amount of questions.\n' +
-  '*quiz abort*\t\tStop a quiz without showing results.\n' +
-  '*quiz next*\t\tSkip the current question (if no one finds the answer).\n',
+  '*rain eligible*\tSee which users are eligible for a raindrop.\n' +
+  '\n',
+
+  // '*rain reset*\t\tReset all tip counts, not needed normally as tip counters are reset when rain is shining.' +
+  // '\n',
 
   'tx_fee': 'The transaction fee is set to ',
   'HelpRandom1': 'Here is an example of one of my commands, type "@dashbot help" for my full list. ',
   // 'HelpRandom2': 'You can get information about all my other cool tricks via the *help* command. \n Have a nice day !',
+
   // NEW USER
   'WarningNewUser1': 'A new user joins Dash Nation! A warm welcome to our Slack, ',
   'WarningNewUser2': '.',
+
   // USER LEFT
   'WarnUserLeft1': 'The user ',
   'WarnUserLeft2': ' has left the slack team. Think about his/her tip jar.',
+
   // DUMMY USER CHECK
   'FoundDummyUser1': 'Be aware that the user ',
   'FoundDummyUser2': ' will not be able to use Tipbot due to the suspicious username.',
+
   // ALL BALANCES
   'RetrievingAllBalancesDisabled': 'Retrieving all balances is disabled!',
   'RetrievingAllBalancesAdminOnly': 'Only admins can list all balances!',
   'RetrievingAllBalancesWait': 'Retrieving all balances... might take a while depending on the amount of users!',
+
   // CHECK BALANCE
   'CheckBalanceDisabled': 'Checking balance of an other user is disabled!',
   'CheckBalanceAdminOnly': 'Only admins can check other balances!',
   'CheckBalanceNoUserFound': 'No user found to check. Did you use the prefix @ ?',
+
   // GENERAL
   'NoAmountFound': ' couldn\'t\'t find the amount. Did you forget the decimal ?',
   'NoValidAddress': ' that\'s not a valid address!',
@@ -111,16 +108,21 @@ const tipbotTxt = {
   'NoAmountOrCurrency': ' I need to know much you want to withdraw and the currency.',
   'UnsupportedCurrency': ': we don\'t support that currency yet!',
   'InvalidAmount': ': that\'s an invalid amount',
+
   // WITHDRAW
   'WithdrawQuestion': ['You want to withdraw ', ' to ', '.\n Is this correct (yes/no) ?'],
+
   // SEND
   'Hello': 'Hello there ',
   'NoUserFoundForTip': ', I didn\'t catch the user you want to tip. You surely didn\'t want to tip yourself, did you ?',
   'SendMessageUsed': '\nThis message what used to send the tip : \n',
+
   // REQUEST
   'RequestingDisabled': 'Requesting coins is disabled!',
+
   // MENTIONS MULTIPLE USERS
   'ToMuchUsers': ' but you\'re mentioning too many people!',
+
   // CONVERT
   'NotEnoughCurrencies': ': not enough currencies!',
   'ToMuchCurrencies': ': too many currencies!',
@@ -138,8 +140,8 @@ const tipbotTxt = {
   'SupportedBase': 'And does it need saying: *DASH* is supported !',
 
   // // RAIN
-  'RainReplacedBySun': 'Really you want rain? It\'s summertime ! _sorry southern hemisphere_ \n ' +
-  'You want *sun* my dear human friend.',
+  // 'RainReplacedByRain': 'Really you want rain? It\'s summertime ! _sorry southern hemisphere_ \n ' +
+  // 'You want *rain* my dear human friend.',
 
   //'RainThreshold': 'Rain threshold is: ',
   // 'RainThresholdNotSet': 'Dear Rain God, the rain threshold isn\'t set yet. \n You can do that with the *rain threshold _amount_* command.',
@@ -163,76 +165,76 @@ const tipbotTxt = {
   // 'RainEmpty': 'Not a cloud in the sky, not rain available to fall down.',
   // 'RainRecieved': ':droplet: \n You got splashed with a Dash raindrop of ',
 
-  // SUN
-  'SunThreshold1': 'Sun threshold is: ',
-  'SunThreshold2': 'Sun will shine and distribute sunrays when sun balance is more then the set threshold.',
-  'SunThresholdNotSet': 'Dear Dash God, the Sun threshold isn\'t set yet. \n' +
-  ' You can do that with the *sun threshold _amount_* command.',
-  // 'SunTimer': 'Sunshine will be checked every *',
-  // 'SunTimerUnit': ' minute(s)*',
-  // 'SunTimerNotSet': 'Dear Dash God, the sun timer is not set yet.\n' +
-  // ' You can do that with the *sun timer _minutes_* command.',
-  'SunAvailibleAmount': 'Available sunrays: ',
-  'SunExplain': 'Each user that has tipped an other user will receive a _sunray_ from the sun fund.',
-  'SunAmountEligibleUsers': ' users are at the moment eligible for a sunray.',
-  'SunRay': ':sunny: :sunny: :sunny:',
-  'SunCannotFindSunAccount1': 'Could not find the Sun user : \'*',
-  'SunCannotFindSunAccount2': '*\' \n Ask the Slack Admin(s) if the Sun feature is correctly setup.',
-  'SunCannotFindSunBalance': 'Could not find the Sun balance for ',
-  'SunReqDonation1': 'If you feel generous tip_@',
-  'SunReqDonation2': 'The complete balance of _@',
-  'SunReqDonation3': '_ will be redistributed as _sunrays_ (aka free dash).',
-  'SunEmpty': ':sun_behind_cloud:no sunrays available to cast. :disappointed:',
-  'SunRecieved': 'As reward of tipping your fellow Dash user(s) you received a sunray of ',
-  'SunEligibleUsersList': '*These users have tipped* \n',
-  'SunErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
-  'SunCountIsReset': 'All tip count records are removed.',
+  // RAIN
+  'RainThreshold1': 'Rain threshold is: ',
+  'RainThreshold2': 'Raindrops (aka free dash) will fall when rain balance is more then the set threshold.',
+  'RainThresholdNotSet': 'Dear Dash God, the Rain threshold isn\'t set yet. \n' +
+  ' You can do that with the *rain threshold _amount_* command.',
+  // 'RainTimer': 'Rainshine will be checked every *',
+  // 'RainTimerUnit': ' minute(s)*',
+  // 'RainTimerNotSet': 'Dear Dash God, the rain timer is not set yet.\n' +
+  // ' You can do that with the *rain timer _minutes_* command.',
+  'RainAvailibleAmount': 'Available raindrops: ',
+  'RainExplain': 'Each user that has tipped an other user will receive a _raindrop_ from the rain fund.',
+  'RainAmountEligibleUsers': ' users are at the moment eligible for a raindrop.',
+  'RainRay': ':rain_cloud: :umbrella_with_rain_drops:  :rain_cloud:',
+  'RainCannotFindRainAccount1': 'Could not find the Rain user : \'*',
+  'RainCannotFindRainAccount2': '*\' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.',
+  'RainCannotFindRainBalance': 'Could not find the Rain balance for ',
+  'RainReqDonation1': 'If you feel generous: tip _@',
+  'RainReqDonation2': 'The complete balance of _@',
+  'RainReqDonation3': '_ will be redistributed as _raindrops_ (aka free dash).',
+  'RainEmpty': ':sun_behind_cloud:no raindrops available to cast. :disappointed:',
+  'RainRecieved': 'As reward of tipping your fellow Dash user(s) you received a raindrop of ',
+  'RainEligibleUsersList': '*These users have tipped* \n',
+  'RainErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
+  'RainCountIsReset': 'All tip count records are removed.',
 
   //QUIZ
-  'QuizAddQuestion': 'Enter your new question.',
-  'QuizAddAnOtherQuestion': 'Will you add an other question (yes/no) ?',
-  'QuizAddAnser': 'Enter the answer to your question.',
-  'QuizConfirmNewQA': 'Is this the correct question and answer (yes/no) ?',
-  'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
-  'QuizAbortedSaving': 'Ok, I will ignore that question.',
-  'QuizListQuestions': '*I know about this questions:* \n',
-  'QuizListReward_1': '\tReward: ',
-  'QuizListReward_2': ' points.',
-  'QuizQ': 'Q: ',
-  'QuizA': 'A: ',
-  'QuizDeleteQuestion': 'To delete a question: *quiz delete _question number_*',
-  'QuizChangeReward': 'To change the reward of a question: *quiz reward _question number_*',
-  'QuizNoQAnumber': 'I didn\'t find the question number',
-  'QuizDeleteNOK': 'I couldn\'t delete question ',
-  'QuizDeleteOk': 'Question is removed',
+  // 'QuizAddQuestion': 'Enter your new question.',
+  // 'QuizAddAnOtherQuestion': 'Will you add an other question (yes/no) ?',
+  // 'QuizAddAnser': 'Enter the answer to your question.',
+  // 'QuizConfirmNewQA': 'Is this the correct question and answer (yes/no) ?',
+  // 'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
+  // 'QuizAbortedSaving': 'Ok, I will ignore that question.',
+  // 'QuizListQuestions': '*I know about this questions:* \n',
+  // 'QuizListReward_1': '\tReward: ',
+  // 'QuizListReward_2': ' points.',
+  // 'QuizQ': 'Q: ',
+  // 'QuizA': 'A: ',
+  // 'QuizDeleteQuestion': 'To delete a question: *quiz delete _question number_*',
+  // 'QuizChangeReward': 'To change the reward of a question: *quiz reward _question number_*',
+  // 'QuizNoQAnumber': 'I didn\'t find the question number',
+  // 'QuizDeleteNOK': 'I couldn\'t delete question ',
+  // 'QuizDeleteOk': 'Question is removed',
 
-  'QuizAnswerCorrect': 'Super ! You got that correct.',
-  'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
+  // 'QuizAnswerCorrect': 'Super ! You got that correct.',
+  // 'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
 
-  'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
+  // 'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
 
-  'QuizReview_1': 'This question don\'t have a reward set:\n',
-  'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
-  'QuizRewardQuestion_1': 'To approve a question set a reward with * @',
-  'QuizRewardQuestion_2': ' quiz reward _question number_ *',
-  'QuizUnreviewed': '*This are the question that need to be reviewed*:\n',
-  'QuizSetReward': 'What should the reward be for this question ?',
-  'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
-  'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
+  // 'QuizReview_1': 'This question don\'t have a reward set:\n',
+  // 'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
+  // 'QuizRewardQuestion_1': 'To approve a question set a reward with * @',
+  // 'QuizRewardQuestion_2': ' quiz reward _question number_ *',
+  // 'QuizUnreviewed': '*This are the question that need to be reviewed*:\n',
+  // 'QuizSetReward': 'What should the reward be for this question ?',
+  // 'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
+  // 'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
 
-  'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
-  'QuizStartNoAmount': 'You need to provided the amount of questions in this quiz. \n_quiz start amount_',
-  'QuizStarted1': 'A quiz has started !',
-  'QuizStarted2': 'Go to the ',
-  'QuizStarted3': ' channel to participate.',
+  // 'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
+  // 'QuizStartNoAmount': 'You need to provided the amount of questions in this quiz. \n_quiz start amount_',
+  // 'QuizStarted1': 'A quiz has started !',
+  // 'QuizStarted2': 'Go to the ',
+  // 'QuizStarted3': ' channel to participate.',
 
-  'QuizEnded': 'The quiz has ended. \nScoreboard :\n',
-  // 'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
-  'QuizAborted': 'The quiz has been aborted.',
-  'QuizAskQuestion1': '*To answer say: @',
-  'QuizAskQuestion2': ' quiz answer _your answer_*',
-  'QuizScored': ' scored ',
-  'QuizThanks': 'Thanks for participating !',
+  // 'QuizEnded': 'The quiz has ended. \nScoreboard :\n',
+  // // 'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
+  // 'QuizAborted': 'The quiz has been aborted.',
+  // 'QuizAskQuestion1': '*To answer say: @',
+  // 'QuizAskQuestion2': ' quiz answer _your answer_*',
+  // 'QuizScored': ' scored ',
+  // 'QuizThanks': 'Thanks for participating !',
 
   // OOPS
   'Oops': 'Use the *help* command to see the valid options.',
@@ -253,13 +255,13 @@ const tipbotTxt = {
   'ERRORreadingDb': 'ERROR reading db:'
 };
 
-const quizTxt = {
-  'alreadyRunning': 'Already in a quiz',
-  'notStarted_noApprovedQ': 'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
-  'done': 'All questions in this quiz are answered.',
-  'notRunning': 'Quiz isn\'t running at the moment',
-  'alreadyAnswered': ' ,you already tried to answer this question, let the others have a try.'
-};
+// const quizTxt = {
+//   'alreadyRunning': 'Already in a quiz',
+//   'notStarted_noApprovedQ': 'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
+//   'done': 'All questions in this quiz are answered.',
+//   'notRunning': 'Quiz isn\'t running at the moment',
+//   'alreadyAnswered': ' ,you already tried to answer this question, let the others have a try.'
+// };
 
 const userTxt = {
   // GENERAL
@@ -272,11 +274,13 @@ const userTxt = {
   'UnconfirmedBalance2': ' confirmations) of ',
   'BalanceWarningHigh': 'This tip jar is filling up. Please consider withdrawing some Dash.',
   'NoBalance': 'You don\'t have a balance (yet). Use the _deposit_ command to fill your tip jar.',
+
   // WITHDRAW
   'Withdrawal1': 'Withdrawal of ',
   'WithdrawalTransaction': ' transaction: ',
   'InsufficientBalance1': 'Sorry ',
   'InsufficientBalance2': ' insufficient balance.',
+
   // SEND
   'SendPublicMessage1': ':clap: ',
   'SendPublicMessage2': ' tipped ',
@@ -289,4 +293,4 @@ const userTxt = {
 
 };
 
-module.exports = { tipbotTxt, userTxt, quizTxt };
+module.exports = { tipbotTxt, userTxt };
