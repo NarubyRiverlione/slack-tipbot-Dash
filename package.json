@@ -5,8 +5,8 @@
   "main": "bot.js",
   "dependencies": {
     "async": "^2.1.0",
+    "base58check": "^2.0.0",
     "bitcoin": "^3.0.1",
-    "bitcoinjs-lib": "^1.4.3",
     "botkit": "^0.4.7",
     "debug": "^2.6.0",
     "lodash": "^4.17.0",
