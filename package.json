@@ -5,7 +5,7 @@
   "main": "bot.js",
   "dependencies": {
     "async": "^2.1.0",
-    "base58check": "^2.0.0",
+    "es": "^2.0.0",
     "bitcoin": "^3.0.1",
     "botkit": "^0.4.7",
     "debug": "^2.6.0",
@@ -23,7 +23,8 @@
   "scripts": {
     "test": "snyk test",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "npm run snyk-protect",
+    "lint": "eslint lib/ --fix"
   },
   "repository": {
     "type": "git",

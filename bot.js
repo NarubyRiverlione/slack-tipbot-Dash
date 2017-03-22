@@ -7,7 +7,7 @@ let assert = require('assert')
 let parseArgs = require('minimist')
 let mongoose = require('mongoose')
 let autoIncrement = require('mongoose-auto-increment')
-let async = require('async')
+//let async = require('async')
 
 let argv = parseArgs(process.argv.slice(2))
 
@@ -158,61 +158,37 @@ controller.on('hello', function (bot) {
     var TipBot = require('./lib/tipbot')
     tipbot = new TipBot(bot, RPC_USER, RPC_PASSWORD, RPC_PORT, TIPBOT_OPTIONS)
   }
-  let setChannelTasks = []
+
   // find channelID of PRICE_CHANNEL_NAME to broadcast price messages
-  setChannelTasks.push(
-    function (asyncCB) {
-      setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast', asyncCB)
-    })
-
-  // find channelID of WARN_NEW_USER_CHANNEL to post new user warning messages
-  setChannelTasks.push(
-    function (asyncCB) {
-      setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel', asyncCB)
-    })
-
-  // find channelID of WARN_MODS_CHANNELNAME to post warning messages to admins
-  setChannelTasks.push(
-    function (asyncCB) {
-      setChannel(OPTIONS.WARN_MODS_CHANNELNAME, 'WARN_MODS_CHANNEL', ' Warn channel not set', asyncCB)
-    })
-
-  // find channelID of MAIN_CHANNEL to post general messages
-  setChannelTasks.push(
-    function (asyncCB) {
-      setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to', asyncCB)
-    })
-
-
-  //execute all setChannel tasks
-  async.parallel(setChannelTasks,
-    function () {
+  setChannel(OPTIONS.PRICE_CHANNEL_NAME, 'PRICETICKER_CHANNEL', 'No price channel to broadcast')
+    .then(() => { setChannel(OPTIONS.WARN_NEW_USER_CHANNELNAME, 'WARN_NEW_USER_CHANNEL', ' warn new user channel') })
+    .then(() => { setChannel(OPTIONS.WARN_MODS_CHANNELNAME, 'WARN_MODS_CHANNEL', ' Warn channel not set') })
+    .then(() => { setChannel(OPTIONS.MAIN_CHANNEL_NAME, 'MAIN_CHANNEL', 'No Main channel found to send general messages to') })
+    .then(() => {
       debug('tipbot:init')('All channels are set.')
-    }
-  )
-  // connection is ready = clear initializing flag
-  initializing--
+      // connection is ready = clear initializing flag
+      initializing--
+    })
   // debug('tipbot:init')('Stop Hello, Init count is now ' + initializing);
 })
 
 
-function setChannel(channelName, tipBotChannel, errMsg, cb) {
-  // find channelID of MAIN_CHANNEL to post general messages
-  if (channelName !== undefined) {
-    tipbot.getChannel(channelName, function (err, channel) {
-      if (err) {
-        debug('tipbot:init')('ERROR: No ' + channelName + ' channel found. ' + errMsg)
-        cb()
-      } else {
-        tipbot.OPTIONS[tipBotChannel] = channel
-        debug('tipbot:init')('Init: Channel ' + tipBotChannel + ' set to "' + channelName + '" (' + channel.id + ')')
-        cb()
-      }
+function setChannel(channelName, tipBotChannel, errMsg) {
+  return new Promise(
+    (resolve, reject) => {
+      if (channelName === undefined) { return reject('no channel name') }
+      // find channelID of MAIN_CHANNEL to post general messages
+      tipbot.getChannel(channelName)
+        .then(channel => {
+          tipbot.OPTIONS[tipBotChannel] = channel
+          debug('tipbot:init')('Init: Channel ' + tipBotChannel + ' set to "' + channelName + '" (' + channel.id + ')')
+          resolve()
+        })
+        .catch(err => {
+          debug('tipbot:init')('ERROR: No ' + channelName + ' channel found. ' + errMsg)
+          reject('no found ' + channelName + ' :' + err)
+        })
     })
-  } else {
-    debug('tipbot:init')('ERROR: can get channel because channelname is not set')
-    cb()
-  }
 }
 
 
