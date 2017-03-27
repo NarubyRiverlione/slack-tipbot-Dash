@@ -5,7 +5,7 @@
   "main": "bot.js",
   "dependencies": {
     "async": "^2.1.0",
-    "es": "^2.0.0",
+    "base58check": "^2.0.0",
     "bitcoin": "^3.0.1",
     "botkit": "^0.4.7",
     "debug": "^2.6.0",
@@ -17,14 +17,22 @@
     "waitjs": "^0.2.0"
   },
   "devDependencies": {
+    "babel-preset-latest": "^6.22.0",
     "eslint": "^3.12.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-batch": "^1.0.5",
+    "gulp-clean": "^0.3.2",
+    "gulp-eslint": "^3.0.1",
+    "gulp-watch": "^4.3.11",
     "snyk": "^1.23.0"
   },
   "scripts": {
     "test": "snyk test",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
-    "lint": "eslint lib/ --fix"
+    "lint": "eslint ./src/**/*.js --fix",
+    "compile": "gulp lint && gulp babel"
   },
   "repository": {
     "type": "git",

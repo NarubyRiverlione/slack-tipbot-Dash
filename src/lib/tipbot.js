@@ -1,19 +1,20 @@
 'use strict'
 /*  global wait */
-let _ = require('lodash')
-let debug = require('debug')('tipbot:tipbot')
-let async = require('async')
-let request = require('request')
-let User = require('./user')
+const _ = require('lodash')
+const debug = require('debug')('tipbot:tipbot')
+const async = require('async')
+const request = require('request')
 const base58check = require('base58check')
-let path = require('path')
-let fs = require('fs')
-let dashd = require('bitcoin')
-let texts = require('../text/txt_dash.js').tipbotTxt
-let rain // only required if ENABLE_RAIN_FEATURE
-
+const path = require('path')
+const fs = require('fs')
 require('waitjs')
-let Coin = require('./coin')
+
+import User from './user.js'
+import Wallet from './wallet.js'
+import { tipbotTxt } from '../text/txt_dash.js'
+import * as  Coin from './coin.js'
+
+let rain // only required if ENABLE_RAIN_FEATURE
 
 const CYBERCURRENCY = 'DASH'  // upper case for compare
 const BLACKLIST_CURRENCIES = [CYBERCURRENCY]
@@ -22,7 +23,7 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   let self = this
   if (!bot) { throw new Error('Connection with Slack not availible for tipbot') }
 
-  self.HighBalanceWarningMark = Coin.toSmall(1.0)
+  const HighBalanceWarningMark = Coin.toSmall(1.0)
 
   self.initializing = false
 
@@ -33,7 +34,7 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   // 
   // default options
   self.OPTIONS = _.defaults(OPTIONS, {
-    TMP_DIR: path.resolve(__dirname, '../tmp'),
+    TMP_DIR: path.resolve(__dirname, '../../tmp'),
     ALL_BALANCES: false,// default admins cannnot see all balances
     OTHER_BALANCES: false,  // default admins cannot see a balance of an other specific user
     WARN_MODS_NEW_USER: false,
@@ -49,14 +50,7 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
     RAIN_DEFAULT_THRESHOLD: Coin.toSmall(0.5) // duff
   })
 
-  // create connection via RPC to wallet
-  self.wallet = new dashd.Client({
-    host: 'localhost',
-    port: RPC_PORT,
-    user: RPC_USER,
-    pass: RPC_PASSWORD,
-    timeout: 30000
-  })
+  self.wallet = new Wallet(RPC_PORT, RPC_USER, RPC_PASSWORD, HighBalanceWarningMark, self.OPTIONS.TX_FEE)
 
   // will be updated with all available currencies when API call is done
   self.CURRENCIES = ['USD', 'EUR', 'GBP', 'CNY', 'CAD', 'RUB', 'HKD', 'JPY', 'AUD', 'btc']
@@ -103,9 +97,9 @@ TipBot.prototype.tellPrice = function (currency) {
         .then(rates => {
           let rate = rates[currency]
           if (!rate) {
-            reject(texts.UnsupportedCurrency)
+            reject(tipbotTxt.UnsupportedCurrency)
           } else {
-            resolve(texts.PriceBase + rate.toPrecision(4) + ' ' + currency)
+            resolve(tipbotTxt.PriceBase + rate.toPrecision(4) + ' ' + currency)
           }
         })
         .catch(err => {
@@ -123,24 +117,50 @@ TipBot.prototype.showPriceList = function (tellInChannel, all) {
   let priceList = (all ? self.CURRENCIES : self.LIST_PRICES)
   debug('Pricelist: show ' + priceList.length + ' currency pairs in ' + tellInChannel.name)
 
-  async.forEach(priceList,
-    function (currency, callback) {
-      self.tellPrice(currency.toLowerCase())
-        .then(respone => {
-          reply.text += respone + '\n'
-          callback()
+  var promises = []
+  priceList.forEach(currency => {
+    debug('get rate of ' + currency)
+    let getRate = (currency => {
+      return new Promise(
+        (resolve, reject) => {
+          self.tellPrice(currency.toLowerCase())
+            .then(response => { reply.text += response + '\n'; resolve() })
+            .catch(err => { reject(err) })
         })
-        .catch(err => {
-          callback(err); return
-        })
-    },
-    function (err) {
-      // add  where price information is pulled from
-      if (err) { debug(err); return }
-      reply.text += texts.PriceInfoFrom
+    })
+    debug(getRate)
+    promises.push(getRate)
+  }, this)
+
+  Promise.all(promises)
+    .then(() => {
+      reply.text += tipbotTxt.PriceInfoFrom
       self.slack.say(reply)
-    }
-  )
+    })
+    .catch(err => {
+      reply.text += err
+      self.slack.say(reply)
+    })
+  /*
+    async.forEach(priceList,
+      function (currency, callback) {
+        self.tellPrice(currency.toLowerCase())
+          .then(respone => {
+            reply.text += respone + '\n'
+            callback()
+          })
+          .catch(err => {
+            callback(err); return
+          })
+      },
+      function (err) {
+        // add  where price information is pulled from
+        if (err) { debug(err); return }
+        reply.text += tipbotTxt.PriceInfoFrom
+        self.slack.say(reply)
+      }
+    )
+    */
 }
 
 // get new price cache file and remove old then PRICE_UPDATE_EVERY minutes
@@ -259,9 +279,9 @@ TipBot.prototype.addUser = function (user, updateRegex) {
   //     let newDummyUserMsg = {
   //       channel: self.OPTIONS.WARN_MODS_CHANNEL.id,
   //       text:
-  //       texts.FoundDummyUser1 +
+  //       tipbotTxt.FoundDummyUser1 +
   //       user.name +
-  //       texts.FoundDummyUser2
+  //       tipbotTxt.FoundDummyUser2
   //     };
   //     self.slack.say(newDummyUserMsg);
   //   }
@@ -277,9 +297,9 @@ TipBot.prototype.addUser = function (user, updateRegex) {
     let newUserMsg = {
       channel: self.OPTIONS.WARN_NEW_USER_CHANNEL.id,
       text:
-      texts.WarningNewUser1 +
+      tipbotTxt.WarningNewUser1 +
       user.name +
-      texts.WarningNewUser2
+      tipbotTxt.WarningNewUser2
     }
     self.slack.say(newUserMsg)
   }
@@ -302,9 +322,9 @@ TipBot.prototype.updateUserFromMember = function (member, updateRegex) {
     if (self.OPTIONS.WARN_MODS_USER_LEFT && self.OPTIONS.WARN_USER__LEFT_CHANNEL !== undefined && !self.initializing) {
       let userLeftMsg = {
         channel: self.OPTIONS.WARN_USER__LEFT_CHANNEL.id,
-        text: texts.WarnUserLeft1 +
+        text: tipbotTxt.WarnUserLeft1 +
         member.name +
-        texts.WarnUserLeft2
+        tipbotTxt.WarnUserLeft2
       }
       self.slack.say(userLeftMsg)
     }
@@ -319,7 +339,8 @@ TipBot.prototype.updateUserFromMember = function (member, updateRegex) {
     }
   } else {
     // new user
-    self.addUser(User.fromMember(self, member), updateRegex)
+    const newUser = new User(member)
+    self.addUser(newUser, updateRegex)
   }
 }
 
@@ -402,7 +423,7 @@ TipBot.prototype.init = function () {
   let self = this
   // prevent multiple initializations
   if (self.initializing) {
-    debug('.init called but still initializing...')
+    debug('++ Init called but still initializing...')
     return
   }
   self.initializing = true
@@ -454,18 +475,18 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
       // asked for all = balance
       if (inputValue === 'all' && user !== undefined) {
         currency = CYBERCURRENCY
-        user.getBalance(user.id, 6, function (err, balance) {
-          if (err) {
+        self.wallet.GetBalance(user.id, 6)
+          .then(balance => {
+            let value = Coin.toSmall(balance)
+            debug('Log: using ALL balance of ' + user.name + ' = ' + balance)
+            // amount is in cybercoin, return only value, no convertion rate
+            const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + CYBERCURRENCY }
+            resolve(converted)
+          })
+          .catch(err => {
             debug(err)
             return reject('ERROR getting balance to find "all" ' + err)
-          }
-          let value = Coin.toSmall(balance)
-          debug('Log: using ALL balance of ' + user.name + ' = ' + balance)
-          // amount is in cybercoin, return only value, no convertion rate
-          const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + CYBERCURRENCY }
-          resolve(converted)
-        })
-
+          })
       } else {
         // no 'all', evaluate the unit
         // large cybercoin -> small cybercoin or fiat -> float
@@ -497,7 +518,7 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
         if (self.CURRENCIES.indexOf(currency) !== -1) {
           value = parseFloat(inputValue)
         } else {
-          return reject(user.handle + texts.UnsupportedCurrency + ' "' + currency + '"')
+          return reject(user.handle + tipbotTxt.UnsupportedCurrency + ' "' + currency + '"')
         }
 
         // check if a price update is needed
@@ -506,7 +527,7 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
             let rate = rates[currency]
             debug('Rate for ' + currency + ' = ' + rate)
             if (!rate) {
-              return reject(user.handle + texts.UnsupportedCurrency + ' "' + currency + '"')
+              return reject(user.handle + tipbotTxt.UnsupportedCurrency + ' "' + currency + '"')
             } else {
               let newValue
               if (cyberToFiat)
@@ -537,15 +558,15 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
 // tell all help text, if call by an admin show also the admin-only commands
 TipBot.prototype.tellHelp = function (is_admin) {
   var self = this
-  let text = _.reduce(texts.helpText, function (completeHelpText, helpPart) {
+  let text = _.reduce(tipbotTxt.helpText, function (completeHelpText, helpPart) {
     return completeHelpText + helpPart + '\n'
   }, '')
   if (self.OPTIONS.ENABLE_RAIN_FEATURE) {
-    text += texts.help_rain
+    text += tipbotTxt.help_rain
   }
 
   if (is_admin) {
-    text += '\n\n' + texts.helpAdminOnly
+    text += '\n\n' + tipbotTxt.helpAdminOnly
   }
   return text
 }
@@ -557,15 +578,15 @@ TipBot.prototype.showRandomHelp = function () {
     debug('ERROR: cannot show random helptext because Main Chat channel is not set.')
     return
   }
-  let helpCount = texts.helpText.length
+  let helpCount = tipbotTxt.helpText.length
   let getHelpNR = Math.floor((Math.random() * helpCount))
   getHelpNR = getHelpNR === 0 ? 1 : getHelpNR // don\'t show title
-  let helpTxt = texts.helpText[getHelpNR].replace(/[*]/g, '').replace(/[_]/g, '') // * for bold doesn't show in a code block
+  let helpTxt = tipbotTxt.helpText[getHelpNR].replace(/[*]/g, '').replace(/[_]/g, '') // * for bold doesn't show in a code block
   debug('show helptext number ' + getHelpNR)
 
   let helpMsg = {
     channel: self.OPTIONS.MAIN_CHANNEL.id,
-    text: '>>>' + texts.HelpRandom1 + '\n' +
+    text: '>>>' + tipbotTxt.HelpRandom1 + '\n' +
     '```' + helpTxt + '```'
   }
   self.slack.say(helpMsg)
@@ -589,9 +610,9 @@ TipBot.prototype.checkForRain = function () {
           // show public announcement
           let reply = {
             channel: self.OPTIONS.MAIN_CHANNEL.id,
-            text: texts.RainRay + '\n' +
-            texts.RainExplain + '\n' +
-            texts.RainRay + '\n'
+            text: tipbotTxt.RainRay + '\n' +
+            tipbotTxt.RainExplain + '\n' +
+            tipbotTxt.RainRay + '\n'
           }
           self.slack.say(reply)
           //send private message to each revieced user
@@ -607,7 +628,7 @@ TipBot.prototype.checkForRain = function () {
                     // send private message to lucky user
                     let recievingUserMessage = {
                       'channel': DMchannelRecievingUser,
-                      'text': texts.RainRecieved + Coin.toLarge(rainraySize) + ' dash'
+                      'text': tipbotTxt.RainRecieved + Coin.toLarge(rainraySize) + ' dash'
                     }
                     self.slack.say(recievingUserMessage)
                   })
@@ -679,7 +700,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
 
       // MENTIONS MULTIPLE USER
       if (userMatches.length > 1) {
-        reply.text = 'Sorry ' + user.handle + texts.ToMuchUsers
+        reply.text = 'Sorry ' + user.handle + tipbotTxt.ToMuchUsers
         self.slack.say(reply)
         return
       }
@@ -727,10 +748,11 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         if (user.is_admin) {
           // check if recieving user was provided
           if (userMatches.length === 0) {
-            reply.text = texts.Hello + user.handle + texts.NoUserFoundForTip
+            reply.text = tipbotTxt.Hello + user.handle + tipbotTxt.NoUserFoundForTip
             self.slack.say(reply)
             return
-          } else if (userMatches.length === 1) {
+          }
+          if (userMatches.length === 1) {
             let whisperTo = userMatches[0]
             self.getDirectMessageChannelID(null, whisperTo.id)
               .then(dmChannel => {
@@ -755,26 +777,32 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         // * ALL BALANCES (admin only, needs to be enabled via OPTIONS.ALL_BALANCES)
         if (message.match(/\ball\b/i)) {
           if (self.OPTIONS.ALL_BALANCES === false) {
-            reply.text = texts.RetrievingAllBalancesDisabled
+            reply.text = tipbotTxt.RetrievingAllBalancesDisabled
             self.slack.say(reply)
             return
           }
           if (!user.is_admin) {
-            reply.text = texts.RetrievingAllBalancesAdminOnly
+            reply.text = tipbotTxt.RetrievingAllBalancesAdminOnly
             self.slack.say(reply)
             return
           }
           // warn that this can take a while
-          reply.text = texts.RetrievingAllBalancesWait
+          reply.text = tipbotTxt.RetrievingAllBalancesWait
           self.slack.say(reply)
-
+          //todo: refactoring async => Promise All
           async.mapLimit(Object.keys(
             self.users),
             3,
             function (userID, cb) {
               let user = self.users[userID]
 
-              user.getBalanceLine(cb)
+              self.wallet.GetBalanceLine(user)
+                .then(line => {
+                  cb(null, line)
+                })
+                .catch(err => {
+                  cb(err, null)
+                })
             },
             function (err, result) {
               if (err) { debug('ERROR', err); return }
@@ -795,18 +823,18 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         // feature asked for verifying dummy, fake, slack accounts
         if (message.match(/\bcheck\b/i)) {
           if (self.OPTIONS.OTHER_BALANCES === false) {
-            privateReply.text = texts.CheckBalanceDisabled
+            privateReply.text = tipbotTxt.CheckBalanceDisabled
             self.slack.say(privateReply)
             return
           }
           if (!user.is_admin) {
-            privateReply.text = texts.CheckBalanceAdminOnly
+            privateReply.text = tipbotTxt.CheckBalanceAdminOnly
             self.slack.say(privateReply)
             return
           }
           // check if  user was provided
           if (userMatches.length === 0) {
-            privateReply.text = texts.Hello + user.handle + texts.CheckBalanceNoUserFound
+            privateReply.text = tipbotTxt.Hello + user.handle + tipbotTxt.CheckBalanceNoUserFound
             self.slack.say(privateReply)
             return
           }
@@ -816,31 +844,30 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         }
 
         // tell  balance in private message
-        balanceOfUser.getBalanceLine(function (err, line) {
-          if (err) {
+        self.wallet.GetBalanceLine(balanceOfUser)
+          .then(line => {
+            privateReply.text = line
+            self.slack.say(privateReply)
+          })
+          .catch(err => {
             debug('ERROR: cannot tell ballance of ' + balanceOfUser.name + '/' + balanceOfUser.id)
             privateReply.text = err
             self.slack.say(privateReply)
-          } else {
-            privateReply.text = line
-            self.slack.say(privateReply)
-          }
-        })
+          })
 
         return
       }
 
       // * DEPOSIT
       if (message.match(/\bdeposit\b/i)) {
-        user.tellDepositeAddress(function (err, line) {
-          if (err) {
-            debug('ERROR: cannot find a deposit address for \'' + user.name + '(' + user.id + ') : ' + err)
-          } else {
+        self.wallet.TellDepositeAddress(user)
+          .then(line => {
             privateReply.text = line
             self.slack.say(privateReply)
-          }
-        })
-
+          })
+          .catch(err => {
+            debug('ERROR: cannot find a deposit address for \'' + user.name + '(' + user.id + ') : ' + err)
+          })
         return
       }
 
@@ -848,7 +875,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       if (message.match(/\bwithdraw\b/i)) {
         amount = message.match(self.AMOUNT_OR_ALL_REGEX) // only the number, no currency
         if (amount === null) {
-          reply.text = user.name + texts.NoAmountFound
+          reply.text = user.name + tipbotTxt.NoAmountFound
           self.slack.say(reply)
           return
         }
@@ -876,24 +903,24 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           }))
 
           if (!address.length) {
-            reply.text = 'Sorry ' + user.handle + texts.NoValidAddress
+            reply.text = 'Sorry ' + user.handle + tipbotTxt.NoValidAddress
             self.slack.say(reply)
             return
           } else if (address.length > 1) {
-            reply.text = 'Sorry ' + user.handle + texts.MoreThen1Address + ' [' + address.join(', ') + ']'
+            reply.text = 'Sorry ' + user.handle + tipbotTxt.MoreThen1Address + ' [' + address.join(', ') + ']'
             self.slack.say(reply)
             return
           }
 
         } else {
           // no address
-          reply.text = 'Sorry ' + user.handle + texts.NoAddress
+          reply.text = 'Sorry ' + user.handle + tipbotTxt.NoAddress
           self.slack.say(reply)
           return
         }
         // no amount
         if (!amount) {
-          reply.text = 'Sorry ' + user.handle + texts.NoAmountOrCurrency
+          reply.text = 'Sorry ' + user.handle + tipbotTxt.NoAmountOrCurrency
           self.slack.say(reply)
           return
         }
@@ -904,24 +931,24 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             let privateConversation = { user: user.id }
             self.slack.startPrivateConversation(privateConversation, function (err, convo) {
               convo.ask(
-                texts.WithdrawQuestion[0] + converted.text +
-                texts.WithdrawQuestion[1] + address +
-                texts.WithdrawQuestion[2],
+                tipbotTxt.WithdrawQuestion[0] + converted.text +
+                tipbotTxt.WithdrawQuestion[1] + address +
+                tipbotTxt.WithdrawQuestion[2],
                 [
                   {
                     pattern: self.slack.utterances.yes,
                     callback: function (response, convo) {
                       convo.say('Great! I will continue...')
                       // do something else...
-                      user.withdraw(converted.value, address[0], self.OPTIONS.WALLET_PASSW, function (err, response) {
-                        if (err) {
+                      self.wallet.Withdraw(converted.newValue, address[0], self.OPTIONS.WALLET_PASSW, user)
+                        .then(response => {
+                          debug(user.name + ' had succesfull withdraw ' + converted.value + ' to ' + address[0])
+                          convo.say(response)
+                        })
+                        .catch(err => {
                           debug('ERROR: cannot withdraw because: ' + err)
                           convo.say(err)
-                        } else {
-                          convo.say(response)
-                          debug(user.name + ' had succesfull withdraw ' + converted.value + ' to ' + address[0])
-                        }
-                      })
+                        })
                       convo.next()
                       return
                     }
@@ -951,7 +978,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       if (message.match(/\b(send|give|sent|tip)\b/i)) {
         // check if recieving user was provided
         if (userMatches.length === 0) {
-          reply.text = texts.Hello + user.handle + texts.NoUserFoundForTip
+          reply.text = tipbotTxt.Hello + user.handle + tipbotTxt.NoUserFoundForTip
           self.slack.say(reply)
           return
         } else if (userMatches.length === 1) {
@@ -960,7 +987,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           // get only the number, no currency
           amount = message.match(self.AMOUNT_REGEX)
           if (amount === null) {
-            reply.text = user.name + texts.NoAmountFound
+            reply.text = user.name + tipbotTxt.NoAmountFound
             self.slack.say(reply)
             return
           }
@@ -978,39 +1005,40 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           self.normalizeValue(amount[1], currency, user)
             .then(converted => {
               // send amount (move between accounts in wallet)
-              user.send(mentioned, converted.newValue, function (err, responses) {
-                if (err) {
+              self.wallet.Move(mentioned, converted.newValue, user)
+                .then(responses => {
+                  // response in public channel:  announce tip
+                  reply.text = responses.public
+                  self.slack.say(reply)
+                  // response to sender: send thanks and new ballance
+                  privateReply.text = responses.privateToSender
+                  self.slack.say(privateReply)
+                  // response to reciever:  inform of the tip
+                  self.getDirectMessageChannelID(null, mentioned.id)
+                    .then(DMchannelRecievingUser => {
+                      let recievingUserMessage = {
+                        'channel': DMchannelRecievingUser,
+                        'text': responses.privateToReciever +
+                        tipbotTxt.SendMessageUsed +
+                        '_' + message + '_' + '\n\n use the command ' +
+                        // explain how to withdraw
+                        tipbotTxt.helpText[4]
+                      }
+                      self.slack.say(recievingUserMessage)
+                    })
+                    .catch()
+                  // save tip to database for Rain feature
+                  if (self.OPTIONS.ENABLE_RAIN_FEATURE) { rain.incTipCountInDb(user) }
+
+                })
+                .catch(err => {
                   debug('ERROR: cannot send ' + converted.newValue + ' to ' + mentioned.name + '(' + mentioned.id + ') : ' + err)
                   // warn sender about the error
                   // response to sender: send thanks and new ballance
                   privateReply.text = err
                   self.slack.say(privateReply)
                   return
-                }
-                // response in public channel:  announce tip
-                reply.text = responses.public
-                self.slack.say(reply)
-                // response to sender: send thanks and new ballance
-                privateReply.text = responses.privateToSender
-                self.slack.say(privateReply)
-                // response to reciever:  inform of the tip
-                self.getDirectMessageChannelID(null, mentioned.id)
-                  .then(DMchannelRecievingUser => {
-                    let recievingUserMessage = {
-                      'channel': DMchannelRecievingUser,
-                      'text': responses.privateToReciever +
-                      texts.SendMessageUsed +
-                      '_' + message + '_' + '\n\n use the command ' +
-                      // explain how to withdraw
-                      texts.helpText[4]
-                    }
-                    self.slack.say(recievingUserMessage)
-                  })
-                  .catch()
-                // save tip to database for Rain feature
-                if (self.OPTIONS.ENABLE_RAIN_FEATURE) { rain.incTipCountInDb(user) }
-
-              })
+                })
             })
             .catch(errTxt => {
               reply.text = errTxt
@@ -1023,19 +1051,19 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       if (message.match(/\b(convert|rate)\b/i)) {
         let currencies = message.match(self.CURRENCY_REGEX)
         if (currencies === null || currencies.length < 2) {
-          reply.text = user.handle + texts.NotEnoughCurrencies
+          reply.text = user.handle + tipbotTxt.NotEnoughCurrencies
           self.slack.say(reply)
           return
         }
         if (currencies.length > 2) {
-          reply.text = user.handle + texts.ToMuchCurrencies
+          reply.text = user.handle + tipbotTxt.ToMuchCurrencies
           self.slack.say(reply)
           return
         }
         // only the number, no currency
         amount = message.match(self.AMOUNT_REGEX)
         if (amount === null) {
-          reply.text = user.name + texts.NoAmountFound
+          reply.text = user.name + tipbotTxt.NoAmountFound
           self.slack.say(reply)
           return
         }
@@ -1078,7 +1106,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           self.tellPrice(currency)
             .then(response => {
               // tell where price is pulled from
-              reply.text = response + '\n' + texts.PriceInfoFrom
+              reply.text = response + '\n' + tipbotTxt.PriceInfoFrom
               self.slack.say(reply)
               return
             })
@@ -1109,7 +1137,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           // show all currencies in the dedicated channel to prevent wall of text in other channels
           self.showPriceList(tellChannel, true)
           // inform the user about its location
-          privateReply.text = texts.LocationOfPriceList1 + self.OPTIONS.PRICETICKER_CHANNEL.name + texts.LocationOfPriceList2
+          privateReply.text = tipbotTxt.LocationOfPriceList1 + self.OPTIONS.PRICETICKER_CHANNEL.name + tipbotTxt.LocationOfPriceList2
           self.slack.say(privateReply)
         }
         return
@@ -1117,10 +1145,10 @@ TipBot.prototype.onMessage = function (channel, member, message) {
 
       // 	* LIST CURRENCIES
       if (message.match(/\bcurrencies\b/i)) {
-        reply.text = texts.CurrenciesTitle +
-          texts.SupportedCurrenciesFull + self.SUPPORTED_CURRENCIES.join(', ') + '\n' +
-          texts.SupportedSymbols + self.CURRENCIES.join(', ') + '* \n' +
-          texts.SupportedBase
+        reply.text = tipbotTxt.CurrenciesTitle +
+          tipbotTxt.SupportedCurrenciesFull + self.SUPPORTED_CURRENCIES.join(', ') + '\n' +
+          tipbotTxt.SupportedSymbols + self.CURRENCIES.join(', ') + '* \n' +
+          tipbotTxt.SupportedBase
         self.slack.say(reply)
         return
       }
@@ -1143,36 +1171,36 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         // all users can check the balance of the Rain Account
         // get Rain User for OPTIONS
         if (self.rainUser === undefined || self.rainUser === null) {
-          reply.text = texts.RainCannotFindRainAccount1 + self.OPTIONS.RAIN_USERNAME + texts.RainCannotFindRainAccount2
-          reply.text += texts.RainExplain
+          reply.text = tipbotTxt.RainCannotFindRainAccount1 + self.OPTIONS.RAIN_USERNAME + tipbotTxt.RainCannotFindRainAccount2
+          reply.text += tipbotTxt.RainExplain
           self.slack.say(reply)
           return
         }
         // show balance of Rain Account, available to non-admin user
         rain.getRainBalance(self.rainUser, function (err, rainBalance) {
           if (err) {
-            reply.text = texts.RainCannotFindRainBalance + self.OPTIONS.RAIN_USERNAME
+            reply.text = tipbotTxt.RainCannotFindRainBalance + self.OPTIONS.RAIN_USERNAME
             self.slack.say(reply)
             return
           } else {
             if (rainBalance !== undefined && rainBalance > 2e-8) {
-              reply.text = texts.RainAvailibleAmount + rainBalance + ' dash'
+              reply.text = tipbotTxt.RainAvailibleAmount + rainBalance + ' dash'
             } else {
-              reply.text = texts.RainEmpty
+              reply.text = tipbotTxt.RainEmpty
             }
-            reply.text += '\n' + texts.RainReqDonation1 + self.OPTIONS.RAIN_USERNAME + '_'
-            reply.text += '\n' + texts.RainReqDonation2 + self.OPTIONS.RAIN_USERNAME + texts.RainReqDonation3
+            reply.text += '\n' + tipbotTxt.RainReqDonation1 + self.OPTIONS.RAIN_USERNAME + '_'
+            reply.text += '\n' + tipbotTxt.RainReqDonation2 + self.OPTIONS.RAIN_USERNAME + tipbotTxt.RainReqDonation3
             // show threshold
             rain.getThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD, function (err, threshold) {
               if (err) { debug(err); return }
-              reply.text += '\n' + texts.RainThreshold1 +
+              reply.text += '\n' + tipbotTxt.RainThreshold1 +
                 Coin.toLarge(threshold) + ' Dash \n' +
-                texts.RainThreshold2
+                tipbotTxt.RainThreshold2
               // show amount of eligible users
               rain.getAmountOfEligibleRainUsers(
                 function (err, count) {
                   if (err) { debug(err) }
-                  reply.text += '\n' + count + texts.RainAmountEligibleUsers
+                  reply.text += '\n' + count + tipbotTxt.RainAmountEligibleUsers
                   self.slack.say(reply)
                 })
             })
@@ -1186,12 +1214,12 @@ TipBot.prototype.onMessage = function (channel, member, message) {
             rain.getListOfRainEligibleUsers(
               function (err, allTippers) {
                 if (err) {
-                  debug(texts.ERRORreadingDb + err)
-                  self.privateReply.text = texts.ERRORreadingDb + ': ' + err
+                  debug(tipbotTxt.ERRORreadingDb + err)
+                  self.privateReply.text = tipbotTxt.ERRORreadingDb + ': ' + err
                   self.slack.say(privateReply)
                 }
                 // show list all tippers
-                privateReply.text = texts.RainEligibleUsersList
+                privateReply.text = tipbotTxt.RainEligibleUsersList
                 allTippers.forEach(function (tipper) {
                   privateReply.text += tipper.name + '(' + tipper.id + ') has tipped ' + tipper.tipCount + ' times.\n'
                 })
@@ -1217,9 +1245,9 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                   // rain.getThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD,
                   // function (err, threshold) {
                   //     if (err) { debug(err); return; }
-                  //     reply.text += '\n' + texts.RainThreshold1 +
+                  //     reply.text += '\n' + tipbotTxt.RainThreshold1 +
                   //         Coin.toLarge(threshold) + ' Dash \n' +
-                  //         texts.RainThreshold2;
+                  //         tipbotTxt.RainThreshold2;
                   //     self.slack.say(reply);
                   // });
                   // threshold changed => check balance now
@@ -1245,13 +1273,13 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       }
 
       //  * OOPS
-      let amountOfPossibleResponds = texts.NoCommandFound.length
+      let amountOfPossibleResponds = tipbotTxt.NoCommandFound.length
       let randomRespons = Math.floor((Math.random() * amountOfPossibleResponds) + 1)
-      if (texts.NoCommandFound[randomRespons] === undefined) {
+      if (tipbotTxt.NoCommandFound[randomRespons] === undefined) {
         randomRespons = 'Unknow helptext (Nr: ' + randomRespons / amountOfPossibleResponds + ')'
       } else {
-        reply.text = '>>>' + texts.NoCommandFound[randomRespons]
-        reply.text += '\n' + texts.Oops
+        reply.text = '>>>' + tipbotTxt.NoCommandFound[randomRespons]
+        reply.text += '\n' + tipbotTxt.Oops
       }
       self.slack.say(reply)
       return
