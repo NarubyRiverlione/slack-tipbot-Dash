@@ -333,7 +333,7 @@ TipBot.prototype.updateUserFromMember = function (member, updateRegex) {
 
   if (self.users[member.id]) {
     // existing user = has updated profile or account
-    self.users[member.id].updateFromMember(member)
+    self.users[member.id] = new User(member)
     if (updateRegex) {
       self.updateUserRegex()
     }
@@ -1264,11 +1264,13 @@ TipBot.prototype.onMessage = function (channel, member, message) {
         if (userMatches.length === 1 && user.is_admin) {
           let mentioned = userMatches[0]
           privateReply.text = 'Slack ID of user ' + mentioned.name + ' = ' + mentioned.id
-          self.slack.say(privateReply)
         } else if (message.match(/\bme\b/i)) {
           privateReply.text = 'Slack ID of user ' + user.name + ' = ' + user.id
-          self.slack.say(privateReply)
+        } else {
+          privateReply.text = 'Sorry user not found.'
         }
+        self.slack.say(privateReply)
+
         return
       }
 
