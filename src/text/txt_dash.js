@@ -23,7 +23,7 @@ const tipbotTxt = {
     // 'help_withdraw':
     '*withdraw*\ttell the bot to withdraw an amount to an address. \n' +
     '\t\t\t\t\tYou can also use _all_ to withdraw your complete balance (minus the tx fee) \n' +
-    '\t\t_@DashBot withdraw 1 DASH to Xdice8EMZmqKvrGE4Qc9bUFf9PX3xaYDp!_',
+    '\t\t_@DashBot withdraw 1 DASH to XqyTXt9LM3AHdrfG8ckdTatDiwk5514a11_',
 
     // 'help_currencies':
     '*currencies*\task the bot for a list of supported currencies.\n' +
@@ -46,10 +46,11 @@ const tipbotTxt = {
   '*rain*\t\t\tcheck the available raindrops. \n' +
   '\t\t\tEach user that has tipped another user will receive a _raindrop_ (read: free Dash) from the rain fund when the donation threshold is reached.',
 
-  'help_quiz':
-  '*quiz add*\t\tThe bot will ask to input a new quiz question and answer.\nEach question needs to be reviewed by a moderator.\n' +
-  // + '\n\t\tUse _quiz list_ and _quiz review_ to get the question number for the next commands.\n' +
-  '*quiz answer*\t\tPost an answer to a quiz question.\n',
+  'help_autowithdraw':
+  '*auto-withdraw*\tCheck you auto-withdraw setup. \n' +
+  '\t\t\tWhen you tip jar exide the set amount then there is an automatic withdraw to the set address.\n' +
+  '*auto-withdraw* amount address\tSet amount and address.\n' +
+  '\t\t_@DashBot auto-withdraw 0.5 DASH XqyTXt9LM3AHdrfG8ckdTatDiwk5514a11',
 
   'helpAdminOnly':
   '===== *ADMIN ONLY COMMANDS* =====\n' +
@@ -190,51 +191,6 @@ const tipbotTxt = {
   'RainErrorResettingCounter': 'Error cannot reset counts. Inform the admin.',
   'RainCountIsReset': 'All tip count records are removed.',
 
-  //QUIZ
-  // 'QuizAddQuestion': 'Enter your new question.',
-  // 'QuizAddAnOtherQuestion': 'Will you add an other question (yes/no) ?',
-  // 'QuizAddAnser': 'Enter the answer to your question.',
-  // 'QuizConfirmNewQA': 'Is this the correct question and answer (yes/no) ?',
-  // 'QuizSavedToDb': 'Ok, I\'ve saved your new question, a moderator will review it and set an appropriate bounty.',
-  // 'QuizAbortedSaving': 'Ok, I will ignore that question.',
-  // 'QuizListQuestions': '*I know about this questions:* \n',
-  // 'QuizListReward_1': '\tReward: ',
-  // 'QuizListReward_2': ' points.',
-  // 'QuizQ': 'Q: ',
-  // 'QuizA': 'A: ',
-  // 'QuizDeleteQuestion': 'To delete a question: *quiz delete _question number_*',
-  // 'QuizChangeReward': 'To change the reward of a question: *quiz reward _question number_*',
-  // 'QuizNoQAnumber': 'I didn\'t find the question number',
-  // 'QuizDeleteNOK': 'I couldn\'t delete question ',
-  // 'QuizDeleteOk': 'Question is removed',
-
-  // 'QuizAnswerCorrect': 'Super ! You got that correct.',
-  // 'QuizAnswerWrong': 'Bummer, that was close but still wrong.\nRety plz.',
-
-  // 'QuizNoQuestionsYet': 'There aren\'t any question yet. Why don\'t you add one now?',
-
-  // 'QuizReview_1': 'This question don\'t have a reward set:\n',
-  // 'QuizReview_2': 'Use *quiz reward _question number_* to set a reward.',
-  // 'QuizRewardQuestion_1': 'To approve a question set a reward with * @',
-  // 'QuizRewardQuestion_2': ' quiz reward _question number_ *',
-  // 'QuizUnreviewed': '*This are the question that need to be reviewed*:\n',
-  // 'QuizSetReward': 'What should the reward be for this question ?',
-  // 'QuizSetRewardNoAmountFound': 'Cannot find the reward amount !',
-  // 'QuizSetRewardOk': 'Reward set, thanks for reviewing this question.',
-
-  // 'QuizErrorStarting': 'Sorry cannot start a quiz because: ',
-  // 'QuizStartNoAmount': 'You need to provided the amount of questions in this quiz. \n_quiz start amount_',
-  // 'QuizStarted1': 'A quiz has started !',
-  // 'QuizStarted2': 'Go to the ',
-  // 'QuizStarted3': ' channel to participate.',
-
-  // 'QuizEnded': 'The quiz has ended. \nScoreboard :\n',
-  // // 'QuizShowCorrectAnswers': 'These where the questions and correct answers: \n',
-  // 'QuizAborted': 'The quiz has been aborted.',
-  // 'QuizAskQuestion1': '*To answer say: @',
-  // 'QuizAskQuestion2': ' quiz answer _your answer_*',
-  // 'QuizScored': ' scored ',
-  // 'QuizThanks': 'Thanks for participating !',
 
   // OOPS
   'Oops': 'Use the *help* command to see the valid options.',
@@ -255,13 +211,6 @@ const tipbotTxt = {
   'ERRORreadingDb': 'ERROR reading db:'
 }
 
-// const quizTxt = {
-//   'alreadyRunning': 'Already in a quiz',
-//   'notStarted_noApprovedQ': 'Cannot start a quiz because there are no (approved) questions.\nCheck with the _quiz list_ command.',
-//   'done': 'All questions in this quiz are answered.',
-//   'notRunning': 'Quiz isn\'t running at the moment',
-//   'alreadyAnswered': ' ,you already tried to answer this question, let the others have a try.'
-// };
 
 const userTxt = {
   // GENERAL
@@ -293,4 +242,14 @@ const userTxt = {
 
 }
 
-module.exports = { tipbotTxt, userTxt }
+const autoWithdrawTxt = {
+  'noSetup': ', auto-withdraw isn\'t setup yet for you.\n' +
+  'You can do this by the command *auto-withdraw* amount address',
+  'setupAmount_1': ', your threshold amount is set to ',
+  'setupAmount_2': ' Dash.\n',
+  'setupAddress_1': ', your threshold amount is set to ',
+  'setupAddress_2': ', your threshold amount is set to ',
+  'errorIncompleteSetup': 'Sorry your auto-withdraw setup is incomplete.',
+
+}
+module.exports = { tipbotTxt, userTxt, autoWithdrawTxt }

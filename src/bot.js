@@ -24,6 +24,7 @@ const TIPBOT_OPTIONS = {
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
   ENABLE_RAIN_FEATURE: false,
+  ENABLE_AUTOWITHDRAW_FEATURE: false,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
   RAIN_USERNAME: 'dashrain',
@@ -104,7 +105,7 @@ function connect(controller) {
 }
 
 // open mongoDB connection if needed for a feature
-const needMongoDb = TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE
+const needMongoDb = TIPBOT_OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE || TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE
 if (needMongoDb) {
   mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } })  // no autoIndex in production for preformance impact
   let db = mongoose.connection
