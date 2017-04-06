@@ -942,7 +942,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                       // do something else...
                       self.wallet.Withdraw(converted.newValue, address[0], self.OPTIONS.WALLET_PASSW, user)
                         .then(response => {
-                          debug(user.name + ' has succesfull withdraw ' + converted.value + ' to ' + address[0])
+                          debug(user.name + ' has succesfull withdraw ' + converted.newValue + ' to ' + address[0])
                           convo.say(response)
                         })
                         .catch(err => {
