@@ -9,10 +9,10 @@ const path = require('path')
 const fs = require('fs')
 require('waitjs')
 
-import User from './user.js'
-import Wallet from './wallet.js'
-import { tipbotTxt } from '../text/txt_dash.js'
-import * as  Coin from './coin.js'
+const User = require('./user.js')
+const Wallet = require('./wallet.js')
+const Coin = require('./coin.js')
+const tipbotTxt = require('../text/txt_dash.js').tipbotTxt
 
 let rain // only required if ENABLE_RAIN_FEATURE
 
@@ -888,7 +888,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
           //not provided, set dash as default currency
           amount[2] = CYBERCURRENCY
         }
-        debug(amount)
+        // debug(amount)
 
         let address = message.match(self.ADDRESS_REGEX)
 
@@ -942,7 +942,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                       // do something else...
                       self.wallet.Withdraw(converted.newValue, address[0], self.OPTIONS.WALLET_PASSW, user)
                         .then(response => {
-                          debug(user.name + ' had succesfull withdraw ' + converted.value + ' to ' + address[0])
+                          debug(user.name + ' has succesfull withdraw ' + converted.value + ' to ' + address[0])
                           convo.say(response)
                         })
                         .catch(err => {

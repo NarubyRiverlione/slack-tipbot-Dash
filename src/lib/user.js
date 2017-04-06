@@ -1,6 +1,6 @@
 'use strict'
 
-export default class User {
+module.exports = class User {
   constructor(member) {
     this.id = member.id
     this.name = member.name
@@ -14,3 +14,5 @@ export default class User {
 function getSlackHandle(user) {
   return '<@' + user.id + '|' + user.name + '>'
 }
+
+

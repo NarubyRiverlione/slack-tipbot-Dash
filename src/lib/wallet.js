@@ -12,7 +12,7 @@ const BLOCKCHAIN_EXPLORER_URL = 'https://chainz.cryptoid.info/dash/tx.dws?'
 const REQUIRED_WITHDRAW_CONFIRMATIONS = 6
 const REQUIRED_TIP_CONFIRMATIONS = 5 // to immediately be able to send a tip after deposit with InstantSend
 
-export default class Wallet {
+module.exports = class Wallet {
   constructor(RPC_PORT, RPC_USER, RPC_PASSWORD, HighBalanceWarningMark, TX_FEE) {
     // create connection via RPC to wallet
     this.walletDaemon = new dashd.Client({
@@ -140,22 +140,20 @@ export default class Wallet {
               value -= this.TX_FEE
             }
             // unlock wallet if needed
-            if (walletPass) {
-              this.walletDaemon.walletPassphrase(walletPass, 10, err => {
-                if (err) {
-                  let error = 'ERROR could not unlock the wallet'
-                  debug(error + ' : ' + err)
-                  user.locked = false
-                  return reject(error)
-                }
-                // wallet is now unlocked for 10 seconds, move amount
-                return sendAmount(user.id, toAddress, value, this.walletDaemon)
-              })
-            } else {
-              // no wallet unlocking needed, no need to wait for the  walletPassphrase callback
-              return sendAmount(user.id, toAddress, value, this.walletDaemon)
-            }
+            return unlockWalletIfNeeded(this.walletDaemon, walletPass)
           })
+
+
+          .then(() => {
+            // wallet is now unlocked, send now
+            return sendAmount(user.id, toAddress, value, this.walletDaemon)
+          })
+          .catch(err => {
+            // error unlocking wallet
+            user.locked = false
+            reject(err)
+          })
+
 
           .then(blockchainTxLine => {
             //  this transaction is done, clear lock to allow new transactions
@@ -164,6 +162,7 @@ export default class Wallet {
           })
 
           .catch(err => {
+            // error send amount
             user.locked = false
             reject(err)
           })
@@ -238,8 +237,6 @@ export default class Wallet {
           })
       })
   }
-
-
 }
 
 // private functions
@@ -265,3 +262,22 @@ function sendAmount(fromAccount, toAddress, value, walletDaemon) {
         })
     })
 }
+
+// unlock the wallet for 10 seconds if a passPhrase is provided
+function unlockWalletIfNeeded(walletDaemon, walletPass) {
+  return new Promise(
+    (resolve, reject) => {
+      // no password supplied = no unlocking needed
+      if (!walletPass) resolve()
+      walletDaemon.walletPassphrase(walletPass, 10,
+        err => {
+          if (err) {
+            let error = 'ERROR could not unlock the wallet because: '
+            debug(error + err)
+            reject(err)
+          }
+          resolve()
+        })
+    })
+}
+
