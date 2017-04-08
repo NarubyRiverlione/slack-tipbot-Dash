@@ -495,28 +495,27 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
           currency = self.CYBERCURRENCY
           value = Coin.toSmall(inputValue)
         }
-        if (currency.endsWith('s')) {
-          currency = currency.slice(0, -1)
-          if (self.CURRENCIES.indexOf(currency) !== -1) {
-            value = parseFloat(inputValue)
-          }
-        }
 
         let cyberToFiat = false
 
-        if (currency === self.CYBERCURRENCY) {
-          // amount is in cybercoin, return only value, no convertion rate
+        currency = unit.trim().toLowerCase()
+        if (currency.endsWith('s')) // remove plurar 's'
+          currency = currency.slice(0, -1)
+
+        if (currency === self.CYBERCURRENCY.toLowerCase()) {
           if (!outputCurrency) {
+            // amount is in cybercoin, return only value, no convertion rate
             const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + self.CYBERCURRENCY }
             return resolve(converted)
           } else {
             // outputCurrency is know =>  convert cybercoin -> fiat
-            unit = outputCurrency
+            // unit = outputCurrency
             cyberToFiat = true
+            currency = outputCurrency
           }
         }
 
-        currency = unit.trim().toLowerCase()
+
         if (self.CURRENCIES.indexOf(currency) !== -1) {
           value = parseFloat(inputValue)
         } else {
@@ -531,8 +530,8 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
             if (!rate) {
               return reject(user.handle + tipbotTxt.UnsupportedCurrency + ' "' + currency + '"')
             } else {
-              let newValue
-              if (cyberToFiat)
+              let newValue = 0.0
+              if (!cyberToFiat)
                 newValue = Math.ceil(value / rate * 1e8)
               else
                 newValue = Math.ceil(value * rate * 1e8)

@@ -436,7 +436,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       tipbot.normalizeValue(amount[1], currency, user)
         .then(converted => {
           // send amount (move between accounts in wallet)
-          tipbot.wallet.Move(mentioned, converted.newValue, user)
+          tipbot.wallet.Move(mentioned, Coin.toSmall(converted.newValue), user)
             .then(responses => {
               // response in public channel:  announce tip
               reply.text = responses.public
@@ -533,7 +533,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       toCurrency = currencies[1].toLowerCase()
     }
 
-    tipbot.normalizeValue(amount[1], toCurrency, user, fromCurrency)
+    tipbot.normalizeValue(amount[1], fromCurrency, user, toCurrency)
       .then(converted => {
         reply.text = amount[1] + ' ' + fromCurrency + ' = '
           + converted.newValue + '  ' + toCurrency +
