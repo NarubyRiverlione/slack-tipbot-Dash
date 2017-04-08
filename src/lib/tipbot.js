@@ -15,8 +15,6 @@ const Coin = require('./coin.js')
 const tipbotTxt = require('../text/txt_dash.js').tipbotTxt
 
 
-let Rain          // only required if ENABLE_RAIN_FEATURE
-
 let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   let self = this
   if (!bot) { throw new Error('Connection with Slack not availible for tipbot') }
@@ -605,18 +603,15 @@ TipBot.prototype.onUserChange = function (bot, member) {
   self.updateUserFromMember(member)
 }
 
-/*
+
 // check if rain balance > rain threshold
 TipBot.prototype.checkForRain = function () {
   let self = this
   if (self.rain !== undefined) {
 
-    self.rain.CheckThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD, self.rainUser,
-      function (err, reviecedUsers, rainraySize) {
-        if (err) {
-          debug(err); return
-        }
-        if (rainraySize !== null && reviecedUsers !== null) {
+    self.rain.CheckThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD)
+      .then(result => {
+        if (result.rainraySize !== null && result.reviecedUsers !== null) {
           // show public announcement
           let reply = {
             channel: self.OPTIONS.MAIN_CHANNEL.id,
@@ -628,7 +623,7 @@ TipBot.prototype.checkForRain = function () {
           self.slack.say(reply)
           //send private message to each revieced user
           debug('rain: ===== ASYNC start sending private messages for rain =====')
-          async.forEachSeries(reviecedUsers,
+          async.forEachSeries(result.reviecedUsers,
             function (oneUser, asyncCB) {
               // wait the time set via rain Throttle to prevent slack spam protection
               wait(self.OPTIONS.RAIN_SEND_THROTTLE, function () {
@@ -639,7 +634,7 @@ TipBot.prototype.checkForRain = function () {
                     // send private message to lucky user
                     let recievingUserMessage = {
                       'channel': DMchannelRecievingUser,
-                      'text': tipbotTxt.RainRecieved + Coin.toLarge(rainraySize) + ' dash'
+                      'text': tipbotTxt.RainRecieved + Coin.toLarge(result.rainraySize) + ' dash'
                     }
                     self.slack.say(recievingUserMessage)
                   })
@@ -658,9 +653,13 @@ TipBot.prototype.checkForRain = function () {
             })
         }
       })
+      .catch(err => {
+        debug(err)
+        return
+      })
   }
 }
-*/
+
 
 // a Slack message was send,
 // if the bot name mentioned look for command keywords

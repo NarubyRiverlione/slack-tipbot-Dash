@@ -479,7 +479,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
                 })
                 .catch()
               // save tip to database for Rain feature
-              if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE) { rain.incTipCountInDb(user) }
+              if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE) { tipbot.rain.IncTipCountInDb(user) }
 
             })
             .catch(err => {
@@ -618,22 +618,17 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
 
   //  * RAIN (reward to users that have tipped others)
   if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE && message.match(/\brain\b/i)) {
-
     // all users can check the balance of the Rain Account
     // get Rain User for OPTIONS
-    if (tipbot.rainUser === undefined || tipbot.rainUser === null) {
+    if (!tipbot.rain) {
       reply.text = tipbotTxt.RainCannotFindRainAccount1 + tipbot.OPTIONS.RAIN_USERNAME + tipbotTxt.RainCannotFindRainAccount2
       reply.text += tipbotTxt.RainExplain
       tipbot.slack.say(reply)
       return
     }
     // show balance of Rain Account, available to non-admin user
-    rain.getRainBalance(tipbot.rainUser, function (err, rainBalance) {
-      if (err) {
-        reply.text = tipbotTxt.RainCannotFindRainBalance + tipbot.OPTIONS.RAIN_USERNAME
-        tipbot.slack.say(reply)
-        return
-      } else {
+    tipbot.rain.GetRainBalance(tipbot.wallet)
+      .then(rainBalance => {
         if (rainBalance !== undefined && rainBalance > 2e-8) {
           reply.text = tipbotTxt.RainAvailibleAmount + rainBalance + ' dash'
         } else {
@@ -642,73 +637,88 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
         reply.text += '\n' + tipbotTxt.RainReqDonation1 + tipbot.OPTIONS.RAIN_USERNAME + '_'
         reply.text += '\n' + tipbotTxt.RainReqDonation2 + tipbot.OPTIONS.RAIN_USERNAME + tipbotTxt.RainReqDonation3
         // show threshold
-        rain.getThreshold(tipbot.OPTIONS.RAIN_DEFAULT_THRESHOLD, function (err, threshold) {
-          if (err) { debug(err); return }
-          reply.text += '\n' + tipbotTxt.RainThreshold1 +
-            Coin.toLarge(threshold) + ' Dash \n' +
-            tipbotTxt.RainThreshold2
-          // show amount of eligible users
-          rain.getAmountOfEligibleRainUsers(
-            function (err, count) {
-              if (err) { debug(err) }
-              reply.text += '\n' + count + tipbotTxt.RainAmountEligibleUsers
-              tipbot.slack.say(reply)
-            })
-        })
-      }
-    })
+        return tipbot.rain.GetThreshold(tipbot.OPTIONS.RAIN_DEFAULT_THRESHOLD)
+      })
+      .catch(err => {
+        debug(err); return
+      })
 
-    // ADMIN ONLY COMMANDS
-    if (user.is_admin) {
-      // show Eligible users (ahs tip before)
-      if (message.match(/\beligible\b/i)) {
-        rain.getListOfRainEligibleUsers(
-          function (err, allTippers) {
-            if (err) {
-              debug(tipbotTxt.ERRORreadingDb + err)
-              tipbot.privateReply.text = tipbotTxt.ERRORreadingDb + ': ' + err
-              tipbot.slack.say(privateReply)
-            }
-            // show list all tippers
-            privateReply.text = tipbotTxt.RainEligibleUsersList
-            allTippers.forEach(function (tipper) {
-              privateReply.text += tipper.name + '(' + tipper.id + ') has tipped ' + tipper.tipCount + ' times.\n'
-            })
-            //  debug(reply.text);
-            tipbot.slack.say(privateReply)
+
+      .then(threshold => {
+        reply.text += '\n' + tipbotTxt.RainThreshold1 +
+          Coin.toLarge(threshold) + ' Dash \n' +
+          tipbotTxt.RainThreshold2
+        // show amount of eligible users
+        return tipbot.rain.GetAmountOfEligibleRainUsers()
+      })
+      .catch(err => {
+        debug(err); return
+      })
+
+
+      .then(count => {
+        reply.text += '\n' + count + tipbotTxt.RainAmountEligibleUsers
+        tipbot.slack.say(reply)
+      })
+      .catch(err => {
+        debug('ERROR get rain balance: ' + err)
+        reply.text = tipbotTxt.RainCannotFindRainBalance + tipbot.OPTIONS.RAIN_USERNAME
+        tipbot.slack.say(reply)
+        return
+      })
+  }
+
+  // ADMIN ONLY COMMANDS
+  if (user.is_admin) {
+    // show Eligible users (ahs tip before)
+    if (message.match(/\beligible\b/i)) {
+      tipbot.rain.GetListOfRainEligibleUsers()
+        .then(allTippers => {
+          // show list all tippers
+          privateReply.text = tipbotTxt.RainEligibleUsersList
+          allTippers.forEach(function (tipper) {
+            privateReply.text += tipper.name + '(' + tipper.id + ') has tipped ' + tipper.tipCount + ' times.\n'
           })
-      }
+          //  debug(reply.text);
+          tipbot.slack.say(privateReply)
+        })
+        .catch(err => {
+          debug(tipbotTxt.ERRORreadingDb + err)
+          tipbot.privateReply.text = tipbotTxt.ERRORreadingDb + ': ' + err
+          tipbot.slack.say(privateReply)
+        })
+    }
 
-      // threshold (rain will be cast if amount of rain balance > threshold)
-      if (message.match(/\bthreshold\b/i)) {
-        // set new threshold
-        amount = message.match(tipbot.AMOUNT_REGEX) // only the number
-        if (amount !== null) {
-          // amount found in message, save this as the new threshold
-          rain.saveThreshold(Coin.toSmall(amount[1]),
-            function (err) {
-              if (err) {
-                debug(err); return
-              } else {
-                debug('New Rain threshold saved as ' + amount[1] + ' by ' + user.name)
-              }
-              // //show new threshold
-              // rain.getThreshold(tipbot.OPTIONS.RAIN_DEFAULT_THRESHOLD,
-              // function (err, threshold) {
-              //     if (err) { debug(err); return; }
-              //     reply.text += '\n' + tipbotTxt.RainThreshold1 +
-              //         Coin.toLarge(threshold) + ' Dash \n' +
-              //         tipbotTxt.RainThreshold2;
-              //     tipbot.slack.say(reply);
-              // });
-              // threshold changed => check balance now
-              tipbot.checkForRain(reply)
-            })
-        }
+    // threshold (rain will be cast if amount of rain balance > threshold)
+    if (message.match(/\bthreshold\b/i)) {
+      // set new threshold
+      amount = message.match(tipbot.AMOUNT_REGEX) // only the number
+      if (amount !== null) {
+        // amount found in message, save this as the new threshold
+        tipbot.rainsaveThreshold(Coin.toSmall(amount[1]),
+          function (err) {
+            if (err) {
+              debug(err); return
+            } else {
+              debug('New Rain threshold saved as ' + amount[1] + ' by ' + user.name)
+            }
+            // //show new threshold
+            // rain.getThreshold(tipbot.OPTIONS.RAIN_DEFAULT_THRESHOLD,
+            // function (err, threshold) {
+            //     if (err) { debug(err); return; }
+            //     reply.text += '\n' + tipbotTxt.RainThreshold1 +
+            //         Coin.toLarge(threshold) + ' Dash \n' +
+            //         tipbotTxt.RainThreshold2;
+            //     tipbot.slack.say(reply);
+            // });
+            // threshold changed => check balance now
+            tipbot.checkForRain(reply)
+          })
       }
     }
     return
   }
+
 
   //  * GET SLACK ID
   if (message.match(/\bgetid\b/i)) {

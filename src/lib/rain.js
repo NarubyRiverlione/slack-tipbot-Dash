@@ -30,15 +30,15 @@ module.exports = class Rain {
   }
 
   // get the balance of the Rain Account
-  GetRainBalance(rainUser, wallet) {
+  GetRainBalance(wallet) {
     return new Promise(
       (resolve, reject) => {
-        if (rainUser === undefined || rainUser === null) {
+        if (!this.rainUser) {
           debug('ERROR Rain: ' + helpTexts.RainCannotFindRainAccount1)
           return reject('UnknowRainUser')
         }
         // get balance of Rain User
-        wallet.getBalance(rainUser.id, 6, (err, rainBalance) => {
+        wallet.getBalance(this.rainUser.id, 6, (err, rainBalance) => {
           if (err) { return reject(err) }
           // return balance
           resolve(rainBalance)
@@ -71,13 +71,13 @@ module.exports = class Rain {
         getThreshold(defaultThreshold,
           (err, threshold) => {
             if (err) { return reject(err) }
-            this.getRainBalance(rainUser, wallet)
+            this.getRainBalance(this.rainUser, wallet)
               .then(rainBalance => {
                 if (Coin.toSmall(rainBalance) >= threshold) {
                   debug('Rain balance ' + rainBalance + ' > threshold ' + threshold + ' : cast rain now !!')
 
-                  rainNow(rainUser, rainBalance, function (err, reviecedUsers, rainraySize) {
-                    resolve(err, reviecedUsers, rainraySize)
+                  rainNow(this.rainUser, rainBalance, function (err, reviecedUsers, rainraySize) {
+                    resolve({ reviecedUsers, rainraySize })
                   })
                 }
               })
@@ -196,10 +196,10 @@ function getThreshold(defaultThreshold) {
 
 
 // it's rainny day, look at all thoese rainrays !
-function rainNow(rainUser, rainBalance, wallet) {
+function rainNow(rainBalance, wallet) {
   return new Promise(
     (resolve, reject) => {
-      if (rainUser === undefined || rainUser === null) {
+      if (!this.rainUser) {
         return reject('ERROR rain: cannot let is rain as rain User is unknown !')
       }
       if (rainBalance === undefined) {
