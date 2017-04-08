@@ -106,8 +106,11 @@ module.exports = class Wallet {
       })
   }
 
-  // value is in satochi !
+  // value is in smallCoin !
   Withdraw(value, toAddress, walletPass, user) {
+    // substract tx fee from amount
+    const withdrawAmount = value - this.TX_FEE
+
     return new Promise(
       (resolve, reject) => {
         // prevent multiple transactions, only continue if not already locked
@@ -121,48 +124,39 @@ module.exports = class Wallet {
         this.GetBalance(user.id, REQUIRED_WITHDRAW_CONFIRMATIONS)
           .then(balance => {
             balance = Coin.toSmall(balance)
-            // check if with all (value = balance)
-            if (value === balance) {
-              // substract tx_fee from value
-              value = balance - this.TX_FEE
-            }
-
-            if (balance < value + this.TX_FEE) {
+            if (balance < value) {
               // not enough balance
               user.locked = false
               let error = helpText.InsufficientBalance1 + user.handle + helpText.InsufficientBalance2
               return reject(error)
             }
             // enough balance
-            if (value === balance) {
-              // withdraw everything (minus the fee)
-              // FIXME  : with 'All' the tx_fee is here again substracted !!
-              value -= this.TX_FEE
-            }
             // unlock wallet if needed
             return unlockWalletIfNeeded(this.walletDaemon, walletPass)
           })
-
-
-          .then(() => {
-            // wallet is now unlocked, send now
-            return sendAmount(user.id, toAddress, value, this.walletDaemon)
-          })
+          // error getting balance
           .catch(err => {
-            // error unlocking wallet
             user.locked = false
-            reject(err)
+            return reject(err)
           })
 
+          // wallet is now unlocked, send now
+          .then(() => {
+            return sendAmount(user.id, toAddress, withdrawAmount, this.walletDaemon)
+          })
+          // error unlocking wallet
+          .catch(err => {
+            user.locked = false
+            return reject(err)
+          })
 
+          //  this transaction is done, clear lock to allow new transactions
           .then(blockchainTxLine => {
-            //  this transaction is done, clear lock to allow new transactions
             user.locked = false
             resolve(blockchainTxLine)
           })
-
+          // error send amount
           .catch(err => {
-            // error send amount
             user.locked = false
             reject(err)
           })
@@ -258,7 +252,7 @@ function sendAmount(fromAccount, toAddress, value, walletDaemon) {
             toAddress +
             helpText.WithdrawalTransaction +
             url
-          resolve(line)
+          return resolve(line)
         })
     })
 }
