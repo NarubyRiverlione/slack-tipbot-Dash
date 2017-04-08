@@ -4,7 +4,7 @@ const _ = require('lodash')
 const debug = require('debug')('tipbot:tipbot')
 const async = require('async')
 const request = require('request')
-const base58check = require('base58check')
+
 const path = require('path')
 const fs = require('fs')
 require('waitjs')
@@ -14,16 +14,15 @@ const Wallet = require('./wallet.js')
 const Coin = require('./coin.js')
 const tipbotTxt = require('../text/txt_dash.js').tipbotTxt
 
-let rain // only required if ENABLE_RAIN_FEATURE
-
-const CYBERCURRENCY = 'DASH'  // upper case for compare
-const BLACKLIST_CURRENCIES = [CYBERCURRENCY]
+let rain          // only required if ENABLE_RAIN_FEATURE
 
 let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   let self = this
   if (!bot) { throw new Error('Connection with Slack not availible for tipbot') }
 
   const HighBalanceWarningMark = Coin.toSmall(1.0)
+  const CYBERCURRENCY = 'DASH'  // upper case for compare
+  const BLACKLIST_CURRENCIES = [CYBERCURRENCY]
 
   self.initializing = false
 
@@ -85,6 +84,7 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   if (self.OPTIONS.ENABLE_RAIN_FEATURE) {
     rain = require('./rain')
   }
+
   // Init tipbot
   self.init()
 }
@@ -467,7 +467,6 @@ TipBot.prototype.init = function () {
 
 // convert currency if needed,
 // return via callback amount in dash, and if it was needed to convertion rate and originalCurrency
-// CB (value, rate, originalCurrency, originalValue, valueText)
 TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurrency) {
   let self = this
   let currency, value
@@ -475,13 +474,13 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
     (resolve, reject) => {
       // asked for all = balance
       if (inputValue === 'all' && user !== undefined) {
-        currency = CYBERCURRENCY
+        currency = self.CYBERCURRENCY
         self.wallet.GetBalance(user.id, 6)
           .then(balance => {
             let value = Coin.toSmall(balance)
             debug('Log: using ALL balance of ' + user.name + ' = ' + balance)
             // amount is in cybercoin, return only value, no convertion rate
-            const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + CYBERCURRENCY }
+            const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + self.CYBERCURRENCY }
             resolve(converted)
           })
           .catch(err => {
@@ -492,11 +491,11 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
         // no 'all', evaluate the unit
         // large cybercoin -> small cybercoin or fiat -> float
         if (unit.match(/duff?/i)) {
-          currency = CYBERCURRENCY
+          currency = self.CYBERCURRENCY
           value = parseInt(inputValue)
         }
         if (unit.match(/DASH/i)) {
-          currency = CYBERCURRENCY
+          currency = self.CYBERCURRENCY
           value = Coin.toSmall(inputValue)
         }
         if (currency.endsWith('s')) {
@@ -508,10 +507,10 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
 
         let cyberToFiat = false
 
-        if (currency === CYBERCURRENCY) {
+        if (currency === self.CYBERCURRENCY) {
           // amount is in cybercoin, return only value, no convertion rate
           if (!outputCurrency) {
-            const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + CYBERCURRENCY }
+            const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + self.CYBERCURRENCY }
             return resolve(converted)
           } else {
             // outputCurrency is know =>  convert cybercoin -> fiat
@@ -545,8 +544,8 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
               rate = rate.toFixed(2)
 
               let text = value.toFixed(2) + ' ' + currency + ' ' +
-                '(' + newValue + ' ' + CYBERCURRENCY +
-                ' at ' + rate + ' ' + currency + ' / ' + CYBERCURRENCY + ')'
+                '(' + newValue + ' ' + self.CYBERCURRENCY +
+                ' at ' + rate + ' ' + currency + ' / ' + self.CYBERCURRENCY + ')'
 
               // return converted value in dash, convertion rate, originalCurrency, originalValue, text about the convertion
               const converted = { newValue, rate, text }
@@ -570,6 +569,10 @@ TipBot.prototype.tellHelp = function (is_admin) {
   if (self.OPTIONS.ENABLE_RAIN_FEATURE) {
     text += tipbotTxt.help_rain
   }
+  if (self.OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE) {
+    text += tipbotTxt.help_autowithdraw
+  }
+
 
   if (is_admin) {
     text += '\n\n' + tipbotTxt.helpAdminOnly
@@ -660,26 +663,21 @@ TipBot.prototype.checkForRain = function () {
 // if the bot name mentioned look for command keywords
 TipBot.prototype.onMessage = function (channel, member, message) {
   let self = this
-  let reply = { 'channel': channel.id }
-
-  let amount, currency, providedCurrency
 
   let user = self.users[member]
-
   if (user === undefined) {
     // don\'t know who send the message
     debug('ERROR don\'t have the user ' + member.name + ' (' + member.id + ') in my known users (array)')
     return
   }
-
   if (user.id === self.slack.identity.id) {
     // message was from bot (reply to a command)
     return
   }
 
-  let privateReply = {}
   self.getDirectMessageChannelID(channel, user.id)
     .then(DMchannelID => {
+<<<<<<< HEAD
       privateReply.channel = DMchannelID
       // debug message
       let channelName = channel.Name || channel.id // channelName = name of id if no name if found (group)
@@ -1291,9 +1289,11 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       }
       self.slack.say(reply)
       return
+=======
+      const ProcessMessage = require('./processMessage.js')
+      ProcessMessage(message, channel, user, DMchannelID, self)
+>>>>>>> autowithdraw
     })
-
-  return
 }
 
 module.exports = TipBot
