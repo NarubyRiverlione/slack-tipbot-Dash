@@ -13,7 +13,7 @@
     "minimist": "^1.1.0",
     "mongoose": "^4.7.0",
     "mongoose-auto-increment": "^5.0.1",
-    "request": "^2.68.0",
+    "request": "^2.79.0",
     "waitjs": "^0.2.0"
   },
   "devDependencies": {
