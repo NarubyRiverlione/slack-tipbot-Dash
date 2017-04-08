@@ -233,7 +233,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       amount[2] = message.match(tipbot.CURRENCY_REGEX)[0]
     } else {
       //not provided, set dash as default currency
-      amount[2] = tipbot.tipbot.CYBERCURRENCY
+      amount[2] = tipbot.CYBERCURRENCY
     }
     // debug(amount)
 
