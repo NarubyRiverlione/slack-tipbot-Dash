@@ -7,7 +7,6 @@ const async = require('async')
 const tipbotTxt = require('../text/txt_dash.js').tipbotTxt
 const Coin = require('./coin.js')
 
-let rain          // only required if ENABLE_RAIN_FEATURE
 let autowithdraw  // only requuired if ENABLE_AUTOWITHDRAW_FEATURE
 
 module.exports = function (message, channel, user, DMchannelID, tipbot) {
@@ -22,9 +21,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
   if (tipbot.OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE) {
     autowithdraw = require('./autowithdraw')
   }
-  if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE) {
-    rain = require('./rain')
-  }
+
 
   // find user ID matches, ignore the sending user
   let userMatches = _.reject(message.match(tipbot.userRegex), function (match) {

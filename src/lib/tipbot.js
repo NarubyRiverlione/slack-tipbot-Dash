@@ -15,6 +15,8 @@ const Coin = require('./coin.js')
 const tipbotTxt = require('../text/txt_dash.js').tipbotTxt
 
 
+let Rain          // only required if ENABLE_RAIN_FEATURE
+
 let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
   let self = this
   if (!bot) { throw new Error('Connection with Slack not availible for tipbot') }
@@ -79,8 +81,6 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
       self.CURRENCY_REGEX = new RegExp('\\b(duff?|' + self.CYBERCURRENCY + '|' + self.CURRENCIES.join('|') + '|' + prurals.join('|') + ')\\b', 'ig') // added \b: bugfix for only finding the currencr symbol instead parts of words (aud = audit)
     })
     .catch(err => { debug('ERROR: Init : getting rates : ' + err) })
-
-
 
   // Init tipbot
   self.init()
@@ -444,7 +444,8 @@ TipBot.prototype.init = function () {
         self.updateUserRegex()
 
         // get Rain user
-        if (self.OPTIONS.ENABLE_RAIN_FEATURE || self.OPTIONS.RAIN_USERNAME) {
+
+        if (self.OPTIONS.ENABLE_RAIN_FEATURE === true && self.OPTIONS.RAIN_USERNAME) {
           const Rain = require('./rain')
           self.rain = new Rain(self.OPTIONS.RAIN_USERNAME, self.users)
         }
@@ -604,10 +605,12 @@ TipBot.prototype.onUserChange = function (bot, member) {
   self.updateUserFromMember(member)
 }
 
+/*
 // check if rain balance > rain threshold
 TipBot.prototype.checkForRain = function () {
   let self = this
   if (self.rain !== undefined) {
+
     self.rain.CheckThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD, self.rainUser,
       function (err, reviecedUsers, rainraySize) {
         if (err) {
@@ -620,6 +623,7 @@ TipBot.prototype.checkForRain = function () {
             text: tipbotTxt.RainRay + '\n' +
             tipbotTxt.RainExplain + '\n' +
             tipbotTxt.RainRay + '\n'
+
           }
           self.slack.say(reply)
           //send private message to each revieced user
@@ -656,6 +660,7 @@ TipBot.prototype.checkForRain = function () {
       })
   }
 }
+*/
 
 // a Slack message was send,
 // if the bot name mentioned look for command keywords

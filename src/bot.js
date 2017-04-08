@@ -105,7 +105,7 @@ function connect(controller) {
 }
 
 // open mongoDB connection if needed for a feature
-const needMongoDb = TIPBOT_OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE || TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE || TIPBOT_OPTIONS.ENABLE_QUIZ_FEATURE
+const needMongoDb = TIPBOT_OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE || TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE
 if (needMongoDb) {
   mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } })  // no autoIndex in production for preformance impact
   let db = mongoose.connection
