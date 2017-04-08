@@ -24,7 +24,7 @@ const TIPBOT_OPTIONS = {
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
   ENABLE_RAIN_FEATURE: false,
-  ENABLE_AUTOWITHDRAW_FEATURE: false,
+  ENABLE_AUTOWITHDRAW_FEATURE: true,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
   RAIN_USERNAME: 'dashrain',
@@ -117,7 +117,7 @@ if (needMongoDb) {
   db.once('open', function () {
     autoIncrement.initialize(db)
     require('./model/tipper')  // load mongoose Tipper model
-    require('./model/quiz')// load mongoose Quiz model
+    require('./model/AutowithdrawModel')// load mongoose AutowithdrawModel model
     debug('tipbot:db')('********* Database connected ********')
     // make connnection to Slack
     connect(controller)

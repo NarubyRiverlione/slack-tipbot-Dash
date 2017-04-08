@@ -950,7 +950,7 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                       // do something else...
                       self.wallet.Withdraw(converted.newValue, address[0], self.OPTIONS.WALLET_PASSW, user)
                         .then(response => {
-                          debug(user.name + ' has succesfull withdraw ' + converted.value + ' to ' + address[0])
+                          debug(user.name + ' has succesfull withdraw ' + converted.newValue + ' to ' + address[0])
                           convo.say(response)
                         })
                         .catch(err => {
@@ -983,80 +983,64 @@ TipBot.prototype.onMessage = function (channel, member, message) {
       }
 
       // * AUTOWITHDRAW
-      if (message.match(/\bauto-withdraw\b/i)) {
-        if (self.OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE) {
-          if (message.match(/\setup\b/i)) {
-            amount = message.match(self.AMOUNT_OR_ALL_REGEX) // only the number, no currency
-            if (amount === null) {
-              reply.text = user.name + tipbotTxt.NoAmountFound
-              self.slack.say(reply)
-              return
-            }
-            // check if currency was provide
-            providedCurrency = message.match(self.CURRENCY_REGEX)
-            if (providedCurrency !== null && providedCurrency[0].length !== 0) {
-              //  set provided currency
-              amount[2] = message.match(self.CURRENCY_REGEX)[0]
-            } else {
-              //not provided, set dash as default currency
-              amount[2] = CYBERCURRENCY
-            }
+      if (message.match(/\bautowithdraw\b/i)) {
+        if (!self.OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE) { return }
 
-            let address = message.match(self.ADDRESS_REGEX)
-            if (address) {
-              address = _.uniq(_.filter(address, function (address) {
-                try {
-                  base58check.decode(address)
-                  return true
-                } catch (e) {
-                  return false
-                }
-              }))
-
-              if (!address.length) {
-                reply.text = 'Sorry ' + user.handle + tipbotTxt.NoValidAddress
-                self.slack.say(reply)
-                return
-              } else if (address.length > 1) {
-                reply.text = 'Sorry ' + user.handle + tipbotTxt.MoreThen1Address + ' [' + address.join(', ') + ']'
-                self.slack.say(reply)
-                return
-              }
-
-            } else {
-              // no address
-              reply.text = 'Sorry ' + user.handle + tipbotTxt.NoAddress
-              self.slack.say(reply)
-              return
-            }
-            // no amount
-            if (!amount) {
-              reply.text = 'Sorry ' + user.handle + tipbotTxt.NoAmountOrCurrency
-              self.slack.say(reply)
-              return
-            }
-            // convert amount if currency isn't Dash
-            self.normalizeValue(amount[1], amount[2], user)
-              .then(converted => {
-                autowithdraw.setup(user.id, address, converted.newValue)
-                  .then(result => {
-                    privateReply.text = result
-                    self.slack.say(privateReply)
-                  })
-                  .catch(errLine => {
-                    privateReply.text = errLine
-                    self.slack.say(privateReply)
-                    return
-                  })
-              })
-              .catch(errTxt => {
-                reply.text = errTxt
-                self.slack.say(reply)
-              })
+        amount = message.match(self.AMOUNT_OR_ALL_REGEX) // only the number, no currency
+        if (amount) {
+          // check if currency was provide
+          providedCurrency = message.match(self.CURRENCY_REGEX)
+          if (providedCurrency !== null && providedCurrency[0].length !== 0) {
+            //  set provided currency
+            amount[2] = message.match(self.CURRENCY_REGEX)[0]
+          } else {
+            //not provided, set dash as default currency
+            amount[2] = CYBERCURRENCY
           }
+        }
 
-          // show own autowithdraw setup
-          autowithdraw.showSetup(user)
+        let address = message.match(self.ADDRESS_REGEX)
+        if (address) {
+          address = _.uniq(_.filter(address, function (address) {
+            try {
+              base58check.decode(address)
+              return true
+            } catch (e) {
+              return false
+            }
+          }))
+
+          if (address.length > 1) {
+            reply.text = 'Sorry ' + user.handle + tipbotTxt.MoreThen1Address + ' [' + address.join(', ') + ']'
+            self.slack.say(reply)
+            return
+          }
+        } else { address = [] }
+
+        // address and amount is provided => save setup
+        if (amount !== null) {
+          // convert amount if currency isn't Dash
+          self.normalizeValue(amount[1], amount[2], user)
+            // amount converted, save setup
+            .then(converted =>
+              autowithdraw.SaveSetup(user.id, address[0], converted.newValue)
+            )
+            .catch(errLine => {
+              privateReply.text = errLine
+              self.slack.say(privateReply)
+              return
+            })
+
+            // get new setup
+            .then(() =>
+              autowithdraw.ShowSetup(user)
+            )
+            .catch(errLine => {
+              privateReply.text = errLine
+              self.slack.say(privateReply)
+              return
+            })
+            // show new setup 
             .then(optionsLine => {
               privateReply.text = optionsLine
               self.slack.say(privateReply)
@@ -1067,10 +1051,24 @@ TipBot.prototype.onMessage = function (channel, member, message) {
               self.slack.say(privateReply)
               return
             })
-
+        }
+        // no address or amount => show own autowithdraw setup
+        else {
+          autowithdraw.ShowSetup(user)
+            .then(optionsLine => {
+              privateReply.text = optionsLine
+              self.slack.say(privateReply)
+              return
+            })
+            .catch(errLine => {
+              privateReply.text = errLine
+              self.slack.say(privateReply)
+              return
+            })
         }
         return
       }
+
       // * SEND / TIP
       if (message.match(/\b(send|give|sent|tip)\b/i)) {
         // check if recieving user was provided
@@ -1117,15 +1115,29 @@ TipBot.prototype.onMessage = function (channel, member, message) {
                         'channel': DMchannelRecievingUser,
                         'text': responses.privateToReciever +
                         tipbotTxt.SendMessageUsed +
-                        '_' + message + '_' + '\n\n use the command ' +
-                        // explain how to withdraw
-                        tipbotTxt.helpText[4]
+                        '_' + message.trim() + '_'
                       }
+                      // explain how to withdraw
+                      recievingUserMessage.text += '\n\n use the command ' + tipbotTxt.helpText[4]
+
                       // if auto-withdraw is enabled check if new balance of recieve exide set amount
                       if (self.OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE) {
                         const recievingUser = self.users[mentioned.id]
                         if (recievingUser !== null)
-                          autowithdraw.check(recievingUser, self.wallet, self.OPTIONS.WALLET_PASSW)
+                          autowithdraw.Check(recievingUser, self.wallet, self.OPTIONS.WALLET_PASSW)
+                            .then(result => {
+                              if (result) {
+                                debug('Preformed an auto-withdraw for user ' + recievingUser.handle)
+                                debug(result)
+                                // warn recieving user that an auto withdraw has executed
+                                let recievingUserMessage = {
+                                  'channel': DMchannelRecievingUser,
+                                  'text': result
+                                }
+                                self.slack.say(recievingUserMessage)
+                              }
+                            })
+                            .catch(err => { debug('ERROR during auto withdraw check: ' + err) })
                       }
                       self.slack.say(recievingUserMessage)
                     })

@@ -47,10 +47,10 @@ const tipbotTxt = {
   '\t\t\tEach user that has tipped another user will receive a _raindrop_ (read: free Dash) from the rain fund when the donation threshold is reached.',
 
   'help_autowithdraw':
-  '*auto-withdraw*\tCheck you auto-withdraw setup. \n' +
+  '*autowithdraw*\tCheck you autowithdraw setup. \n' +
   '\t\t\tWhen you tip jar exide the set amount then there is an automatic withdraw to the set address.\n' +
-  '*auto-withdraw* amount address\tSet amount and address.\n' +
-  '\t\t_@DashBot auto-withdraw 0.5 DASH XqyTXt9LM3AHdrfG8ckdTatDiwk5514a11',
+  '*autowithdraw* amount address\tSet amount and address.\n' +
+  '\t\t_@DashBot autowithdraw 0.5 DASH XqyTXt9LM3AHdrfG8ckdTatDiwk5514a11',
 
   'helpAdminOnly':
   '===== *ADMIN ONLY COMMANDS* =====\n' +
@@ -140,32 +140,6 @@ const tipbotTxt = {
   'SupportedSymbols': 'use these currency abbreviations/symbols in your message: *',
   'SupportedBase': 'And does it need saying: *DASH* is supported !',
 
-  // // RAIN
-  // 'RainReplacedByRain': 'Really you want rain? It\'s summertime ! _sorry southern hemisphere_ \n ' +
-  // 'You want *rain* my dear human friend.',
-
-  //'RainThreshold': 'Rain threshold is: ',
-  // 'RainThresholdNotSet': 'Dear Rain God, the rain threshold isn\'t set yet. \n You can do that with the *rain threshold _amount_* command.',
-  // 'Rainimminent': ':cloud: :cloud: :cloud: \n _When will those clouds all disappear?_ Will it rain soon? \n:cloud: :cloud: :cloud:',
-  // 'RainTimer': ' It will rain random in the next *',
-  // 'RainTimerUnit': ' minute(s)* ',
-  // 'RainTimerNotSet': 'Dear Rain God, the rain timer not set yet.\n You can do that with the *rain timer _minutes_* command.',
-  // 'RainAvailibleAmount': 'Available rain : ',
-  // 'RainPerUserNow': 'If you let it rain *now* ',
-  // 'RainDropSizeWithThreshold': 'If you wait for the rain *threshold* of ',
-  // 'RainPerUser1': ' raindrops of ',
-  // 'RainPerUser2': ' dash would fall',
-  // 'RainClouds': ':rain_cloud: :rain_cloud: :rain_cloud:',
-  // 'RainNow': '*And the Dash Rain Gods said _LET IT RAIN DASH_* \n' +
-  // '_Each current online user will get a raindrop of_',
-  // 'RainCannotFindRainAccount1': 'Could not find the Rain user : '*',
-  // 'RainCannotFindRainAccount2': '*' \n Ask the Slack Admin(s) if the Rain feature is correctly setup.',
-  // 'RainCannotFindRainBalance': 'Could not find the Rain balance for ',
-  // 'RainReqDonation1': 'If you feel generous tip the_@',
-  // 'RainReqDonation2': '_ user.\nThe complete balance of this Rain user will be redistributed via raindrops.',
-  // 'RainEmpty': 'Not a cloud in the sky, not rain available to fall down.',
-  // 'RainRecieved': ':droplet: \n You got splashed with a Dash raindrop of ',
-
   // RAIN
   'RainThreshold1': 'Rain threshold is: ',
   'RainThreshold2': 'Raindrops (aka free dash) will fall when rain balance is more then the set threshold.',
@@ -243,13 +217,15 @@ const userTxt = {
 }
 
 const autoWithdrawTxt = {
-  'noSetup': ', auto-withdraw isn\'t setup yet for you.\n' +
-  'You can do this by the command *auto-withdraw* amount address',
-  'setupAmount_1': ', your threshold amount is set to ',
-  'setupAmount_2': ' Dash.\n',
-  'setupAddress_1': ', your threshold amount is set to ',
-  'setupAddress_2': ', your threshold amount is set to ',
-  'errorIncompleteSetup': 'Sorry your auto-withdraw setup is incomplete.',
+  'noSetup': ' autowithdraw isn\'t setup yet for you.\n' +
+  'You can do this by the command *autowithdraw* amount address',
+  'setup_1': ' your threshold amount is ',
+  'setup_2': ' your withdraw address is ',
+  'setup_3': '\n\t *Remember to backup you wallet so you don\'t lose this address.*',
+  'setup_4': '\n\t If you want to disable autowithdraw just set the amount to 0.',
+  'disabled': ', your autowithdraw setup is incomplete and dues disabled.',
+  'notSet': ' _no set_ ',
+  'executed_1': ', an automatic withdraw has be executed:\n'
 
 }
 module.exports = { tipbotTxt, userTxt, autoWithdrawTxt }
