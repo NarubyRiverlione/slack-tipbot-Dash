@@ -11,7 +11,7 @@ let async = require('async')
 require('waitjs')
 
 
-export default class Rain {
+module.exports = class Rain {
   constructor(rainUserName, users) {
     this.rainUser = null
     // get tipbot user that hold the rain/rain balance
@@ -65,7 +65,7 @@ export default class Rain {
   }
 
   // check rain balance and trigger a rainshine when higher then the threshold
-  CheckThreshold(defaultThreshold, rainUser, wallet) {
+  CheckThreshold(defaultThreshold, wallet) {
     return new Promise(
       (resolve, reject) => {
         getThreshold(defaultThreshold,
