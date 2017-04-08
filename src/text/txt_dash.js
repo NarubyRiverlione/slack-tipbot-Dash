@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const tipbotTxt = {
   // HELPTEXT
@@ -253,7 +253,7 @@ const tipbotTxt = {
   ],
 
   'ERRORreadingDb': 'ERROR reading db:'
-};
+}
 
 // const quizTxt = {
 //   'alreadyRunning': 'Already in a quiz',
@@ -291,6 +291,6 @@ const userTxt = {
   'SendOops1': 'Oops could not tip ',
   'SendOops2': ' to '
 
-};
+}
 
-module.exports = { tipbotTxt, userTxt };
+module.exports = { tipbotTxt, userTxt }

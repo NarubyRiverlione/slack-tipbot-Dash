@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 // Tipper model
 
 var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  Schema = mongoose.Schema
 
 var TipperShema = new Schema({
   name: String,
@@ -10,12 +10,12 @@ var TipperShema = new Schema({
   tipCount: Number,
   lastTipDate: Date,
   gotRainDrop: { type: Boolean, default: false }
-});
+})
 
 TipperShema.virtual('date')
   .get(function () {
-    return this._id.getTimestamp();
-  });
+    return this._id.getTimestamp()
+  })
 
-mongoose.model('Tipper', TipperShema);
+mongoose.model('Tipper', TipperShema)
 

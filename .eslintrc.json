@@ -1,12 +1,17 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "commonjs": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": false
+    }
   },
   "extends": "eslint:recommended",
-  "parserOptions": {
-    "sourceType": "module"
-  },
   "rules": {
     "indent": [
       "warn",
@@ -21,7 +26,7 @@
     ],
     "semi": [
       "error",
-      "always"
+      "never"
     ],
     "no-mixed-spaces-and-tabs": [
       "warn",
