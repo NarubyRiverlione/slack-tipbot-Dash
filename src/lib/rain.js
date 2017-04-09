@@ -20,12 +20,11 @@ module.exports = class Rain {
         return match.name.match(rainUserName, 'i')
       })
     if (findRainUser === undefined || findRainUser.length !== 1) {
-      debug('ERROR Init: ' + helpTexts.RainCannotFindRainAccount1 +
-        rainUserName +
-        helpTexts.RainCannotFindRainAccount2)
+      debug('ERROR Init: ' + helpTexts.RainCannotFindRainAccount1 + rainUserName + helpTexts.RainCannotFindRainAccount2)
+
     } else {
-      debug('Init: Tipbot user \'' + rainUserName + '\' found : ' + this.rainUser.handle)
       this.rainUser = findRainUser[0]
+      debug('Init: Tipbot user \'' + rainUserName + '\' found : ' + this.rainUser.handle)
     }
   }
 
@@ -38,11 +37,12 @@ module.exports = class Rain {
           return reject('UnknowRainUser')
         }
         // get balance of Rain User
-        wallet.getBalance(this.rainUser.id, 6, (err, rainBalance) => {
-          if (err) { return reject(err) }
-          // return balance
-          resolve(rainBalance)
-        })
+        wallet.GetBalance(this.rainUser.id, 6)
+          .then(rainBalance => {
+            // return balance
+            resolve(rainBalance)
+          })
+          .catch(err => reject(err))
       })
   }
 
@@ -66,24 +66,36 @@ module.exports = class Rain {
 
   // check rain balance and trigger a rainshine when higher then the threshold
   CheckThreshold(defaultThreshold, wallet) {
+    let rainThreshold, rainBalance
     return new Promise(
       (resolve, reject) => {
-        getThreshold(defaultThreshold,
-          (err, threshold) => {
-            if (err) { return reject(err) }
-            this.getRainBalance(this.rainUser, wallet)
-              .then(rainBalance => {
-                if (Coin.toSmall(rainBalance) >= threshold) {
-                  debug('Rain balance ' + rainBalance + ' > threshold ' + threshold + ' : cast rain now !!')
-
-                  rainNow(this.rainUser, rainBalance, function (err, reviecedUsers, rainraySize) {
-                    resolve({ reviecedUsers, rainraySize })
-                  })
-                }
-              })
+        this.GetThreshold(defaultThreshold)
+          .then(threshold => {
+            rainThreshold = threshold
+            return this.GetRainBalance(wallet)
           })
-      })
+          .catch(err => reject(err))
 
+          .then(balance => {
+            rainBalance = balance
+            if (Coin.toSmall(rainBalance) >= rainThreshold) {
+              debug('Rain balance ' + rainBalance + ' > threshold ' + rainThreshold + ' : cast rain now !!')
+              return this.GetRainRaySize(rainBalance)
+            }
+            resolve()
+          })
+          .catch(err => reject(err))
+
+          .then(rainSize =>
+            rainNow(rainBalance, rainSize, this.rainUser, wallet)
+          )
+          .catch(err => reject(err))
+
+          .then(rainResult => {
+            resolve(rainResult)
+          })
+          .catch(err => reject(err))
+      })
   }
 
   //  save threshold (in Duffs)
@@ -146,6 +158,27 @@ module.exports = class Rain {
           })
       })
   }
+
+  // get saved threshold (in Duffs), if not saved us default threshold
+  GetThreshold(defaultThreshold) {
+    return new Promise(
+      (resolve, reject) => {
+        Tipper.findOne(
+          { name: 'threshold' },
+          (err, thresholdRecord) => {
+            if (err) {
+              return reject(err)
+            }
+            // use tipCount field to save threshold
+            resolve(thresholdRecord === null ? defaultThreshold : thresholdRecord.tipCount)
+          }
+        )
+      })
+  }
+
+  GetListOfRainEligibleUsers() {
+    return getListOfRainEligibleUsers()
+  }
 }
 
 // get list of all users that have tipped before and didn't recieved a rainray yet
@@ -176,64 +209,45 @@ function setTipperAsRecievedRain(tipperId) {
     })
 }
 
-// get saved threshold (in Duffs), if not saved us default threshold
-function getThreshold(defaultThreshold) {
-  return new Promise(
-    (resolve, reject) => {
-      Tipper.findOne(
-        { name: 'threshold' },
-        (err, thresholdRecord) => {
-          if (err) {
-            return reject(err)
-          }
-          // use tipCount field to save threshold
-          resolve(thresholdRecord === null ? defaultThreshold : thresholdRecord.tipCount)
-        }
-      )
-    })
-}
-
-
-
 // it's rainny day, look at all thoese rainrays !
-function rainNow(rainBalance, wallet) {
+function rainNow(rainBalance, rainSize, rainUser, wallet) {
+
   return new Promise(
     (resolve, reject) => {
-      if (!this.rainUser) {
-        return reject('ERROR rain: cannot let is rain as rain User is unknown !')
+      if (!rainUser) {
+        return reject('ERROR rain: cannot let it rain as rain User is unknown !')
       }
-      if (rainBalance === undefined) {
-        return reject('ERROR rain:cannot make the rain shining as rainray size is unknown !')
+      if (!rainBalance) {
+        return reject('ERROR rain: cannot let it rain as rain amount (balance) is unknown !')
       }
       if (rainBalance <= 2e-80) {
         // no rain available, don\'t continue
         return reject(helpTexts.rainEmpty)
       }
-      // get rainray size
-      this.getRainRaySize(rainBalance)
-        .then(rainraySize => {
-          //get list of users that have tipped
-          getListOfRainEligibleUsers(function (err, usersList) {
-            async.forEachSeries(usersList,
-              (oneUser, asyncCB) => {
-                debug('Cast a rainray of ' + Coin.toLarge(rainraySize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
-                wallet.Move(oneUser, rainraySize, this.rainUser)
-                  .then(() => {
-                    // mark this tipper records as recieved a rainray, don't delete them so we have a history
-                    setTipperAsRecievedRain(oneUser.id, function (err) {
-                      if (err) { asyncCB(err); return }
-                      debug(oneUser.name + ' just recieved a rainray !')
-                      asyncCB()
-                    })
-                  })
-                  .catch(err => { return reject(err) })
-              },
-              err => {
-                if (err) { return reject }
-                resolve({ usersList, rainraySize })
+      if (!rainSize) {
+        return reject('ERROR rain: cannot let it rain as rain size is unknown !')
+      }
+
+      //get list of users that have tipped
+      getListOfRainEligibleUsers(function (err, usersList) {
+        async.forEachSeries(usersList,
+          (oneUser, asyncCB) => {
+            debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
+            wallet.Move(oneUser, rainSize, rainUser)
+              .then(() => {
+                // mark this tipper records as recieved a rainray, don't delete them so we have a history
+                setTipperAsRecievedRain(oneUser.id, function (err) {
+                  if (err) { asyncCB(err); return }
+                  debug(oneUser.name + ' just recieved a rainray !')
+                  asyncCB()
+                })
               })
+              .catch(err => { return reject(err) })
+          },
+          err => {
+            if (err) { return reject }
+            resolve({ reviecedUsers: usersList, rainSize })
           })
-        })
-        .catch(err => { return reject(err) })
+      })
     })
 }

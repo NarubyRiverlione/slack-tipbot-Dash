@@ -23,7 +23,7 @@ const TIPBOT_OPTIONS = {
   WALLET_PASSW: WALLET_PASSW,
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
-  ENABLE_RAIN_FEATURE: false,
+  ENABLE_RAIN_FEATURE: true,
   ENABLE_AUTOWITHDRAW_FEATURE: false,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
@@ -201,7 +201,7 @@ controller.on('tick', function () {
     // check rain balance every X minutes
     if (tipbot.OPTIONS.ENABLE_RAIN_FEATURE &&
       tipbot.OPTIONS.RAIN_TIMER !== undefined &&
-      tipbot.rainUser !== undefined) {
+      tipbot.rain.rainUser !== undefined) {
       // only check rain balance every RAIN_TIMER min
       if (rainTicker === 0) {
         debug('tipbot:rain')('RAIN: check balance > threshold now')

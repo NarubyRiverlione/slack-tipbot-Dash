@@ -430,7 +430,6 @@ TipBot.prototype.init = function () {
     // add each user to our list of users
     async.forEachLimit(data.members, 100,
       function (member, cb) {
-        // debug(member.name + '(' + member.id + ') =  ' + member.profile.email);
         self.updateUserFromMember(member, false)
         cb()
       },
@@ -441,8 +440,7 @@ TipBot.prototype.init = function () {
 
         self.updateUserRegex()
 
-        // get Rain user
-
+        // get Rain user if needed
         if (self.OPTIONS.ENABLE_RAIN_FEATURE === true && self.OPTIONS.RAIN_USERNAME) {
           const Rain = require('./rain')
           self.rain = new Rain(self.OPTIONS.RAIN_USERNAME, self.users)
@@ -451,9 +449,6 @@ TipBot.prototype.init = function () {
         // Done !
         debug('I am <@%s:%s> of %s', self.slack.identity.id, self.slack.identity.name, self.slack.team_info.name)
         debug('***** TipBot ready! *****')
-        // debug('We have the following . + Object.keys(self.users).length +  known users; ', _.map(self.users, function(user) {
-        // return user.name;
-        // }).join(', '));
 
         self.initializing = false
       })
@@ -602,15 +597,13 @@ TipBot.prototype.onUserChange = function (bot, member) {
   self.updateUserFromMember(member)
 }
 
-
 // check if rain balance > rain threshold
 TipBot.prototype.checkForRain = function () {
   let self = this
-  if (self.rain !== undefined) {
-
-    self.rain.CheckThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD)
+  if (self.rain && self.rain.rainUser) {
+    self.rain.CheckThreshold(self.OPTIONS.RAIN_DEFAULT_THRESHOLD, self.wallet)
       .then(result => {
-        if (result.rainraySize !== null && result.reviecedUsers !== null) {
+        if (result && result.rainraySize !== null && result.reviecedUsers !== null) {
           // show public announcement
           let reply = {
             channel: self.OPTIONS.MAIN_CHANNEL.id,
@@ -659,11 +652,14 @@ TipBot.prototype.checkForRain = function () {
   }
 }
 
-
 // a Slack message was send,
 // if the bot name mentioned look for command keywords
 TipBot.prototype.onMessage = function (channel, member, message) {
   let self = this
+  if (self.initializing) {
+    debug('Ignore message, still initializing...')
+    return
+  }
 
   let user = self.users[member]
   if (user === undefined) {
