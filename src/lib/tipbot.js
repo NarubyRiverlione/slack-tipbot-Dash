@@ -458,7 +458,7 @@ TipBot.prototype.init = function () {
 }
 
 // convert currency if needed,
-// return via callback amount in dash, and if it was needed to convertion rate and originalCurrency
+//  amount in Coin Large, and if it was needed to convertion rate and originalCurrency
 TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurrency) {
   let self = this
   let currency, value
@@ -484,11 +484,11 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
         // large cybercoin -> small cybercoin or fiat -> float
         if (unit.match(/duff?/i)) {
           currency = self.CYBERCURRENCY
-          value = parseInt(inputValue)
+          value = Coin.toSmall(inputValue)
         }
         if (unit.match(/DASH/i)) {
           currency = self.CYBERCURRENCY
-          value = Coin.toSmall(inputValue)
+          value = parseFloat(inputValue)
         }
 
         let cyberToFiat = false

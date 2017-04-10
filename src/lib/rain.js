@@ -1,4 +1,5 @@
 'use strict'
+
 let debug = require('debug')('tipbot:rain')
 let helpTexts = require('../text/txt_dash.js').tipbotTxt
 let Coin = require('./coin')
@@ -6,10 +7,6 @@ let mongoose = require('mongoose')
 let Tipper = mongoose.model('Tipper')
 
 let _ = require('lodash')
-
-let async = require('async')
-require('waitjs')
-
 
 module.exports = class Rain {
   constructor(rainUserName, users) {
@@ -55,7 +52,7 @@ module.exports = class Rain {
             let rainraySize = Coin.toSmall(rainBalance) / amountOfTippers
             rainraySize -= 1 // 1 duff to prevent rouding errors so the last rainray is still enough
             debug('RAIN: ' + amountOfTippers + ' will recieve ' + Coin.toLarge(rainraySize))
-            resolve(rainraySize)
+            return resolve(rainraySize)
           })
           .catch(err => {
             debug('ERROR Rain, cannot cast rainray as amount of eligible users in unknow.')
@@ -67,6 +64,7 @@ module.exports = class Rain {
   // check rain balance and trigger a rainshine when higher then the threshold
   CheckThreshold(defaultThreshold, wallet) {
     let rainThreshold, rainBalance
+    const rainUser = this.rainUser
     return new Promise(
       (resolve, reject) => {
         this.GetThreshold(defaultThreshold)
@@ -74,30 +72,28 @@ module.exports = class Rain {
             rainThreshold = threshold
             return this.GetRainBalance(wallet)
           })
-          .catch(err => reject(err))
 
           .then(balance => {
             rainBalance = balance
             if (Coin.toSmall(rainBalance) >= rainThreshold) {
               debug('Rain balance ' + rainBalance + ' > threshold ' + rainThreshold + ' : cast rain now !!')
-              return this.GetRainRaySize(rainBalance)
+              this.GetRainRaySize(rainBalance)
+                .then(rainSize => {
+                  return rainNow(rainBalance, rainSize, rainUser, wallet)
+                })
+
+                .then(rainResult => {
+                  debug(rainResult)
+                  resolve(rainResult)
+                })
+            } else {
+              resolve()
             }
-            resolve()
           })
-          .catch(err => reject(err))
-
-          .then(rainSize =>
-            rainNow(rainBalance, rainSize, this.rainUser, wallet)
-          )
-          .catch(err => reject(err))
-
-          .then(rainResult => {
-            resolve(rainResult)
-          })
-          .catch(err => reject(err))
+          .catch(err =>
+            reject(err))
       })
   }
-
   //  save threshold (in Duffs)
   SaveThreshold(newThreshold) {
     return new Promise(
@@ -188,7 +184,9 @@ function getListOfRainEligibleUsers() {
       Tipper.find(
         { gotRainDrop: false },
         (err, allTippers) => {
-          if (err) { return reject(err) }
+          if (err) {
+            return reject(err)
+          }
           resolve(allTippers)
         })
     })
@@ -211,7 +209,6 @@ function setTipperAsRecievedRain(tipperId) {
 
 // it's rainny day, look at all thoese rainrays !
 function rainNow(rainBalance, rainSize, rainUser, wallet) {
-
   return new Promise(
     (resolve, reject) => {
       if (!rainUser) {
@@ -229,25 +226,39 @@ function rainNow(rainBalance, rainSize, rainUser, wallet) {
       }
 
       //get list of users that have tipped
-      getListOfRainEligibleUsers(function (err, usersList) {
-        async.forEachSeries(usersList,
-          (oneUser, asyncCB) => {
-            debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
-            wallet.Move(oneUser, rainSize, rainUser)
-              .then(() => {
-                // mark this tipper records as recieved a rainray, don't delete them so we have a history
-                setTipperAsRecievedRain(oneUser.id, function (err) {
-                  if (err) { asyncCB(err); return }
-                  debug(oneUser.name + ' just recieved a rainray !')
-                  asyncCB()
-                })
-              })
-              .catch(err => { return reject(err) })
-          },
-          err => {
-            if (err) { return reject }
-            resolve({ reviecedUsers: usersList, rainSize })
+      getListOfRainEligibleUsers()
+        .then(usersList => {
+          let promises = []
+          usersList.forEach(oneUser => {
+            promises.push = cast1raindrop(oneUser, rainSize, rainUser, wallet)
           })
-      })
+
+          Promise.all(promises)
+            .then(() => {
+              return resolve({ reviecedUsers: usersList, rainSize })
+            })
+            .catch(err => reject(err))
+        })
+
+        .catch(err =>
+          reject('ERROR: cannnot cast rain because error in getting List Of Rain EligibleUsers:' + err)
+        )
+    })
+}
+
+function cast1raindrop(oneUser, rainSize, rainUser, wallet) {
+  return new Promise(
+    (resolve, reject) => {
+      debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
+      wallet.Move(oneUser, rainSize, rainUser)
+        .then(() => {
+          // mark this tipper records as recieved a rainray, don't delete them so we have a history
+          setTipperAsRecievedRain(oneUser.id, function (err) {
+            if (err) { return reject(err) }
+            debug(oneUser.name + ' just recieved a rainray !')
+            resolve()
+          })
+        })
+        .catch(err => reject(err))
     })
 }

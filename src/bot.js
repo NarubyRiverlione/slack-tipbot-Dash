@@ -7,7 +7,6 @@ let assert = require('assert')
 let parseArgs = require('minimist')
 let mongoose = require('mongoose')
 let autoIncrement = require('mongoose-auto-increment')
-//let async = require('async')
 
 let argv = parseArgs(process.argv.slice(2))
 
@@ -24,11 +23,11 @@ const TIPBOT_OPTIONS = {
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
   ENABLE_RAIN_FEATURE: true,
-  ENABLE_AUTOWITHDRAW_FEATURE: false,
+  ENABLE_AUTOWITHDRAW_FEATURE: true,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
   RAIN_USERNAME: 'dashrain',
-  RAIN_TIMER: debugMode ? 3 : 30  // debug = check rain every minute, production check every 30 minutes
+  RAIN_TIMER: debugMode ? 1 : 30  // debug = check rain every minute, production check every 30 minutes
 }
 
 let OPTIONS = {
