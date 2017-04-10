@@ -27,7 +27,7 @@ function ShowSetup(user) {
           line += '\n\n'
           // amount
           line += autoWithdrawTxt.setup_1 +
-            (options.amount ? Coin.toLarge(options.amount) + ' dash'
+            (options.amount ? options.amount + ' dash'
               : autoWithdrawTxt.notSet)
           // address
           line += '\n' + autoWithdrawTxt.setup_2 +
