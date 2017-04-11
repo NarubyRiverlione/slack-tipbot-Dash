@@ -55,9 +55,9 @@ assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required')
 
 /*
 1) setup slack controller
-2) connect to mongoDb
+2) (if needed) connect to mongoDb
 3) connect to slack
-4) 'hello' = connected => setup tipbot
+4) 'hello' = connected to slack => setup tipbot
 */
 
 debug('tipbot:bot')('Debug mode is: ' + debugMode)
@@ -132,6 +132,11 @@ if (needMongoDb) {
 controller.on('rtm_close', function () {
   debug('tipbot:bot')('!!!!!! BOTKIT CLOSED DOWN !!!!!!!!')
   //don't restart connection on error here because these an auto reconnect
+  if (initializing === -99) {
+    // flag for restart is set
+    initializing = 0
+    connect(controller)
+  }
 })
 
 // botkit had an oopsie
@@ -145,7 +150,7 @@ controller.on('error', function (bot, msg) {
 controller.on('hello', function (bot) {
   // prevent multiple connections
   // debug('tipbot:init')('Start Hello, Init count is now ' + initializing);
-  if (initializing > 0) {
+  if (initializing !== 0) {
     debug('tipbot:bot')('Already initializing... (count ' + initializing + ')')
     return
   }
@@ -246,11 +251,15 @@ controller.hears('emergency', ['direct_message'], function (bot, message) {
         debug('tipbot:EMERGENCY')('**** Emergency connection restart ****')
         if (initializing) {
           debug('tipbot:EMERGENCY')('++++ Tried a restart while still initializing, restart aborted.')
-        } else { bot.closeRTM() }
+        } else {
+          initializing = -99 // flag to restart
+          bot.closeRTM()
+        }
       }
 
       if (message.text.match(/\bstop\b/i)) {
         debug('tipbot:EMERGENCY')('**** Emergency stop ****')
+        bot.closeRTM()
       }
     }
   })

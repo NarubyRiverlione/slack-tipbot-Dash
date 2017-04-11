@@ -626,7 +626,7 @@ TipBot.prototype.checkForRain = function () {
                     // send private message to lucky user
                     let recievingUserMessage = {
                       'channel': DMchannelRecievingUser,
-                      'text': tipbotTxt.RainRecieved + Coin.toLarge(result.rainraySize) + ' dash'
+                      'text': tipbotTxt.RainRecieved + Coin.toLarge(result.rainSize) + ' dash'
                     }
                     self.slack.say(recievingUserMessage)
                   })
