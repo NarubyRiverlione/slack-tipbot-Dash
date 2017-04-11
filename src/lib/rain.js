@@ -29,47 +29,47 @@ module.exports = class Rain {
   }
   // Get Rain status
   GetRainStatus(wallet) {
-    let reply
+    let replyTxt
     return new Promise(
       (resolve, reject) => {
         // show balance of Rain Account, available to non-admin user
         this.GetRainBalance(wallet)
           .then(rainBalance => {
             if (rainBalance !== undefined && rainBalance > 2e-8) {
-              reply.text = helpTexts.RainAvailibleAmount + rainBalance + ' dash'
+              replyTxt = helpTexts.RainAvailibleAmount + rainBalance + ' dash'
             } else {
-              reply.text = helpTexts.RainEmpty
+              replyTxt = helpTexts.RainEmpty
             }
-            reply.text += '\n' + helpTexts.RainReqDonation1 + this.rainUser.handle + '_'
-            reply.text += '\n' + helpTexts.RainReqDonation2 + this.rainUser.handle + helpTexts.RainReqDonation3
+            replyTxt += '\n' + helpTexts.RainReqDonation1 + this.rainUser.handle + '_'
+            replyTxt += '\n' + helpTexts.RainReqDonation2 + this.rainUser.handle + helpTexts.RainReqDonation3
             // show threshold
             return this.GetThreshold()
           })
           .catch(err => {
-            debug(err); return
+            debug(err); return reject(err)
           })
 
 
           .then(threshold => {
-            reply.text += '\n' + helpTexts.RainThreshold1 +
+            replyTxt += '\n' + helpTexts.RainThreshold1 +
               Coin.toLarge(threshold) + ' Dash \n' +
               helpTexts.RainThreshold2
             // show amount of eligible users
             return this.GetAmountOfEligibleRainUsers()
           })
           .catch(err => {
-            debug(err); return
+            debug(err); return reject(err)
           })
 
 
           .then(count => {
-            reply.text += '\n' + count + helpTexts.RainAmountEligibleUsers
-            resolve(reply)
+            replyTxt += '\n' + count + helpTexts.RainAmountEligibleUsers
+            resolve(replyTxt)
           })
           .catch(err => {
             debug('ERROR get rain balance: ' + err)
-            reply.text = helpTexts.RainCannotFindRainBalance + this.rainUser.handle
-            reject(reply)
+            replyTxt = helpTexts.RainCannotFindRainBalance + this.rainUser.handle
+            reject(replyTxt)
           })
       })
   }
@@ -90,7 +90,6 @@ module.exports = class Rain {
           .catch(err => reject(err))
       })
   }
-
   // get size of rainray in  SATHOSHI = rain balance / eligible users
   GetRainRaySize(rainBalance) {
     return new Promise(
@@ -108,7 +107,6 @@ module.exports = class Rain {
           })
       })
   }
-
   // check rain balance and trigger a rainshine when higher then the threshold
   CheckThreshold(defaultThreshold, wallet) {
     let rainThreshold, rainBalance
@@ -159,7 +157,6 @@ module.exports = class Rain {
         resolve()
       })
   }
-
   // increment tip count in database for user on the record that hasn't recieverd a rainray yet
   IncTipCountInDb(user) {
     return new Promise(
@@ -205,7 +202,6 @@ module.exports = class Rain {
           })
       })
   }
-
   // get saved threshold (in Duffs), if not saved us default threshold
   GetThreshold() {
     return new Promise(
@@ -281,7 +277,7 @@ function rainNow(rainBalance, rainSize, rainUser, wallet) {
         .then(usersList => {
           let promises = []
           usersList.forEach(oneUser => {
-            promises.push = cast1raindrop(oneUser, rainSize, rainUser, wallet)
+            promises.push(cast1raindrop(oneUser, rainSize, rainUser, wallet))
           })
 
           Promise.all(promises)
@@ -300,24 +296,20 @@ function rainNow(rainBalance, rainSize, rainUser, wallet) {
 function cast1raindrop(oneUser, rainSize, rainUser, wallet) {
   return new Promise(
     (resolve, reject) => {
-      debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
-
       // slow down to prevent locking
       setTimeout(() => {
+        debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
         wallet.Move(oneUser, rainSize, rainUser)
           .then(() => {
             // mark this tipper records as recieved a rainray, don't delete them so we have a history
-            setTipperAsRecievedRain(oneUser.id, function (err) {
-              if (err) {
-                return reject(err)
-              }
-              debug(oneUser.name + ' just recieved a rainray !')
-              resolve()
-            })
+            setTipperAsRecievedRain(oneUser.id)
+              .then(() => {
+                debug(oneUser.name + ' just recieved a rainray !')
+                resolve()
+              })
+              .catch(err => reject(err))
           })
           .catch(err => reject(err))
-      }// wait x ms befor executing
-        , 1500) // todo: read from tipbot.OPTIONS.RAIN_SEND_THROTTLE
+      }, 2500) // todo: read from tipbot.OPTIONS.RAIN_SEND_THROTTLE
     })
 }
-

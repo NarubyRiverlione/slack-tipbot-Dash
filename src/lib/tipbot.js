@@ -1,5 +1,5 @@
 'use strict'
-/*  global wait */
+
 const _ = require('lodash')
 const debug = require('debug')('tipbot:tipbot')
 const async = require('async')
@@ -7,7 +7,7 @@ const request = require('request')
 
 const path = require('path')
 const fs = require('fs')
-require('waitjs')
+//require('waitjs')
 
 const User = require('./user.js')
 const Wallet = require('./wallet.js')
@@ -91,11 +91,11 @@ TipBot.prototype.tellPrice = function (currency) {
     (resolve, reject) => {
       self.getPriceRates()
         .then(rates => {
-          let rate = rates[currency]
+          const rate = rates[currency]
           if (!rate) {
-            reject(tipbotTxt.UnsupportedCurrency)
+            return reject(tipbotTxt.UnsupportedCurrency)
           } else {
-            resolve(tipbotTxt.PriceBase + rate.toPrecision(4) + ' ' + currency)
+            return resolve(tipbotTxt.PriceBase + rate.toPrecision(4) + ' ' + currency)
           }
         })
         .catch(err => {
@@ -116,17 +116,17 @@ TipBot.prototype.showPriceList = function (tellInChannel, all) {
   var promises = []
   priceList.forEach(currency => {
     debug('get rate of ' + currency)
-    let getRate = (currency => {
-      return new Promise(
-        (resolve, reject) => {
-          self.tellPrice(currency.toLowerCase())
-            .then(response => { reply.text += response + '\n'; resolve() })
-            .catch(err => { reject(err) })
+    const getRate =
+      self.tellPrice(currency.toLowerCase())
+        .then(response => {
+          debug('rate: ' + response)
+          reply.text += response + '\n'
         })
-    })
-    debug(getRate)
+        .catch(err => {
+          debug(err)
+        })
     promises.push(getRate)
-  }, this)
+  })
 
   Promise.all(promises)
     .then(() => {
@@ -137,26 +137,6 @@ TipBot.prototype.showPriceList = function (tellInChannel, all) {
       reply.text += err
       self.slack.say(reply)
     })
-  /*
-    async.forEach(priceList,
-      function (currency, callback) {
-        self.tellPrice(currency.toLowerCase())
-          .then(respone => {
-            reply.text += respone + '\n'
-            callback()
-          })
-          .catch(err => {
-            callback(err); return
-          })
-      },
-      function (err) {
-        // add  where price information is pulled from
-        if (err) { debug(err); return }
-        reply.text += tipbotTxt.PriceInfoFrom
-        self.slack.say(reply)
-      }
-    )
-    */
 }
 
 // get new price cache file and remove old then PRICE_UPDATE_EVERY minutes
@@ -171,7 +151,10 @@ TipBot.prototype.getPriceRates = function () {
       // fire and forget
       // remove files older then PRICE_UPDATE_EVERY minuts
       this.clearPriceRatesCache(cacheDir, function (err) {
-        if (err) { debug(err) }
+        if (err) {
+          debug(err)
+          return reject(err)
+        }
       })
 
       // read current file (not older then PRICE_UPDATE_EVERY minuts) or download a new one
@@ -193,7 +176,7 @@ TipBot.prototype.getPriceRates = function () {
             rates.dollar = rates.usd
           }
 
-          resolve(rates)
+          return resolve(rates)
         }
       })
     })
@@ -610,20 +593,17 @@ TipBot.prototype.checkForRain = function () {
             text: tipbotTxt.RainRay + '\n' +
             tipbotTxt.RainExplain + '\n' +
             tipbotTxt.RainRay + '\n'
-
           }
           self.slack.say(reply)
           let promises = []
           //send private message to each revieced user
           debug('rain: =====  start sending private messages for rain =====')
           result.reviecedUsers.forEach(oneUser => {
-            promises.push(function () {
-              // wait the time set via rain Throttle to prevent slack spam protection
-              wait(self.OPTIONS.RAIN_SEND_THROTTLE, function () {
-                this.sendPrivateRainMessage(oneUser, result.rainSize)
-              })
-            })
+            promises.push(
+              self.sendPrivateRainMessage(oneUser, result.rainSize)
+            )
           })
+
           Promise.all(promises)
             .then(() => {
               debug('rain: ===== Done sending private messages for rain =====')
@@ -641,17 +621,21 @@ TipBot.prototype.checkForRain = function () {
   }
 }
 
+// send private message to lucky user, throttle sending by RAIN_SEND_THROTTLE ms
 TipBot.prototype.sendPrivateRainMessage = function (oneUser, rainSize) {
+  let self = this
   return new Promise(
     (resolve, reject) => {
       this.getDirectMessageChannelID(null, oneUser.id)
         .then(DMchannelRecievingUser => {
-          // send private message to lucky user
-          let recievingUserMessage = {
+          const recievingUserMessage = {
             'channel': DMchannelRecievingUser,
             'text': tipbotTxt.RainRecieved + Coin.toLarge(rainSize) + ' dash'
           }
-          this.slack.say(recievingUserMessage)
+          // wait the time set via rain Throttle to prevent slack spam protection
+          setTimeout(() => {
+            this.slack.say(recievingUserMessage)
+          }, self.OPTIONS.RAIN_SEND_THROTTLE)
         })
         .catch(err => reject(err))
     })

@@ -627,7 +627,8 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       return
     }
     tipbot.rain.GetRainStatus(tipbot.wallet)
-      .then(reply => {
+      .then(replyTxt => {
+        reply.text = replyTxt
         tipbot.slack.say(reply)
       })
       .catch(err => {
