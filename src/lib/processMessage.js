@@ -626,38 +626,8 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       tipbot.slack.say(reply)
       return
     }
-    // show balance of Rain Account, available to non-admin user
-    tipbot.rain.GetRainBalance(tipbot.wallet)
-      .then(rainBalance => {
-        if (rainBalance !== undefined && rainBalance > 2e-8) {
-          reply.text = tipbotTxt.RainAvailibleAmount + rainBalance + ' dash'
-        } else {
-          reply.text = tipbotTxt.RainEmpty
-        }
-        reply.text += '\n' + tipbotTxt.RainReqDonation1 + tipbot.OPTIONS.RAIN_USERNAME + '_'
-        reply.text += '\n' + tipbotTxt.RainReqDonation2 + tipbot.OPTIONS.RAIN_USERNAME + tipbotTxt.RainReqDonation3
-        // show threshold
-        return tipbot.rain.GetThreshold(tipbot.OPTIONS.RAIN_DEFAULT_THRESHOLD)
-      })
-      .catch(err => {
-        debug(err); return
-      })
-
-
-      .then(threshold => {
-        reply.text += '\n' + tipbotTxt.RainThreshold1 +
-          Coin.toLarge(threshold) + ' Dash \n' +
-          tipbotTxt.RainThreshold2
-        // show amount of eligible users
-        return tipbot.rain.GetAmountOfEligibleRainUsers()
-      })
-      .catch(err => {
-        debug(err); return
-      })
-
-
-      .then(count => {
-        reply.text += '\n' + count + tipbotTxt.RainAmountEligibleUsers
+    tipbot.rain.GetRainStatus(tipbot.wallet)
+      .then(reply => {
         tipbot.slack.say(reply)
       })
       .catch(err => {
@@ -666,7 +636,6 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
         tipbot.slack.say(reply)
         return
       })
-
 
     // ADMIN ONLY COMMANDS
     if (user.is_admin) {

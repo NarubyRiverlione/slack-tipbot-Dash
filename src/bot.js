@@ -16,29 +16,49 @@ const RPC_PASSWORD = argv['rpc-password'] || process.env.TIPBOT_RPC_PASSWORD
 const RPC_PORT = argv['rpc-port'] || process.env.TIPBOT_RPC_PORT || 9998
 const WALLET_PASSW = argv['wallet-password'] || process.env.TIPBOT_WALLET_PASSWORD
 
+assert(SLACK_TOKEN, '--slack-token or TIPBOT_SLACK_TOKEN is required')
+assert(RPC_USER, '--rpc-user or TIPBOT_RPC_USER is required')
+assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required')
+
+const PRICE_CHANNEL_NAME = argv['PriceChannel'] || process.env.TIPBOT_PRICE_CHANNEL_NAME
+const MODS_CHANNELNAME = argv['ModsChannel'] || process.env.TIPBOT_MODS_CHANNELNAME
+const WARN_NEW_USER_CHANNELNAME = argv['WarnNewUserChannel'] || process.env.TIPBOT_WARN_NEW_USER_CHANNELNAME
+const MAIN_CHANNEL_NAME = argv['MainChannel'] || process.env.TIPBOT_MAIN_CHANNEL_NAME
+const DEBUG_CHANNEL_NAME = argv['DebugChannel'] || process.env.TIPBOT_DEBUG_CHANNEL_NAME
+
+const ENABLE_RAIN_FEATURE = (argv['EnableRain'] || process.env.TIPBOT_ENABLE_RAIN_FEATURE) === 'true'
+const RAIN_USERNAME = argv['RainUser'] || process.env.TIPBOT_RAIN_USERNAME
+
+const ENABLE_AUTOWITHDRAW_FEATURE = (argv['EnableAutowithdraw'] || process.env.TIPBOT_ENABLE_AUTOWITHDRAW_FEATURE) == 'true'
+
+const SHOW_RANDOM_HELP_TIMER = parseInt(argv['ShowHelpTimer'] || process.env.TIPBOT_SHOW_HELP_TIMER)
+
+
 const debugMode = process.env.NODE_ENV === 'development' ? true : false
+
+
 
 const TIPBOT_OPTIONS = {
   WALLET_PASSW: WALLET_PASSW,
   ALL_BALANCES: true,
   OTHER_BALANCES: true,
-  ENABLE_RAIN_FEATURE: true,
-  ENABLE_AUTOWITHDRAW_FEATURE: true,
+  ENABLE_RAIN_FEATURE,
+  ENABLE_AUTOWITHDRAW_FEATURE,
   WARN_MODS_NEW_USER: !debugMode,
   WARN_MODS_USER_LEFT: !debugMode,
-  RAIN_USERNAME: 'dashrain',
+  RAIN_USERNAME,
   RAIN_TIMER: debugMode ? 1 : 30  // debug = check rain every minute, production check every 30 minutes
 }
 
 let OPTIONS = {
-  PRICE_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_markets',
-  WARN_MODS_CHANNELNAME: debugMode ? 'bot-testing' : 'naruby',
-  WARN_NEW_USER_CHANNELNAME: debugMode ? 'bot-testing' : 'dash_talk',
-  MAIN_CHANNEL_NAME: debugMode ? 'bot-testing' : 'dash_talk',
+  PRICE_CHANNEL_NAME: debugMode ? DEBUG_CHANNEL_NAME : PRICE_CHANNEL_NAME,
+  WARN_MODS_CHANNELNAME: debugMode ? DEBUG_CHANNEL_NAME : MODS_CHANNELNAME,
+  WARN_NEW_USER_CHANNELNAME: debugMode ? DEBUG_CHANNEL_NAME : WARN_NEW_USER_CHANNELNAME,
+  MAIN_CHANNEL_NAME: debugMode ? DEBUG_CHANNEL_NAME : MAIN_CHANNEL_NAME,
 
-  SHOW_RANDOM_HELP_TIMER: 720, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
+  SHOW_RANDOM_HELP_TIMER, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
-  DB: 'mongodb://localhost/tipdb-dev' //tipbotdb
+  DB: debugMode ? 'mongodb://localhost/tipdb-dev' : 'mongodb://localhost/tipdb' //tipbotdb
 }
 
 let initializing = 0
@@ -48,10 +68,6 @@ let tipbot = null
 let rainTicker = 0
 // decrease ticker until 0 => show random help command text
 let helpTicker = OPTIONS.SHOW_RANDOM_HELP_TIMER === undefined ? 0 : OPTIONS.SHOW_RANDOM_HELP_TIMER * 60
-
-assert(SLACK_TOKEN, '--slack-token or TIPBOT_SLACK_TOKEN is required')
-assert(RPC_USER, '--rpc-user or TIPBOT_RPC_USER is required')
-assert(RPC_PASSWORD, '--rpc-password or TIPBOT_RPC_PASSWORD is required')
 
 /*
 1) setup slack controller

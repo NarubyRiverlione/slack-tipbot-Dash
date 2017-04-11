@@ -8,9 +8,12 @@ let Tipper = mongoose.model('Tipper')
 
 let _ = require('lodash')
 
+const RAIN_DEFAULT_THRESHOLD = Coin.toSmall(0.5)
+
 module.exports = class Rain {
   constructor(rainUserName, users) {
     this.rainUser = null
+
     // get tipbot user that hold the rain/rain balance
     let findRainUser = _.filter(users,
       function (match) {
@@ -24,7 +27,52 @@ module.exports = class Rain {
       debug('Init: Tipbot user \'' + rainUserName + '\' found : ' + this.rainUser.handle)
     }
   }
+  // Get Rain status
+  GetRainStatus(wallet) {
+    let reply
+    return new Promise(
+      (resolve, reject) => {
+        // show balance of Rain Account, available to non-admin user
+        this.GetRainBalance(wallet)
+          .then(rainBalance => {
+            if (rainBalance !== undefined && rainBalance > 2e-8) {
+              reply.text = helpTexts.RainAvailibleAmount + rainBalance + ' dash'
+            } else {
+              reply.text = helpTexts.RainEmpty
+            }
+            reply.text += '\n' + helpTexts.RainReqDonation1 + this.rainUser.handle + '_'
+            reply.text += '\n' + helpTexts.RainReqDonation2 + this.rainUser.handle + helpTexts.RainReqDonation3
+            // show threshold
+            return this.GetThreshold()
+          })
+          .catch(err => {
+            debug(err); return
+          })
 
+
+          .then(threshold => {
+            reply.text += '\n' + helpTexts.RainThreshold1 +
+              Coin.toLarge(threshold) + ' Dash \n' +
+              helpTexts.RainThreshold2
+            // show amount of eligible users
+            return this.GetAmountOfEligibleRainUsers()
+          })
+          .catch(err => {
+            debug(err); return
+          })
+
+
+          .then(count => {
+            reply.text += '\n' + count + helpTexts.RainAmountEligibleUsers
+            resolve(reply)
+          })
+          .catch(err => {
+            debug('ERROR get rain balance: ' + err)
+            reply.text = helpTexts.RainCannotFindRainBalance + this.rainUser.handle
+            reject(reply)
+          })
+      })
+  }
   // get the balance of the Rain Account
   GetRainBalance(wallet) {
     return new Promise(
@@ -72,6 +120,7 @@ module.exports = class Rain {
             rainThreshold = threshold
             return this.GetRainBalance(wallet)
           })
+          .catch(err => reject(err))
 
           .then(balance => {
             rainBalance = balance
@@ -81,17 +130,19 @@ module.exports = class Rain {
                 .then(rainSize => {
                   return rainNow(rainBalance, rainSize, rainUser, wallet)
                 })
+                .catch(err => reject(err))
 
                 .then(rainResult => {
                   debug(rainResult)
                   resolve(rainResult)
                 })
+                .catch(err => reject(err))
+
             } else {
               resolve()
             }
           })
-          .catch(err =>
-            reject(err))
+          .catch(err => reject(err))
       })
   }
   //  save threshold (in Duffs)
@@ -156,7 +207,7 @@ module.exports = class Rain {
   }
 
   // get saved threshold (in Duffs), if not saved us default threshold
-  GetThreshold(defaultThreshold) {
+  GetThreshold() {
     return new Promise(
       (resolve, reject) => {
         Tipper.findOne(
@@ -166,7 +217,7 @@ module.exports = class Rain {
               return reject(err)
             }
             // use tipCount field to save threshold
-            resolve(thresholdRecord === null ? defaultThreshold : thresholdRecord.tipCount)
+            resolve(thresholdRecord === null ? RAIN_DEFAULT_THRESHOLD : thresholdRecord.tipCount)
           }
         )
       })
@@ -250,15 +301,23 @@ function cast1raindrop(oneUser, rainSize, rainUser, wallet) {
   return new Promise(
     (resolve, reject) => {
       debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
-      wallet.Move(oneUser, rainSize, rainUser)
-        .then(() => {
-          // mark this tipper records as recieved a rainray, don't delete them so we have a history
-          setTipperAsRecievedRain(oneUser.id, function (err) {
-            if (err) { return reject(err) }
-            debug(oneUser.name + ' just recieved a rainray !')
-            resolve()
+
+      // slow down to prevent locking
+      setTimeout(() => {
+        wallet.Move(oneUser, rainSize, rainUser)
+          .then(() => {
+            // mark this tipper records as recieved a rainray, don't delete them so we have a history
+            setTipperAsRecievedRain(oneUser.id, function (err) {
+              if (err) {
+                return reject(err)
+              }
+              debug(oneUser.name + ' just recieved a rainray !')
+              resolve()
+            })
           })
-        })
-        .catch(err => reject(err))
+          .catch(err => reject(err))
+      }// wait x ms befor executing
+        , 1500) // todo: read from tipbot.OPTIONS.RAIN_SEND_THROTTLE
     })
 }
+

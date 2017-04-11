@@ -43,9 +43,9 @@ let TipBot = function (bot, RPC_USER, RPC_PASSWORD, RPC_PORT, OPTIONS) {
     PRICE_UPDATE_EVERY: 30, // minuts
 
     RAIN_USERNAME: null,
-    RAIN_SEND_THROTTLE: 1250, // ms wait between rainrays to cast (prevent slack spam protection)
+    RAIN_SEND_THROTTLE: 1250, // ms wait between rainrays to cast (prevent slack spam protection and simultaneous wallet transactions)
     RAIN_TIMER: 30, // check rain balance > threshold every X minutes
-    RAIN_DEFAULT_THRESHOLD: Coin.toSmall(0.5) // duff
+    // RAIN_DEFAULT_THRESHOLD: Coin.toSmall(0.5) // duff
   })
 
   self.wallet = new Wallet(RPC_PORT, RPC_USER, RPC_PASSWORD, HighBalanceWarningMark, self.OPTIONS.TX_FEE)
@@ -613,35 +613,24 @@ TipBot.prototype.checkForRain = function () {
 
           }
           self.slack.say(reply)
+          let promises = []
           //send private message to each revieced user
-          debug('rain: ===== ASYNC start sending private messages for rain =====')
-          async.forEachSeries(result.reviecedUsers,
-            function (oneUser, asyncCB) {
+          debug('rain: =====  start sending private messages for rain =====')
+          result.reviecedUsers.forEach(oneUser => {
+            promises.push(function () {
               // wait the time set via rain Throttle to prevent slack spam protection
               wait(self.OPTIONS.RAIN_SEND_THROTTLE, function () {
-                // ignore all response to prevent wall of text in public, sender = rain User = not usefull to inform
-                // custom message to reciever:
-                self.getDirectMessageChannelID(null, oneUser.id)
-                  .then(DMchannelRecievingUser => {
-                    // send private message to lucky user
-                    let recievingUserMessage = {
-                      'channel': DMchannelRecievingUser,
-                      'text': tipbotTxt.RainRecieved + Coin.toLarge(result.rainSize) + ' dash'
-                    }
-                    self.slack.say(recievingUserMessage)
-                  })
-                  .catch()
-                //})
+                this.sendPrivateRainMessage(oneUser, result.rainSize)
               })
-              asyncCB()// callback needed to let async know everyhing is done
-            },
-            // function called when all async tasks are done
-            function (err) {
-              if (err) {
-                debug('ERROR rain: during async rain: ' + err)
-                return
-              }
-              debug('RAIN ===== ASYNC stop sending private messages for rain =====')
+            })
+          })
+          Promise.all(promises)
+            .then(() => {
+              debug('rain: ===== Done sending private messages for rain =====')
+            })
+            .catch(err => {
+              debug(err)
+              return
             })
         }
       })
@@ -650,6 +639,22 @@ TipBot.prototype.checkForRain = function () {
         return
       })
   }
+}
+
+TipBot.prototype.sendPrivateRainMessage = function (oneUser, rainSize) {
+  return new Promise(
+    (resolve, reject) => {
+      this.getDirectMessageChannelID(null, oneUser.id)
+        .then(DMchannelRecievingUser => {
+          // send private message to lucky user
+          let recievingUserMessage = {
+            'channel': DMchannelRecievingUser,
+            'text': tipbotTxt.RainRecieved + Coin.toLarge(rainSize) + ' dash'
+          }
+          this.slack.say(recievingUserMessage)
+        })
+        .catch(err => reject(err))
+    })
 }
 
 // a Slack message was send,
