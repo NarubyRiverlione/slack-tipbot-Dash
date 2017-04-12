@@ -283,17 +283,19 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
                 pattern: tipbot.slack.utterances.yes,
                 callback: function (response, convo) {
                   convo.say('Great! I will continue...')
+                  convo.next()
                   // do something else...
-                  tipbot.wallet.Withdraw(converted.newValue, address[0], tipbot.OPTIONS.WALLET_PASSW, user)
+                  tipbot.wallet.Withdraw(Coin.toSmall(converted.newValue), address[0], tipbot.OPTIONS.WALLET_PASSW, user)
                     .then(response => {
                       debug(user.name + ' has succesfull withdraw ' + converted.newValue + ' to ' + address[0])
                       convo.say(response)
+                      convo.next()
                     })
                     .catch(err => {
                       debug('ERROR: cannot withdraw because: ' + err)
                       convo.say(err)
+                      convo.next()
                     })
-                  convo.next()
                   return
                 }
               },
