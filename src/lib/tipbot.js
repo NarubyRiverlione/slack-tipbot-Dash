@@ -441,7 +441,7 @@ TipBot.prototype.init = function () {
 }
 
 // convert currency if needed,
-//  amount in Coin Large, and if it was needed to convertion rate and originalCurrency
+// resolve : {newValue = Coin.small , rate , text }
 TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurrency) {
   let self = this
   let currency, value
@@ -464,14 +464,14 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
           })
       } else {
         // no 'all', evaluate the unit
-        // large cybercoin -> small cybercoin or fiat -> float
+        // large cybercoin -> small cybercoin
         if (unit.match(/duff?/i)) {
           currency = self.CYBERCURRENCY
-          value = Coin.toSmall(inputValue)
+          value = parseFloat(inputValue)
         }
         if (unit.match(/DASH/i)) {
           currency = self.CYBERCURRENCY
-          value = parseFloat(inputValue)
+          value = Coin.toSmall(inputValue)
         }
 
         let cyberToFiat = false
@@ -480,9 +480,10 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
         if (currency.endsWith('s')) // remove plurar 's'
           currency = currency.slice(0, -1)
 
+
         if (currency === self.CYBERCURRENCY.toLowerCase()) {
           if (!outputCurrency) {
-            // amount is in cybercoin, return only value, no convertion rate
+            // amount is in cybercoin, return only value (in small Coin) , no convertion rate
             const converted = { newValue: value, rate: null, text: Coin.toLarge(value) + ' ' + self.CYBERCURRENCY }
             return resolve(converted)
           } else {
@@ -493,6 +494,8 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
           }
         }
 
+        if (currency.endsWith('s')) // remove plurar 's'
+          currency = currency.slice(0, -1)
 
         if (self.CURRENCIES.indexOf(currency) !== -1) {
           value = parseFloat(inputValue)
@@ -514,11 +517,12 @@ TipBot.prototype.normalizeValue = function (inputValue, unit, user, outputCurren
               else
                 newValue = Math.ceil(value * rate * 1e8)
 
-              newValue = Coin.toLarge(newValue)
-              rate = rate.toFixed(2)
+              //newValue = Coin.toLarge(newValue).toFixed(4)
+              rate = rate.toFixed(4)
+              let showAmount = Coin.toFixed(Coin.toLarge(newValue), 4)
 
-              let text = value.toFixed(2) + ' ' + currency + ' ' +
-                '(' + newValue + ' ' + self.CYBERCURRENCY +
+              let text = Coin.toFixed(value, 4) + ' ' + currency + ' ' +
+                '(' + showAmount + ' ' + self.CYBERCURRENCY +
                 ' at ' + rate + ' ' + currency + ' / ' + self.CYBERCURRENCY + ')'
 
               // return converted value in dash, convertion rate, originalCurrency, originalValue, text about the convertion

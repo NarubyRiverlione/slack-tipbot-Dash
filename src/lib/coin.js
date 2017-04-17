@@ -9,9 +9,16 @@ function toSmall(largeAmount) {
   }
 }
 
-function toLarge(smallAmount) {
-  return (smallAmount / 1e8).toFixed(8)
+function toLarge(smallAmount, decimals = 8) {
+  return (smallAmount / 1e8).toFixed(decimals)
 }
 
+function toFixed(amount, decimals) {
+  let fAmount = parseFloat(amount)
+  if (fAmount)
+    return fAmount.toFixed(decimals).toString()  // toString to remove trailing zero's
+  else
+    return null
+}
 
-module.exports = { toSmall, toLarge }
+module.exports = { toSmall, toLarge, toFixed }

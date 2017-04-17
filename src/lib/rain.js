@@ -275,18 +275,13 @@ function rainNow(rainBalance, rainSize, rainUser, wallet) {
       //get list of users that have tipped
       getListOfRainEligibleUsers()
         .then(usersList => {
-          let promises = []
+          let promiseSequence = Promise.resolve() // empty promise
           usersList.forEach(oneUser => {
-            promises.push(cast1raindrop(oneUser, rainSize, rainUser, wallet))
+            promiseSequence = promiseSequence.then(() => { return cast1raindrop(oneUser, rainSize, rainUser, wallet) }).catch(err => { debug(err) })
           })
-
-          Promise.all(promises)
-            .then(() => {
-              return resolve({ reviecedUsers: usersList, rainSize })
-            })
-            .catch(err => reject(err))
+          // when all is done
+          resolve({ reviecedUsers: usersList, rainSize })
         })
-
         .catch(err =>
           reject('ERROR: cannnot cast rain because error in getting List Of Rain EligibleUsers:' + err)
         )
@@ -296,20 +291,17 @@ function rainNow(rainBalance, rainSize, rainUser, wallet) {
 function cast1raindrop(oneUser, rainSize, rainUser, wallet) {
   return new Promise(
     (resolve, reject) => {
-      // slow down to prevent locking
-      setTimeout(() => {
-        debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
-        wallet.Move(oneUser, rainSize, rainUser)
-          .then(() => {
-            // mark this tipper records as recieved a rainray, don't delete them so we have a history
-            setTipperAsRecievedRain(oneUser.id)
-              .then(() => {
-                debug(oneUser.name + ' just recieved a rainray !')
-                resolve()
-              })
-              .catch(err => reject(err))
-          })
-          .catch(err => reject(err))
-      }, 2500) // todo: read from tipbot.OPTIONS.RAIN_SEND_THROTTLE
+      debug('Cast a rainray of ' + Coin.toLarge(rainSize) + ' dash on ' + oneUser.name + ' (' + oneUser.id + ')')
+      wallet.Move(oneUser, rainSize, rainUser)
+        .then(() => {
+          // mark this tipper records as recieved a rainray, don't delete them so we have a history
+          setTipperAsRecievedRain(oneUser.id)
+            .then(() => {
+              debug(oneUser.name + ' just recieved a rainray !')
+              resolve()
+            })
+            .catch(err => reject(err))
+        })
+        .catch(err => reject(err))
     })
 }

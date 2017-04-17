@@ -285,9 +285,9 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
                   convo.say('Great! I will continue...')
                   convo.next()
                   // do something else...
-                  tipbot.wallet.Withdraw(Coin.toSmall(converted.newValue), address[0], tipbot.OPTIONS.WALLET_PASSW, user)
+                  tipbot.wallet.Withdraw(converted.newValue, address[0], tipbot.OPTIONS.WALLET_PASSW, user)
                     .then(response => {
-                      debug(user.name + ' has succesfull withdraw ' + converted.newValue + ' to ' + address[0])
+                      debug(user.name + ' has succesfull withdraw ' + converted.text + ' to ' + address[0])
                       convo.say(response)
                       convo.next()
                     })
@@ -438,7 +438,7 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
       tipbot.normalizeValue(amount[1], currency, user)
         .then(converted => {
           // send amount (move between accounts in wallet)
-          tipbot.wallet.Move(mentioned, Coin.toSmall(converted.newValue), user)
+          tipbot.wallet.Move(mentioned, converted.newValue, user)
             .then(responses => {
               // response in public channel:  announce tip
               reply.text = responses.public
@@ -537,8 +537,9 @@ module.exports = function (message, channel, user, DMchannelID, tipbot) {
 
     tipbot.normalizeValue(amount[1], fromCurrency, user, toCurrency)
       .then(converted => {
+        let showValue = Coin.toLarge(converted.newValue, 4).toString()
         reply.text = amount[1] + ' ' + fromCurrency + ' = '
-          + converted.newValue + '  ' + toCurrency +
+          + showValue + '  ' + toCurrency +
           ' ( 1.0 ' + tipbot.CYBERCURRENCY + ' = ' + converted.rate + ' ' + toCurrency + ' )'
 
         tipbot.slack.say(reply)

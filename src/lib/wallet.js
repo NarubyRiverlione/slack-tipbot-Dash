@@ -142,7 +142,7 @@ module.exports = class Wallet {
 
           // wallet is now unlocked, send now
           .then(() => {
-            return sendAmount(user.id, toAddress, withdrawAmount, this.walletDaemon)
+            return sendAmount(user.id, toAddress, withdrawAmount, this.walletDaemon, this.TX_FEE)
           })
           // error unlocking wallet
           .catch(err => {
@@ -162,7 +162,7 @@ module.exports = class Wallet {
           })
       })
   }
-
+  // value is in smallCoin !
   Move(sendToUser, value, user) {
     let error = ''
     return new Promise(
@@ -235,7 +235,7 @@ module.exports = class Wallet {
 
 // private functions
 // send via Blockchain
-function sendAmount(fromAccount, toAddress, value, walletDaemon) {
+function sendAmount(fromAccount, toAddress, value, walletDaemon, tx_fee) {
   return new Promise(
     (resolve, reject) => {
       // send  users Account to Address
@@ -247,7 +247,8 @@ function sendAmount(fromAccount, toAddress, value, walletDaemon) {
             return reject(error)
           }
           let url = BLOCKCHAIN_EXPLORER_URL + tx_id
-          let line = helpText.Withdrawal1 + Coin.toLarge(value) + ' ' +
+          let withdrawAmount = value + tx_fee
+          let line = helpText.Withdrawal1 + Coin.toLarge(withdrawAmount).toString() + ' ' +
             helpText.BaseCurrency + ' to ' +
             toAddress +
             helpText.WithdrawalTransaction +
