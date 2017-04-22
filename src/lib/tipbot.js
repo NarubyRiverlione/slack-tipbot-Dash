@@ -235,7 +235,8 @@ TipBot.prototype._getPriceRates = function (filename, cb) {
         }
       })
     } else {
-      request.get('http://coinmarketcap-nexuist.rhcloud.com/api/dash/price', function (err, response, body) {
+      //http://coinmarketcap-nexuist.rhcloud.com/
+      request.get('http://localhost:8080/api/dash/price', function (err, response, body) {
         fs.writeFile(filename, body, function (err) {
           if (err) {
             return cb(err)
