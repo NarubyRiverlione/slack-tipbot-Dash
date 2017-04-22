@@ -93,7 +93,7 @@ function connect(controller) {
     retry: 10
   }).startRTM(function (err, bot, payload) {
     if (err) {
-      throw new Error(err)
+      throw new Error('ERROR Connecting to Slack: ' + err)
     }
     // get info where bot is active
     let channels = [],

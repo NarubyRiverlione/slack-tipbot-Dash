@@ -227,8 +227,12 @@ TipBot.prototype._getPriceRates = function (filename, cb) {
         if (err) {
           return cb(err)
         }
-
-        cb(null, JSON.parse(data))
+        try {
+          const jsonData = JSON.parse(data)
+          cb(null, jsonData)
+        } catch (ex) {
+          cb('ERROR parsing price data (read): ' + ex)
+        }
       })
     } else {
       request.get('http://coinmarketcap-nexuist.rhcloud.com/api/dash/price', function (err, response, body) {
@@ -236,8 +240,12 @@ TipBot.prototype._getPriceRates = function (filename, cb) {
           if (err) {
             return cb(err)
           }
-
-          cb(null, JSON.parse(body))
+          try {
+            const jsonData = JSON.parse(body)
+            cb(null, jsonData)
+          } catch (ex) {
+            cb('ERROR parsing price data (write): ' + ex)
+          }
         })
       })
     }
