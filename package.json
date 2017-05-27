@@ -14,7 +14,8 @@
     "mongoose": "^4.7.0",
     "mongoose-auto-increment": "^5.0.1",
     "request": "^2.79.0",
-    "waitjs": "^0.2.0"
+    "waitjs": "^0.2.0",
+    "snyk": "^1.31.0"
   },
   "devDependencies": {
     "babel-preset-latest": "^6.22.0",
@@ -24,8 +25,7 @@
     "gulp-batch": "^1.0.5",
     "gulp-clean": "^0.3.2",
     "gulp-eslint": "^3.0.1",
-    "gulp-watch": "^4.3.11",
-    "snyk": "^1.23.0"
+    "gulp-watch": "^4.3.11"
   },
   "scripts": {
     "test": "snyk test",
