@@ -423,7 +423,7 @@ TipBot.prototype.init = function () {
     async.forEachLimit(data.members, 100,
       function (member, cb) {
         self.updateUserFromMember(member, false)
-        cb()
+	setTimeout(cb, 0); // workaroud to call the callback in an async way
       },
       function (err) {
         if (err) {
