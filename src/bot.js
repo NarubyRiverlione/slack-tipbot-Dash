@@ -58,7 +58,7 @@ let OPTIONS = {
 
   SHOW_RANDOM_HELP_TIMER, // show a random help command every X minutes (6/12 hours = 360/720 minutes)
 
-  DB: debugMode ? 'mongodb://localhost/tipdb-dev' : 'mongodb://localhost/tipdb' //tipbotdb
+  DB_URL: debugMode ? 'mongodb://localhost/tipdb-dev' : 'mongodb://localhost/tipdb' //tipbotdb
 }
 
 let initializing = 0
@@ -122,21 +122,20 @@ function connect(controller) {
 // open mongoDB connection if needed for a feature
 const needMongoDb = TIPBOT_OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE || TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE
 if (needMongoDb) {
-  mongoose.connect(OPTIONS.DB, { config: { autoIndex: debugMode } })  // no autoIndex in production for preformance impact
-  let db = mongoose.connection
-  db.on('error', function (err) {
-    debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB + ': ' + err)
-  })
-
-  // database connection open =  conncect to slack
-  db.once('open', function () {
+  const mongoConnection = mongoose.connect(OPTIONS.DB_URL, { autoIndexId: debugMode, useMongoClient: true })  // no autoIndex in production for preformance impact
+  mongoConnection.then(db => {
+    db.on('error', function (err) {
+      debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB_URL + ': ' + err)
+    })
+    // database connection open =  conncect to slack
+    //  db.once('open', function () {
     autoIncrement.initialize(db)
     require('./model/TipperModel')        // load mongoose Tipper model
     require('./model/AutowithdrawModel')  // load mongoose AutowithdrawModel model
     debug('tipbot:db')('********* Database connected ********')
     // make connnection to Slack
     connect(controller)
-
+    //})
   })
 } else {
   debug('tipbot:init')('No features enabled that need mongoDb.')
