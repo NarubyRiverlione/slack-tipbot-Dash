@@ -122,7 +122,8 @@ function connect(controller) {
 // open mongoDB connection if needed for a feature
 const needMongoDb = TIPBOT_OPTIONS.ENABLE_AUTOWITHDRAW_FEATURE || TIPBOT_OPTIONS.ENABLE_RAIN_FEATURE
 if (needMongoDb) {
-  const mongoConnection = mongoose.connect(OPTIONS.DB_URL, { autoIndexId: debugMode, useMongoClient: true })  // no autoIndex in production for preformance impact
+  mongoose.Promise = global.Promise // Use native promises
+  const mongoConnection = mongoose.connect(OPTIONS.DB_URL, { config: { autoIndex: debugMode }, useMongoClient: true })  // no autoIndex in production for preformance impact
   mongoConnection.then(db => {
     db.on('error', function (err) {
       debug('tipbot:db')('******** ERROR: unable to connect to database at ' + OPTIONS.DB_URL + ': ' + err)
