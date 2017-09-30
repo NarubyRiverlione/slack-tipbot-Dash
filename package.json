@@ -14,7 +14,8 @@
     "mongoose": "^4.11.3",
     "mongoose-auto-increment": "^5.0.1",
     "request": "^2.79.0",
-    "waitjs": "^0.2.0"
+    "waitjs": "^0.2.0",
+    "snyk": "^1.41.1"
   },
   "devDependencies": {
     "babel-preset-latest": "^6.22.0",
@@ -24,15 +25,15 @@
     "gulp-batch": "^1.0.5",
     "gulp-clean": "^0.3.2",
     "gulp-eslint": "^4.0.0",
-    "gulp-watch": "^4.3.11",
-    "snyk": "^1.23.0"
+    "gulp-watch": "^4.3.11"
   },
   "scripts": {
     "test": "snyk test",
     "snyk-protect": "snyk protect",
     "prepublish": "npm run snyk-protect",
     "lint": "eslint ./src/**/*.js --fix",
-    "compile": "gulp lint && gulp babel"
+    "compile": "gulp lint && gulp babel",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
